@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>채팅 메이커</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- 고화질 스크린샷 캡처 라이브러리 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --left-bubble-bg: #ffffff;
+    --right-bubble-bg: #ff94b0;
+    --text-main: #4A4A4A;
+    --text-sub: #71788e;
+    --accent-blue: #4a8bf5;
+    --accent-green: #2ecc71;
+    --accent-red: #ff4757;
+    --convert-btn-bg: #ADCFFF;
+    --cam-color: #838383;
+    --status-color: #9C9C9C;
+    --bg-page: #f0f2f7;
+    --panel-bg: #ffffff;
+    --card-bg: #f8f9fc;
+    --border-color: #e2e6f0;
+    --phone-bg: #e8ecf4;
+    --bubble-radius: 4px;
+    --bubble-font-size: 13.5px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Noto Sans KR", sans-serif;
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 28px 16px;
+  }
+
+  .app-container {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    max-width: 1120px;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  /* ================= LEFT: 조작 패널 ================= */
+  .controller-side {
+    flex: 1.1;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #3b5998;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .card-box.editing-mode {
+    border: 2px solid var(--accent-green);
+    background: #f4fbf7;
+  }
+
+  .control-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+
+  label {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 700;
+  }
+
+  input[type="text"], select, textarea {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  input[type="text"]:focus, select:focus, textarea:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(74, 139, 245, 0.12);
+  }
+
+  /* 색상 선택기 일렬 정렬 영역 컨테이너 (상대 채팅, 내 채팅, 배경 기본색 순서) */
+  .color-pickers-container {
+    display: flex;
+    gap: 10px;
+  }
+
+  .color-picker-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .color-picker-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  input[type="color"] {
+    -webkit-appearance: none;
+    border: 1px solid var(--border-color);
+    flex: 1;
+    height: 38px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #ffffff;
+    padding: 2px 4px;
+  }
+  input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 6px;
+  }
+
+  .btn-reset-small {
+    background: #eaedf4;
+    color: #555;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0 10px;
+    height: 38px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .btn-reset-small:hover { background: #dce1ed; }
+
+  textarea {
+    resize: vertical;
+    min-height: 65px;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .file-btn {
+    background: #ffffff;
+    color: #43536d;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    display: block;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  }
+  .file-btn:hover { 
+    background: #f0f4ff; 
+    border-color: #cbd8fc;
+    color: var(--accent-blue);
+  }
+
+  .btn-primary {
+    background: var(--accent-blue);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 12px rgba(74, 139, 245, 0.3);
+  }
+  .btn-primary:hover { background: #3876dc; }
+  .btn-primary:active { transform: scale(0.99); }
+
+  .btn-save-edit {
+    background: var(--accent-green);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    flex: 2;
+    transition: background 0.2s;
+  }
+  .btn-save-edit:hover { background: #27ae60; }
+
+  .btn-cancel-edit {
+    background: #e2e6f0;
+    color: #555;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+  }
+
+  /* ================= RIGHT: 스마트폰 미리보기 ================= */
+  .preview-side {
+    position: sticky;
+    top: 24px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* 다운로드 버튼 2개를 가로로 일자로 나란히 정렬 */
+  .download-buttons-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .download-btn {
+    background: #2b303c;
+    color: #ffffff;
+    border: none;
+    flex: 1;
+    padding: 12px 8px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .download-btn:hover { background: #1a1e27; }
+  .download-btn:active { transform: scale(0.99); }
+
+  .download-btn.secondary-dl {
+    background: #4a5568;
+  }
+  .download-btn.secondary-dl:hover { background: #374151; }
+
+  .phone-screen {
+    width: 380px;
+    height: 720px;
+    background: var(--phone-bg);
+    border-radius: 12px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08), inset 0 0 0 6px #ffffff, inset 0 0 0 7px #e0e4ee;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* 상단 헤더 */
+  .chat-header {
+    height: 55px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(14px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    z-index: 10;
+    position: relative;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    z-index: 2;
+    cursor: pointer;
+  }
+
+  .back-btn-icon {
+    width: 34px;
+    height: 23px;
+    display: flex;
+    align-items: center;
+  }
+
+  .back-btn-icon svg {
+    width: 34px;
+    height: 23px;
+  }
+
+  .header-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) scaleY(1.05);
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--text-main);
+    white-space: nowrap;
+    z-index: 1;
+    letter-spacing: -0.3px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 2;
+  }
+
+  .header-cam-icon {
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(1px);
+    cursor: pointer;
+  }
+
+  .header-cam-icon svg {
+    width: 25px;
+    height: 25px;
+    fill: var(--cam-color);
+  }
+
+  .diamonds-icon {
+    display: flex;
+    align-items: center;
+    gap: 6.5px;
+    cursor: pointer;
+  }
+
+  .diamond-dot {
+    width: 3.5px;
+    height: 3.5px;
+    background-color: var(--text-main);
+    transform: rotate(45deg);
+  }
+
+  .chat-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    background-color: var(--phone-bg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+  }
+
+  /* ================= 하단 메세지 발송 창 ================= */
+  .chat-footer {
+    height: 55px;
+    background: #ebebf0;
+    display: flex;
+    align-items: center;
+    padding: 8px 14px;
+    gap: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    z-index: 10;
+  }
+
+  .fake-input {
+    flex: 1;
+    height: 35px;
+    background: #dedfe4;
+    border-radius: var(--bubble-radius);
+  }
+
+  .fake-btn {
+    min-width: 82px;
+    height: 35px;
+    background: #9fa0a4;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    padding-left: 2px;
+    border-radius: var(--bubble-radius);
+    user-select: none;
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.6);
+    transform: scaleY(1.04);
+  }
+
+  /* ================= 말풍선 & 프로필 스타일 ================= */
+  .msg-row {
+    display: flex;
+    gap: 11px;
+    max-width: 91%;
+    position: relative;
+  }
+
+  .msg-row.left { align-self: flex-start; }
+  .msg-row.right { align-self: flex-end; flex-direction: row-reverse; }
+
+  .msg-row.is-editing .msg-content-wrap {
+    outline: 2px dashed var(--accent-green);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .avatar-crop-box {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--bubble-radius);
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #d8dde8;
+  }
+
+  .avatar-crop-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .msg-content-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    max-width: 190px;
+    cursor: pointer;
+  }
+
+  .msg-content-wrap.voice-content-wrap {
+    max-width: 225px;
+  }
+
+  .bubble-text {
+    position: relative;
+    box-sizing: border-box;
+    min-height: 36px;
+    padding: 8px 13px;
+    border-radius: var(--bubble-radius);
+    font-size: var(--bubble-font-size);
+    line-height: 1.38;
+    word-break: break-word;
+    box-shadow: none;
+    letter-spacing: -0.5px;
+    
+    display: inline-block;
+    text-align: left;
+    align-self: flex-start;
+    max-width: 190px;
+    
+    transform: scaleY(1.05);
+    transform-origin: top left;
+  }
+
+  .msg-row.left .bubble-text {
+    background: var(--left-bubble-bg);
+    color: var(--text-main);
+  }
+
+  .msg-row.left .bubble-text::before {
+    content: '';
+    position: absolute;
+    top: 13px;
+    left: -7px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 8px 5px 0;
+    border-color: transparent var(--left-bubble-bg) transparent transparent;
+  }
+
+  .msg-row.right .bubble-text {
+    background: var(--right-bubble-bg);
+    color: #ffffff;
+    transform-origin: top right;
+  }
+
+  .msg-row.right .bubble-text::before {
+    content: '';
+    position: absolute;
+    top: 13px;
+    right: -7px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 0 5px 8px;
+    border-color: transparent transparent transparent var(--right-bubble-bg);
+  }
+
+  /* ================= 음성 메시지 박스 ================= */
+  .voice-pill-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+
+  .msg-row.right .voice-pill-wrap {
+    flex-direction: row-reverse;
+  }
+
+  .voice-pill {
+    position: relative;
+    background: #ffffff;
+    height: 38px;
+    min-width: 175px;
+    padding: 0 16px;
+    border-radius: var(--bubble-radius);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: none;
+  }
+
+  .msg-row.left .voice-pill::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: -7px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 8px 5px 0;
+    border-color: transparent #ffffff transparent transparent;
+  }
+
+  .msg-row.right .voice-pill::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    right: -7px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 0 5px 8px;
+    border-color: transparent transparent transparent #ffffff;
+  }
+
+  .voice-wave-icon {
+    width: 19px;
+    height: 19px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .voice-sec {
+    font-size: 15.5px;
+    font-weight: 500;
+    color: var(--text-main);
+    letter-spacing: 0.2px;
+    transform: scaleY(1.05);
+    display: inline-block;
+  }
+
+  .voice-toggle-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--convert-btn-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+    box-shadow: none;
+    transition: transform 0.1s ease, filter 0.2s ease;
+  }
+
+  .voice-toggle-btn:hover {
+    filter: brightness(0.96);
+  }
+
+  .voice-toggle-btn:active {
+    transform: scale(0.94);
+  }
+
+  .voice-toggle-btn svg {
+    fill: #ffffff;
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+
+  .transcribed-box {
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: var(--bubble-radius);
+    padding: 8px 12px;
+    box-shadow: none;
+    margin-top: 3px;
+    transform: scaleY(1.05);
+    transform-origin: top left;
+  }
+
+  .transcribed-text-content {
+    font-size: var(--bubble-font-size);
+    color: var(--text-main);
+    line-height: 1.38;
+    letter-spacing: -0.5px;
+    word-break: break-word;
+    text-align: left;
+  }
+
+  .transcribed-status {
+    margin-top: 4px;
+    font-size: 9.5px;
+    color: var(--status-color);
+    display: flex;
+    align-items: center;
+    gap: 3.5px;
+    font-weight: 500;
+  }
+
+  .check-circle-icon {
+    width: 10px;
+    height: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .msg-actions {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 5;
+  }
+
+  .msg-row.left .msg-actions {
+    left: 100%;
+    margin-left: 8px;
+  }
+
+  .msg-row.right .msg-actions {
+    right: 100%;
+    margin-right: 8px;
+    flex-direction: row-reverse;
+  }
+
+  .delete-msg-btn {
+    opacity: 0;
+    background: transparent;
+    border: none;
+    color: #ff4757;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0 4px;
+    transition: opacity 0.2s ease;
+  }
+
+  .msg-row:hover .delete-msg-btn {
+    opacity: 1;
+  }
+
+  .edit-icon-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    color: var(--accent-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    padding: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    transform: scale(0.85);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .edit-icon-btn.visible {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+
+  .edit-icon-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ================= 이미지 자르기 크롭 박스 모달 ================= */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(20, 26, 40, 0.65);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    width: 95%;
+    max-width: 480px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+  }
+
+  .modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .crop-stage-container {
+    background: #1a1d26;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .crop-stage {
+    position: relative;
+    display: inline-block;
+    user-select: none;
+  }
+
+  .crop-stage img {
+    display: block;
+    max-width: 400px;
+    max-height: 380px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .crop-box {
+    position: absolute;
+    border: 2px solid var(--accent-blue);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+    cursor: move;
+    box-sizing: border-box;
+  }
+
+  .crop-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border: 1px dashed rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+  }
+
+  .crop-handle {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #ffffff;
+    border: 2px solid var(--accent-blue);
+    border-radius: 50%;
+  }
+
+  .crop-handle.tl { top: -7px; left: -7px; cursor: nwse-resize; }
+  .crop-handle.tr { top: -7px; right: -7px; cursor: nesw-resize; }
+  .crop-handle.bl { bottom: -7px; left: -7px; cursor: nesw-resize; }
+  .crop-handle.br { bottom: -7px; right: -7px; cursor: nwse-resize; }
+
+  .modal-hint {
+    font-size: 12px;
+    color: var(--text-sub);
+    text-align: center;
+  }
+
+  .modal-btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .btn-secondary {
+    background: #eaedf4;
+    color: #495057;
+    border: none;
+    border-radius: 8px;
+    padding: 11px;
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-modal-apply {
+    background: var(--accent-blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 11px;
+    flex: 1;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  @media (max-width: 860px) {
+    .app-container {
+      flex-direction: column-reverse;
+      align-items: center;
+    }
+    .preview-side, .controller-side {
+      width: 100%;
+      max-width: 380px;
+    }
+    .crop-stage img {
+      max-width: 300px;
+      max-height: 300px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- ================= LEFT: 조작 패널 ================= -->
+  <div class="controller-side">
+    <div class="section-title">
+      <span>⚙️ 1. 프로필 & 테마 설정</span>
+      <button class="btn-reset-small" onclick="resetAllChatSettings()" title="모든 설정을 처음 상태로 초기화합니다">전체 초기화</button>
+    </div>
+
+    <div class="control-group">
+      <label>방 이름 (상단 바 실시간 반영)</label>
+      <input type="text" id="titleInput" value="채팅방 이름" oninput="updateRoomTitle()">
+    </div>
+
+    <!-- 색상 변경 UI를 일렬(가로)로 나란히 배치 (상대 채팅, 내 채팅, 배경 기본색 순서) -->
+    <div class="color-pickers-container">
+      <!-- 상대 채팅 배경색 -->
+      <div class="color-picker-column">
+        <label>🎨 상대 채팅(좌)</label>
+        <div class="color-picker-row">
+          <input type="color" id="leftBubbleColorInput" value="#ffffff" oninput="updateLeftBubbleColor(this.value)">
+          <button class="btn-reset-small" onclick="resetLeftBubbleColor()">초기화</button>
+        </div>
+      </div>
+
+      <!-- 내 채팅 배경색 -->
+      <div class="color-picker-column">
+        <label>🎨 내 채팅(우)</label>
+        <div class="color-picker-row">
+          <input type="color" id="myBubbleColorInput" value="#ff94b0" oninput="updateMyBubbleColor(this.value)">
+          <button class="btn-reset-small" onclick="resetMyBubbleColor()">초기화</button>
+        </div>
+      </div>
+
+      <!-- 배경 기본색 -->
+      <div class="color-picker-column">
+        <label>🖼️ 배경 기본색</label>
+        <div class="color-picker-row">
+          <input type="color" id="phoneBgColorInput" value="#e8ecf4" oninput="updatePhoneBgColor(this.value)">
+          <button class="btn-reset-small" onclick="resetPhoneBgColor()">초기화</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 배경 이미지 자르기 설정 -->
+    <div class="card-box">
+      <label>🖼️ 채팅 배경 이미지 업로드</label>
+      <label class="file-btn" for="bgFileInput">배경 선택 및 자르기</label>
+      <input type="file" id="bgFileInput" accept="image/*" onchange="openCropModal(event, 'bg')">
+    </div>
+
+    <!-- 프로필 설정 -->
+    <div class="control-row">
+      <div class="card-box" style="flex:1;">
+        <label>👤 상대방 프로필 (좌)</label>
+        <label class="file-btn" for="leftAvatarFileInput">선택 & 자르기</label>
+        <input type="file" id="leftAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'left')">
+      </div>
+
+      <div class="card-box" style="flex:1;">
+        <label>👤 내 프로필 (우)</label>
+        <label class="file-btn" for="rightAvatarFileInput">선택 & 자르기</label>
+        <input type="file" id="rightAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'right')">
+      </div>
+    </div>
+
+    <!-- 2. 대화 작성 & 수정 섹션 -->
+    <div class="section-title">
+      <span id="formTitle">💬 2. 대화 메시지 작성</span>
+      <span id="editBadge" style="display:none; font-size:12px; color:var(--accent-green); font-weight:700;">[수정 중]</span>
+    </div>
+
+    <div class="card-box" id="msgCardBox">
+      <div class="control-row">
+        <div class="control-group">
+          <label>발신자</label>
+          <select id="senderSelect" onchange="handleInputChange()">
+            <option value="left">상대방 (왼쪽)</option>
+            <option value="right" selected>나 (오른쪽)</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>메시지 형식</label>
+          <select id="typeSelect" onchange="handleTypeChange()">
+            <option value="text">일반 텍스트</option>
+            <option value="voice">음성 메시지</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group" id="textGroup">
+        <label>텍스트 내용 (작성 즉시 우측에 반영)</label>
+        <textarea id="msgTextInput" placeholder="작성하는 내용이 오른쪽에 바로 나타납니다..." oninput="handleInputChange()">내 채팅 예시입니다.</textarea>
+      </div>
+
+      <div id="voiceGroup" style="display: none;" class="control-group">
+        <div class="control-group">
+          <label>음성 메시지 시간 (초)</label>
+          <input type="text" id="voiceDurationInput" value="2.5" oninput="handleInputChange()">
+        </div>
+        <div class="control-group" style="margin-top: 6px;">
+          <label>음성 변환 텍스트 (아이콘 누르면 열림)</label>
+          <textarea id="voiceTextInput" placeholder="글로 변환할 내용을 입력하세요..." oninput="handleInputChange()"></textarea>
+        </div>
+      </div>
+
+      <!-- 신규 추가 버튼 -->
+      <button class="btn-primary" id="addBtn" onclick="confirmDraftMessage()">➕ 대화 목록에 추가</button>
+
+      <!-- 수정 완료/취소 버튼 세트 (수정 모드일 때만 노출) -->
+      <div id="editBtnRow" style="display: none; gap: 8px;">
+        <button class="btn-cancel-edit" onclick="cancelEditing()">취소</button>
+        <button class="btn-save-edit" onclick="saveEditedMessage()">💾 수정 완료</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= RIGHT: 스마트폰 미리보기 ================= -->
+  <div class="preview-side">
+    <div class="phone-screen" id="phoneScreen">
+      
+      <!-- 헤더 -->
+      <div class="chat-header">
+        <div class="header-left">
+          <span class="back-btn-icon">
+            <svg viewBox="0 0 35 24">
+              <path d="M11.5 4.5L3.5 12L11.5 19.5" stroke="#4A4A4A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <g transform="translate(13.5, 12) rotate(45)">
+                <rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#4A4A4A"/>
+              </g>
+              <g transform="translate(18.2, 12) rotate(45)">
+                <rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#4A4A4A"/>
+              </g>
+              <g transform="translate(26.2, 12) rotate(45)">
+                <rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#4A4A4A"/>
+              </g>
+            </svg>
+          </span>
+        </div>
+
+        <div class="header-title" id="roomTitle">채팅방 이름</div>
+
+        <div class="header-right">
+          <span class="header-cam-icon">
+            <svg viewBox="0 0 24 24">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M2.5 7.5C2.5 5.843 3.843 4.5 5.5 4.5h9c1.657 0 3 1.343 3 3v1.382l3.447-2.298A1 1 0 0 1 22.5 7.416v9.168a1 1 0 0 1-1.553.832L17.5 15.118V16.5c0 1.657-1.343 3-3 3h-9c-1.657 0-3-1.343-3-3v-9zm5.3 1.7a.6.6 0 0 0-.9.52v4.56a.6.6 0 0 0 .9.52l4.0-2.28a.6.6 0 0 0 0-1.04L7.8 9.2z"/>
+            </svg>
+          </span>
+          <div class="diamonds-icon">
+            <div class="diamond-dot"></div>
+            <div class="diamond-dot"></div>
+            <div class="diamond-dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-scroll-area" id="chatArea">
+        <div id="confirmedList" style="display: contents;"></div>
+        <div id="liveDraftBox" style="display: contents;"></div>
+      </div>
+
+      <!-- 하단 발송 창 -->
+      <div class="chat-footer">
+        <div class="fake-input"></div>
+        <div class="fake-btn">발송</div>
+      </div>
+
+    </div>
+
+    <!-- 미리보기 하단: 가로로 나란히 정렬된 다운로드 버튼 2개 -->
+    <div class="download-buttons-container">
+      <button class="download-btn" onclick="downloadPreviewImage(false)">현재 화면 다운로드</button>
+      <button class="download-btn secondary-dl" onclick="downloadPreviewImage(true)">전체 메시지 길게 다운로드</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ================= 이미지 자르기 크롭 박스 모달 ================= -->
+<div class="modal-backdrop" id="cropModal">
+  <div class="modal-card">
+    <div class="modal-title">
+      <span id="cropModalTitle">이미지 자르기</span>
+      <span style="cursor:pointer; font-size:18px; color: #888;" onclick="closeCropModal()">✕</span>
+    </div>
+
+    <div class="crop-stage-container">
+      <div class="crop-stage" id="cropStage">
+        <img id="stageImg" src="" alt="stage">
+        <div class="crop-box" id="cropBox">
+          <div class="crop-handle tl" data-handle="tl"></div>
+          <div class="crop-handle tr" data-handle="tr"></div>
+          <div class="crop-handle bl" data-handle="bl"></div>
+          <div class="crop-handle br" data-handle="br"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-hint">💡 상자 안을 잡아 이동하고, 모서리 점을 당겨 자를 영역의 크기를 조절하세요.</div>
+
+    <div class="modal-btn-row">
+      <button class="btn-secondary" onclick="closeCropModal()">취소</button>
+      <button class="btn-modal-apply" onclick="applyBoxCrop()">자르기 완료</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let leftAvatarUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%239db2d8'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='13' font-weight='bold' fill='%23fff'%3ELeft%3C/text%3E%3C/svg%3E";
+  let rightAvatarUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23ff94b0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='13' font-weight='bold' fill='%23fff'%3ERight%3C/text%3E%3C/svg%3E";
+  let bgUrl = '';
+
+  let messages = [];
+  let editingIndex = null;
+  let draftBackup = null;
+  let editIconTimers = {};
+
+  let currentTarget = null;
+  let rawImageObj = new Image();
+  let targetAspectRatio = 1;
+
+  let cropState = { x: 0, y: 0, w: 100, h: 100 };
+  let dragMode = null;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let initialCropState = {};
+
+  function updateRoomTitle() {
+    document.getElementById('roomTitle').innerText = document.getElementById('titleInput').value;
+  }
+
+  /* ================= 색상 및 설정 초기화 함수들 ================= */
+  function updateMyBubbleColor(color) {
+    document.documentElement.style.setProperty('--right-bubble-bg', color);
+  }
+
+  function resetMyBubbleColor() {
+    const defaultColor = '#ff94b0';
+    document.getElementById('myBubbleColorInput').value = defaultColor;
+    updateMyBubbleColor(defaultColor);
+  }
+
+  function updateLeftBubbleColor(color) {
+    document.documentElement.style.setProperty('--left-bubble-bg', color);
+  }
+
+  function resetLeftBubbleColor() {
+    const defaultColor = '#ffffff';
+    document.getElementById('leftBubbleColorInput').value = defaultColor;
+    updateLeftBubbleColor(defaultColor);
+  }
+
+  function updatePhoneBgColor(color) {
+    const chatArea = document.getElementById('chatArea');
+    chatArea.style.backgroundColor = color;
+    if (bgUrl) {
+      chatArea.style.backgroundImage = `url('${bgUrl}')`;
+    }
+  }
+
+  function resetPhoneBgColor() {
+    const defaultBgColor = '#e8ecf4';
+    document.getElementById('phoneBgColorInput').value = defaultBgColor;
+    const chatArea = document.getElementById('chatArea');
+    chatArea.style.backgroundColor = defaultBgColor;
+    if (bgUrl) {
+      chatArea.style.backgroundImage = `url('${bgUrl}')`;
+    }
+  }
+
+  /* 전체 채팅 설정 및 대화 내용 초기화 */
+  function resetAllChatSettings() {
+    if (!confirm('방 이름, 모든 색상 설정 및 대화 내용이 초기화됩니다. 계속하시겠습니까?')) return;
+
+    document.getElementById('titleInput').value = '채팅방 이름';
+    updateRoomTitle();
+
+    resetMyBubbleColor();
+    resetLeftBubbleColor();
+    resetPhoneBgColor();
+
+    bgUrl = '';
+    const chatArea = document.getElementById('chatArea');
+    chatArea.style.backgroundImage = 'none';
+
+    messages = [];
+    if (editingIndex !== null) cancelEditing();
+    resetFormToCreateMode();
+    renderAllMessages();
+  }
+
+  /* ================= 이미지 다운로드 (현재 화면 vs 전체 메시지 길게) ================= */
+  function downloadPreviewImage(isFullLength = false) {
+    const phoneElement = document.getElementById('phoneScreen');
+    const chatArea = document.getElementById('chatArea');
+
+    hideAllEditIcons();
+    document.querySelectorAll('.delete-msg-btn').forEach(btn => btn.style.display = 'none');
+    document.querySelectorAll('.edit-icon-btn').forEach(btn => btn.style.display = 'none');
+
+    let originalHeight = phoneElement.style.height;
+    let originalOverflow = chatArea.style.overflowY;
+
+    if (isFullLength) {
+      phoneElement.style.height = 'auto';
+      chatArea.style.overflowY = 'visible';
+    }
+
+    html2canvas(phoneElement, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: null,
+      onclone: (clonedDoc) => {
+        const clonedPhone = clonedDoc.getElementById('phoneScreen');
+        if (clonedPhone) {
+          clonedPhone.style.borderRadius = '0px';
+          clonedPhone.style.boxShadow = 'none';
+          if (isFullLength) {
+            clonedPhone.style.height = 'auto';
+            const clonedChatArea = clonedDoc.getElementById('chatArea');
+            if (clonedChatArea) clonedChatArea.style.overflowY = 'visible';
+          }
+        }
+      }
+    }).then(canvas => {
+      phoneElement.style.height = originalHeight;
+      chatArea.style.overflowY = originalOverflow;
+
+      const link = document.createElement('a');
+      link.download = `chat-screenshot-${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      
+      document.querySelectorAll('.delete-msg-btn').forEach(btn => btn.style.display = '');
+      document.querySelectorAll('.edit-icon-btn').forEach(btn => btn.style.display = '');
+    }).catch(err => {
+      console.error('다운로드 오류:', err);
+      alert('이미지 생성 중 오류가 발생했습니다.');
+      phoneElement.style.height = originalHeight;
+      chatArea.style.overflowY = originalOverflow;
+      document.querySelectorAll('.delete-msg-btn').forEach(btn => btn.style.display = '');
+      document.querySelectorAll('.edit-icon-btn').forEach(btn => btn.style.display = '');
+    });
+  }
+
+  /* ================= 크롭 모달 열기 ================= */
+  function openCropModal(event, target) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    currentTarget = target;
+    const reader = new FileReader();
+    reader.onload = e => {
+      rawImageObj = new Image();
+      rawImageObj.onload = () => {
+        const stageImg = document.getElementById('stageImg');
+        const modalTitle = document.getElementById('cropModalTitle');
+
+        stageImg.src = e.target.result;
+
+        if (target === 'bg') {
+          targetAspectRatio = 380 / 610;
+          modalTitle.innerText = '채팅 배경 자르기';
+        } else {
+          targetAspectRatio = 1;
+          modalTitle.innerText = target === 'left' ? '상대방(좌) 프로필 자르기' : '내(우) 프로필 자르기';
+        }
+
+        document.getElementById('cropModal').style.display = 'flex';
+
+        setTimeout(() => {
+          initCropBox();
+        }, 50);
+
+        event.target.value = '';
+      };
+      rawImageObj.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function closeCropModal() {
+    document.getElementById('cropModal').style.display = 'none';
+  }
+
+  function initCropBox() {
+    const stageImg = document.getElementById('stageImg');
+    const imgW = stageImg.clientWidth;
+    const imgH = stageImg.clientHeight;
+
+    let boxW, boxH;
+    if (imgW / imgH > targetAspectRatio) {
+      boxH = imgH * 0.85;
+      boxW = boxH * targetAspectRatio;
+    } else {
+      boxW = imgW * 0.85;
+      boxH = boxW / targetAspectRatio;
+    }
+
+    cropState = {
+      x: (imgW - boxW) / 2,
+      y: (imgH - boxH) / 2,
+      w: boxW,
+      h: boxH
+    };
+
+    updateCropBoxDOM();
+  }
+
+  function updateCropBoxDOM() {
+    const cropBox = document.getElementById('cropBox');
+    cropBox.style.left = `${cropState.x}px`;
+    cropBox.style.top = `${cropState.y}px`;
+    cropBox.style.width = `${cropState.w}px`;
+    cropBox.style.height = `${cropState.h}px`;
+  }
+
+  const cropBox = document.getElementById('cropBox');
+
+  function onPointerDown(clientX, clientY, mode) {
+    dragMode = mode;
+    dragStartX = clientX;
+    dragStartY = clientY;
+    initialCropState = { ...cropState };
+  }
+
+  function onPointerMove(clientX, clientY) {
+    if (!dragMode) return;
+
+    const dx = clientX - dragStartX;
+    const dy = clientY - dragStartY;
+    const stageImg = document.getElementById('stageImg');
+    const maxW = stageImg.clientWidth;
+    const maxH = stageImg.clientHeight;
+
+    if (dragMode === 'move') {
+      let newX = initialCropState.x + dx;
+      let newY = initialCropState.y + dy;
+
+      newX = Math.max(0, Math.min(newX, maxW - cropState.w));
+      newY = Math.max(0, Math.min(newY, maxH - cropState.h));
+
+      cropState.x = newX;
+      cropState.y = newY;
+    } else {
+      let newW = initialCropState.w;
+      let newH = initialCropState.h;
+      let newX = initialCropState.x;
+      let newY = initialCropState.y;
+
+      if (dragMode === 'br') {
+        newW = initialCropState.w + dx;
+        newH = newW / targetAspectRatio;
+      } else if (dragMode === 'tr') {
+        newW = initialCropState.w + dx;
+        newH = newW / targetAspectRatio;
+        newY = initialCropState.y - (newH - initialCropState.h);
+      } else if (dragMode === 'bl') {
+        newW = initialCropState.w - dx;
+        newH = newW / targetAspectRatio;
+        newX = initialCropState.x + (initialCropState.w - newW);
+      } else if (dragMode === 'tl') {
+        newW = initialCropState.w - dx;
+        newH = newW / targetAspectRatio;
+        newX = initialCropState.x + (initialCropState.w - newW);
+        newY = initialCropState.y - (newH - initialCropState.h);
+      }
+
+      if (newW > 40 && newH > 40 && newX >= 0 && newY >= 0 && newX + newW <= maxW && newY + newH <= maxH) {
+        cropState = { x: newX, y: newY, w: newW, h: newH };
+      }
+    }
+
+    updateCropBoxDOM();
+  }
+
+  function onPointerUp() {
+    dragMode = null;
+  }
+
+  cropBox.addEventListener('mousedown', (e) => {
+    const handle = e.target.getAttribute('data-handle');
+    onPointerDown(e.clientX, e.clientY, handle || 'move');
+    e.stopPropagation();
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    onPointerMove(e.clientX, e.clientY);
+  });
+
+  window.addEventListener('mouseup', onPointerUp);
+
+  cropBox.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      const handle = e.target.getAttribute('data-handle');
+      onPointerDown(e.touches[0].clientX, e.touches[0].clientY, handle || 'move');
+      e.stopPropagation();
+    }
+  });
+
+  window.addEventListener('touchmove', (e) => {
+    if (!isDragging && dragMode && e.touches.length === 1) {
+      onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  });
+
+  window.addEventListener('touchend', onPointerUp);
+
+  function applyBoxCrop() {
+    const stageImg = document.getElementById('stageImg');
+    const scaleRatio = rawImageObj.naturalWidth / stageImg.clientWidth;
+
+    const sourceX = cropState.x * scaleRatio;
+    const sourceY = cropState.y * scaleRatio;
+    const sourceW = cropState.w * scaleRatio;
+    const sourceH = cropState.h * scaleRatio;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const outW = currentTarget === 'bg' ? 380 * 2 : 200 * 2;
+    const outH = currentTarget === 'bg' ? 610 * 2 : 200 * 2;
+
+    canvas.width = outW;
+    canvas.height = outH;
+
+    ctx.drawImage(rawImageObj, sourceX, sourceY, sourceW, sourceH, 0, 0, outW, outH);
+
+    const croppedDataUrl = canvas.toDataURL('image/png');
+
+    if (currentTarget === 'left') {
+      leftAvatarUrl = croppedDataUrl;
+    } else if (currentTarget === 'right') {
+      rightAvatarUrl = croppedDataUrl;
+    } else if (currentTarget === 'bg') {
+      bgUrl = croppedDataUrl;
+      const chatArea = document.getElementById('chatArea');
+      chatArea.style.backgroundImage = `url('${bgUrl}')`;
+    }
+
+    renderAllMessages();
+    if (editingIndex === null) syncLiveDraft();
+    closeCropModal();
+  }
+
+  function getAvatarHtml(side) {
+    const url = side === 'left' ? leftAvatarUrl : rightAvatarUrl;
+    return `
+      <div class="avatar-crop-box">
+        <img src="${url}">
+      </div>
+    `;
+  }
+
+  function updateTypeGroupsVisibility(type) {
+    document.getElementById('textGroup').style.display = (type === 'text') ? 'flex' : 'none';
+    document.getElementById('voiceGroup').style.display = (type === 'voice') ? 'flex' : 'none';
+  }
+
+  function handleTypeChange() {
+    const type = document.getElementById('typeSelect').value;
+    updateTypeGroupsVisibility(type);
+    handleInputChange();
+  }
+
+  function toggleTranscription(id, event) {
+    if (event) event.stopPropagation();
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+  }
+
+  /* ================= 메시지 렌더링 ================= */
+  function buildMessageHtml(data, isDraft = false, index = null) {
+    const avatarHtml = getAvatarHtml(data.sender);
+    let contentHtml = '';
+
+    const bubbleClickAttr = !isDraft ? `onclick="event.stopPropagation(); showEditIcon(${index})"` : '';
+
+    const deleteBtn = !isDraft ? `<button class="delete-msg-btn" onclick="event.stopPropagation(); deleteMessage(${index})">✕</button>` : '';
+    const editIconBtn = !isDraft ? `
+      <button class="edit-icon-btn" id="editIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); enterEditFromIcon(${index})" title="수정하기">
+        <svg viewBox="0 0 24 24"><path d="M4 20.5v-3.3L16.5 4.7a1 1 0 0 1 1.4 0l1.4 1.4a1 1 0 0 1 0 1.4L6.8 20l-2.8.5z" fill="currentColor"/></svg>
+      </button>
+    ` : '';
+    const actionButtonsHtml = !isDraft ? `<div class="msg-actions">${editIconBtn}${deleteBtn}</div>` : '';
+
+    if (data.type === 'text') {
+      contentHtml = `
+        <div class="msg-content-wrap" ${bubbleClickAttr}>
+          <div class="bubble-text" style="${isDraft ? 'opacity: 0.85; border: 1px dashed var(--accent-blue);' : ''}">
+            ${(data.text || '').replace(/\n/g, '<br>')}
+          </div>
+          ${actionButtonsHtml}
+        </div>
+      `;
+    } else {
+      const transId = isDraft ? 'draft-trans' : `trans-${index}`;
+      contentHtml = `
+        <div class="msg-content-wrap voice-content-wrap" ${bubbleClickAttr}>
+          <div class="voice-pill-wrap">
+            <div class="voice-pill">
+              <!-- •)) 음성 아이콘 -->
+              <span class="voice-wave-icon">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
+                  <circle cx="4.5" cy="12" r="2.3" fill="#4A4A4A"/>
+                  <path d="M9.5 7.5c2.4 2.5 2.4 6.5 0 9" stroke="#4A4A4A" stroke-width="2.2" stroke-linecap="round"/>
+                  <path d="M14.5 4.5c4.1 4.1 4.1 10.9 0 15" stroke="#4A4A4A" stroke-width="2.2" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="voice-sec">${data.duration || '2.5'} "</span>
+            </div>
+            ${data.transText ? `
+              <button class="voice-toggle-btn" onclick="toggleTranscription('${transId}', event)" title="글로 변환">
+                <svg viewBox="0 0 24 24">
+                  <path d="M7 6l-3.5 3.5L7 13v-2.5h10V8.5H7V6zm10 12l3.5-3.5L17 11v2.5H7v2h10V18z"/>
+                </svg>
+              </button>
+            ` : ''}
+          </div>
+          ${data.transText ? `
+            <div class="transcribed-box" id="${transId}" style="${isDraft ? 'display:block;' : 'display:none;'}">
+              <div class="transcribed-text-content">${data.transText.replace(/\n/g, '<br>')}</div>
+              <div class="transcribed-status">
+                <span class="check-circle-icon">
+                  <svg viewBox="0 0 16 16" width="10" height="10">
+                    <circle cx="8" cy="8" r="8" fill="#9C9C9C"/>
+                    <path d="M4.5 8.2l2.3 2.3 4.7-4.7" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  </svg>
+                </span>
+                전환 완료
+              </div>
+            </div>
+          ` : ''}
+          ${actionButtonsHtml}
+        </div>
+      `;
+    }
+
+    const isCurrentEditing = (editingIndex === index);
+
+    return `
+      <div class="msg-row ${data.sender} ${isCurrentEditing ? 'is-editing' : ''}">
+        ${avatarHtml}
+        ${contentHtml}
+      </div>
+    `;
+  }
+
+  /* ================= 실시간 입력 & 수정 모드 제어 ================= */
+  function handleInputChange() {
+    if (editingIndex !== null) {
+      const sender = document.getElementById('senderSelect').value;
+      const type = document.getElementById('typeSelect').value;
+      
+      messages[editingIndex].sender = sender;
+      messages[editingIndex].type = type;
+
+      if (type === 'text') {
+        messages[editingIndex].text = document.getElementById('msgTextInput').value;
+      } else {
+        messages[editingIndex].duration = document.getElementById('voiceDurationInput').value;
+        messages[editingIndex].transText = document.getElementById('voiceTextInput').value;
+      }
+      renderAllMessages();
+    } else {
+      syncLiveDraft();
+    }
+  }
+
+  function syncLiveDraft() {
+    const sender = document.getElementById('senderSelect').value;
+    const type = document.getElementById('typeSelect').value;
+    const liveDraftBox = document.getElementById('liveDraftBox');
+
+    let data = { sender, type };
+
+    if (type === 'text') {
+      data.text = document.getElementById('msgTextInput').value;
+      if (!data.text.trim()) {
+        liveDraftBox.innerHTML = '';
+        return;
+      }
+    } else {
+      data.duration = document.getElementById('voiceDurationInput').value;
+      data.transText = document.getElementById('voiceTextInput').value;
+    }
+
+    liveDraftBox.innerHTML = buildMessageHtml(data, true);
+    scrollChatBottom();
+  }
+
+  /* ================= 말풍선 클릭 시 수정 아이콘 노출 ================= */
+  function showEditIcon(idx) {
+    document.querySelectorAll('.edit-icon-btn.visible').forEach(btn => {
+      if (btn.id !== `editIcon-${idx}`) btn.classList.remove('visible');
+    });
+
+    const icon = document.getElementById(`editIcon-${idx}`);
+    if (!icon) return;
+
+    icon.classList.add('visible');
+
+    if (editIconTimers[idx]) clearTimeout(editIconTimers[idx]);
+    editIconTimers[idx] = setTimeout(() => {
+      icon.classList.remove('visible');
+      delete editIconTimers[idx];
+    }, 3000);
+  }
+
+  function hideAllEditIcons() {
+    Object.keys(editIconTimers).forEach(idx => clearTimeout(editIconTimers[idx]));
+    editIconTimers = {};
+    document.querySelectorAll('.edit-icon-btn.visible').forEach(btn => btn.classList.remove('visible'));
+  }
+
+  function enterEditFromIcon(idx) {
+    if (editIconTimers[idx]) {
+      clearTimeout(editIconTimers[idx]);
+      delete editIconTimers[idx];
+    }
+    startEditingMessage(idx);
+  }
+
+  document.addEventListener('click', hideAllEditIcons);
+
+  /* ================= 메시지 수정 시작 ================= */
+  function startEditingMessage(idx) {
+    if (editingIndex === null) {
+      draftBackup = {
+        sender: document.getElementById('senderSelect').value,
+        type: document.getElementById('typeSelect').value,
+        text: document.getElementById('msgTextInput').value,
+        duration: document.getElementById('voiceDurationInput').value,
+        transText: document.getElementById('voiceTextInput').value
+      };
+    }
+
+    editingIndex = idx;
+    const item = messages[idx];
+
+    document.getElementById('formTitle').innerText = `✏️ ${idx + 1}번째 메시지 수정`;
+    document.getElementById('editBadge').style.display = 'inline';
+    document.getElementById('msgCardBox').classList.add('editing-mode');
+    document.getElementById('addBtn').style.display = 'none';
+    document.getElementById('editBtnRow').style.display = 'flex';
+
+    document.getElementById('liveDraftBox').innerHTML = '';
+
+    document.getElementById('senderSelect').value = item.sender;
+    document.getElementById('typeSelect').value = item.type;
+    updateTypeGroupsVisibility(item.type);
+
+    if (item.type === 'text') {
+      document.getElementById('msgTextInput').value = item.text || '';
+    } else {
+      document.getElementById('voiceDurationInput').value = item.duration || '2.5';
+      document.getElementById('voiceTextInput').value = item.transText || '';
+    }
+
+    renderAllMessages();
+  }
+
+  function saveEditedMessage() {
+    editingIndex = null;
+    resetFormToCreateMode();
+    renderAllMessages();
+  }
+
+  function cancelEditing() {
+    editingIndex = null;
+    resetFormToCreateMode();
+    renderAllMessages();
+  }
+
+  function resetFormToCreateMode() {
+    document.getElementById('formTitle').innerText = '💬 2. 대화 메시지 작성';
+    document.getElementById('editBadge').style.display = 'none';
+    document.getElementById('msgCardBox').classList.remove('editing-mode');
+    document.getElementById('addBtn').style.display = 'block';
+    document.getElementById('editBtnRow').style.display = 'none';
+
+    if (draftBackup) {
+      document.getElementById('senderSelect').value = draftBackup.sender;
+      document.getElementById('typeSelect').value = draftBackup.type;
+      updateTypeGroupsVisibility(draftBackup.type);
+      document.getElementById('msgTextInput').value = draftBackup.text || '';
+      document.getElementById('voiceDurationInput').value = draftBackup.duration || '2.5';
+      document.getElementById('voiceTextInput').value = draftBackup.transText || '';
+      draftBackup = null;
+      syncLiveDraft();
+    } else {
+      document.getElementById('msgTextInput').value = '';
+      document.getElementById('voiceDurationInput').value = '2.5';
+      document.getElementById('voiceTextInput').value = '';
+      document.getElementById('liveDraftBox').innerHTML = '';
+    }
+  }
+
+  function confirmDraftMessage() {
+    const sender = document.getElementById('senderSelect').value;
+    const type = document.getElementById('typeSelect').value;
+
+    let item = { sender, type };
+
+    if (type === 'text') {
+      item.text = document.getElementById('msgTextInput').value;
+      if (!item.text.trim()) return;
+      document.getElementById('msgTextInput').value = '';
+    } else {
+      item.duration = document.getElementById('voiceDurationInput').value || '2.5';
+      item.transText = document.getElementById('voiceTextInput').value;
+      document.getElementById('voiceTextInput').value = '';
+    }
+
+    messages.push(item);
+    document.getElementById('liveDraftBox').innerHTML = '';
+    renderAllMessages();
+    scrollChatBottom();
+  }
+
+  function deleteMessage(idx) {
+    if (editingIndex === idx) {
+      cancelEditing();
+    } else if (editingIndex !== null && editingIndex > idx) {
+      editingIndex--;
+    }
+    messages.splice(idx, 1);
+    renderAllMessages();
+  }
+
+  function renderAllMessages() {
+    Object.keys(editIconTimers).forEach(idx => clearTimeout(editIconTimers[idx]));
+    editIconTimers = {};
+    const confirmedList = document.getElementById('confirmedList');
+    confirmedList.innerHTML = messages.map((m, i) => buildMessageHtml(m, false, i)).join('');
+  }
+
+  function scrollChatBottom() {
+    const chatArea = document.getElementById('chatArea');
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  window.onload = () => {
+    messages.push(
+      { sender: 'left', type: 'text', text: '상대방 채팅 예시입니다.' },
+      { sender: 'right', type: 'text', text: '내 채팅 예시입니다.' }
+    );
+    renderAllMessages();
+  };
+</script>
+</body>
+</html>

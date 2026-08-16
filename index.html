@@ -397,8 +397,8 @@
     width: 380px;
     height: 720px;
     background: var(--phone-bg);
-    border-radius: 0px; /* 흰 선(인셋 테두리) 제거 */
-    box-shadow: none;    /* 그림자 제거 */
+    border-radius: 0px;
+    box-shadow: none;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -457,7 +457,7 @@
   .header-title {
     position: absolute;
     left: 50%;
-    transform: translateX(-50%) scaleY(1.05);
+    transform: translateX(-50%);
     font-size: 15px;
     font-weight: 400;
     color: var(--text-main);
@@ -599,7 +599,6 @@
     border-radius: var(--bubble-radius);
     user-select: none;
     text-shadow: 0 0 2px rgba(255, 255, 255, 0.6);
-    transform: scaleY(1.04);
   }
 
   /* ================= 말풍선 & 프로필 스타일 ================= */
@@ -653,10 +652,10 @@
     position: relative;
     box-sizing: border-box;
     min-height: 36px;
-    padding: 8px 13px;
+    padding: 7px 13px 9px 13px; /* 위아래 패딩 균형 조정으로 쏠림 방지 */
     border-radius: var(--bubble-radius);
     font-size: var(--bubble-font-size);
-    line-height: 1.38;
+    line-height: 1.4;
     word-break: break-word;
     box-shadow: none;
     letter-spacing: -0.5px;
@@ -666,9 +665,6 @@
     text-align: left;
     align-self: flex-start;
     max-width: 250px;
-    
-    transform: scaleY(1.05);
-    transform-origin: top left;
     font-family: "Noto Sans KR", sans-serif;
   }
 
@@ -692,7 +688,6 @@
   .msg-row.right .bubble-text {
     background: var(--right-bubble-bg);
     color: var(--right-text-color);
-    transform-origin: top right;
   }
 
   .msg-row.right .bubble-text::before {
@@ -756,7 +751,6 @@
     font-weight: 400;
     letter-spacing: -0.5px;
     line-height: 1.2;
-    transform: scaleY(1.04);
     font-family: "Noto Sans KR", sans-serif;
   }
   .lucky-money-status {
@@ -822,19 +816,9 @@
     max-width: 250px;
     box-shadow: none;
     font-family: "Noto Sans KR", sans-serif;
-    transform: scaleY(1.05);
     flex-direction: row; 
   }
 
-  .msg-row.left .call-bubble-wrap {
-    transform-origin: top left;
-  }
-
-  .msg-row.right .call-bubble-wrap {
-    transform-origin: top right;
-  }
-
-  /* 부재중 전화 색상 */
   .msg-row.left .call-bubble-wrap.missed { background: var(--left-bubble-bg); }
   .msg-row.left .call-bubble-text.missed { color: var(--accent-red) !important; }
   .msg-row.left .call-bubble-icon.missed path { fill: var(--accent-red) !important; }
@@ -843,7 +827,6 @@
   .msg-row.right .call-bubble-text.missed { color: var(--right-text-color) !important; }
   .msg-row.right .call-bubble-icon.missed path { fill: var(--right-text-color) !important; }
 
-  /* 통화 완료 색상 */
   .msg-row.left .call-bubble-wrap.complete { background: var(--left-bubble-bg); }
   .msg-row.left .call-bubble-text.complete { color: var(--left-text-color) !important; }
   .msg-row.left .call-bubble-icon.complete path { fill: var(--left-text-color) !important; }
@@ -875,10 +858,9 @@
     font-size: var(--bubble-font-size);
     font-weight: 400;
     letter-spacing: -0.5px;
-    line-height: 1.38;
+    line-height: 1.4;
     font-family: "Noto Sans KR", sans-serif;
     white-space: nowrap;
-    transform: translateY(-0.5px);
   }
 
   .msg-row.left .call-bubble-wrap::before {
@@ -934,16 +916,16 @@
   .msg-row.right .voice-pill .voice-wave-icon svg path { stroke: var(--right-text-color); }
   .msg-row.right .voice-pill .voice-sec { color: var(--right-text-color); }
   .voice-wave-icon { width: 19px; height: 19px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .voice-sec { font-size: 15.5px; font-weight: 400; letter-spacing: 0.2px; transform: scaleY(1.05); display: inline-block; font-family: "Noto Sans KR", sans-serif; }
+  .voice-sec { font-size: 15.5px; font-weight: 400; letter-spacing: 0.2px; display: inline-block; font-family: "Noto Sans KR", sans-serif; }
   .voice-toggle-btn { width: 26px; height: 26px; border-radius: 50%; background: var(--convert-btn-bg); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; padding: 0; flex-shrink: 0; box-shadow: none; transition: transform 0.1s ease, filter 0.2s ease; }
   .voice-toggle-btn:hover { filter: brightness(0.96); }
   .voice-toggle-btn:active { transform: scale(0.94); }
   .voice-toggle-btn svg { fill: #ffffff; width: 22px; height: 22px; display: block; }
   .msg-content-wrap.voice-content-wrap { display: flex; flex-direction: column; align-items: flex-start; }
   .msg-row.right .msg-content-wrap.voice-content-wrap { align-items: flex-end; }
-  .transcribed-box { background: var(--left-bubble-bg); border-radius: var(--bubble-radius); padding: 8px 12px; box-shadow: none; margin-top: 4px; transform: scaleY(1.05); transform-origin: top left; }
+  .transcribed-box { background: var(--left-bubble-bg); border-radius: var(--bubble-radius); padding: 8px 12px; box-shadow: none; margin-top: 4px; }
   .msg-row.right .transcribed-box { background: var(--right-bubble-bg); }
-  .transcribed-text-content { font-size: var(--bubble-font-size); color: var(--left-text-color); line-height: 1.38; letter-spacing: -0.5px; word-break: break-word; text-align: left; font-family: "Noto Sans KR", sans-serif; font-weight: 400; }
+  .transcribed-text-content { font-size: var(--bubble-font-size); color: var(--left-text-color); line-height: 1.4; letter-spacing: -0.5px; word-break: break-word; text-align: left; font-family: "Noto Sans KR", sans-serif; font-weight: 400; }
   .msg-row.right .transcribed-text-content { color: var(--right-text-color); }
   .transcribed-status { margin-top: 4px; font-size: 9.5px; color: var(--left-text-color); opacity: 0.75; display: flex; align-items: center; gap: 3.5px; font-weight: 400; font-family: "Noto Sans KR", sans-serif; }
   .msg-row.right .transcribed-status { color: var(--right-text-color); opacity: 0.85; }
@@ -1016,7 +998,7 @@
   }
   .edit-icon-btn svg { width: 14px; height: 14px; }
 
-  /* 이미지 자르기 크롭 모달 (마우스 휠 스크롤 및 드래그 이동 적용) */
+  /* 이미지 자르기 크롭 모달 */
   .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(20, 26, 40, 0.65); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; }
   .modal-card { background: #ffffff; border: 1px solid var(--border-color); border-radius: 20px; width: 95%; max-width: 480px; padding: 22px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2); }
   .modal-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; justify-content: space-between; align-items: center; }
@@ -1061,7 +1043,6 @@
     </div>
 
     <div class="color-pickers-container">
-      <!-- 상대 채팅 색상 및 글자색 선택 -->
       <div class="color-picker-column">
         <label>🎨 상대 채팅(좌)</label>
         <div class="control-group" style="gap: 4px;">
@@ -1076,7 +1057,6 @@
         </div>
       </div>
 
-      <!-- 내 채팅 색상 및 글자색 선택 -->
       <div class="color-picker-column">
         <label>🎨 내 채팅(우)</label>
         <div class="control-group" style="gap: 4px;">
@@ -1091,7 +1071,6 @@
         </div>
       </div>
 
-      <!-- 배경 기본색 -->
       <div class="color-picker-column">
         <label>🖼️ 배경 기본색</label>
         <div class="control-group" style="gap: 4px;">
@@ -1104,7 +1083,6 @@
       </div>
     </div>
 
-    <!-- 배경 이미지 및 투명도 조절 설정 (배경 삭제 버튼 추가) -->
     <div class="card-box">
       <label>🖼️ 채팅 배경 이미지 업로드 & 투명도</label>
       <div class="file-btn-wrap">
@@ -1203,7 +1181,6 @@
         <input type="file" id="msgPhotoFileInput" accept="image/*" onchange="openCropModal(event, 'chatPhoto')">
       </div>
 
-      <!-- 럭키머니 입력 그룹 -->
       <div id="luckyGroup" style="display: none;" class="control-group">
         <div class="control-group">
           <label>상단 타이틀 (예: 럭키머니)</label>
@@ -1215,13 +1192,11 @@
         </div>
       </div>
 
-      <!-- 부재중 전화 입력 그룹 -->
       <div id="missedCallGroup" style="display: none;" class="control-group">
         <label>부재중 전화 문구</label>
         <input type="text" id="missedCallTextInput" value="부재중 전화" oninput="handleInputChange()">
       </div>
 
-      <!-- 통화 완료 입력 그룹 -->
       <div id="callCompleteGroup" style="display: none;" class="control-group">
         <label>통화 완료 문구</label>
         <input type="text" id="callCompleteTextInput" value="통화 종료" oninput="handleInputChange()">
@@ -1373,7 +1348,6 @@
     document.getElementById('roomTitle').innerText = document.getElementById('titleInput').value;
   }
 
-  /* ================= 프로필 및 배경 삭제 함수 ================= */
   function deleteBgImage() {
     bgUrl = '';
     const chatArea = document.getElementById('chatArea');
@@ -1393,7 +1367,6 @@
     renderAllMessages();
   }
 
-  /* ================= 색상 및 투명도 조절 처리 ================= */
   function updateBubbleColor(type, color) {
     if (type === 'left') {
       document.documentElement.style.setProperty('--left-bubble-bg', color);
@@ -1469,7 +1442,7 @@
     renderAllMessages();
   }
 
-  /* ================= 이미지 다운로드 ================= */
+  /* ================= 이미지 다운로드 (텍스트 오차 보정 포함) ================= */
   function downloadPreviewImage(isFullLength = false) {
     const phoneElement = document.getElementById('phoneScreen');
     const chatArea = document.getElementById('chatArea');
@@ -1495,6 +1468,13 @@
         if (clonedPhone) {
           clonedPhone.style.borderRadius = '0px';
           clonedPhone.style.boxShadow = 'none';
+
+          // 캔버스 변환 시 텍스트 쏠림 방지 및 정렬 보정
+          clonedDoc.querySelectorAll('.bubble-text, .call-bubble-text, .header-title').forEach(el => {
+            el.style.transform = 'none';
+            el.style.lineHeight = '1.4';
+          });
+
           if (isFullLength) {
             clonedPhone.style.height = 'auto';
             const clonedChatArea = clonedDoc.getElementById('chatArea');
@@ -1531,7 +1511,6 @@
     });
   }
 
-  /* ================= 크롭 모달 및 스크롤 확대/축소, 드래그 이동 ================= */
   function openCropModal(event, target) {
     const file = event.target.files[0];
     if (!file) return;
@@ -1634,7 +1613,6 @@
     updateImageTransform();
   }
 
-  // 마우스 휠 스크롤을 이용한 확대/축소 이벤트 추가
   const cropStageEl = document.getElementById('cropStage');
   cropStageEl.addEventListener('wheel', (e) => {
     e.preventDefault();
@@ -2043,7 +2021,6 @@
     `;
   }
 
-  /* ================= 실시간 입력 & 수정 모드 제어 ================= */
   function handleInputChange() {
     if (editingIndex !== null) {
       const sender = document.getElementById('senderSelect').value;
@@ -2149,7 +2126,6 @@
     scrollChatBottom();
   }
 
-  /* ================= 독립된 구분선 추가 함수 ================= */
   function addDividerMessage() {
     if (editingIndex !== null) return;
     messages.push({ type: 'divider' });
@@ -2157,7 +2133,6 @@
     scrollChatBottom();
   }
 
-  /* ================= 말풍선 클릭 시 수정 및 삭제 아이콘 동시 노출 ================= */
   function showEditIcon(idx) {
     document.querySelectorAll('.edit-icon-btn.visible').forEach(btn => btn.classList.remove('visible'));
     document.querySelectorAll('.delete-msg-btn.visible').forEach(btn => btn.classList.remove('visible'));
@@ -2194,7 +2169,6 @@
 
   document.addEventListener('click', hideAllEditIcons);
 
-  /* ================= 메시지 수정 시작 ================= */
   function startEditingMessage(idx) {
     if (editingIndex === null) {
       draftBackup = {

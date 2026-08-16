@@ -261,7 +261,7 @@
     background: #e2e6f0;
     flex-shrink: 0;
     position: relative;
-    cursor: pointer; /* 클릭 가능하도록 커서 변경 */
+    cursor: pointer;
   }
   .avatar-preview-thumb img {
     width: 100%;
@@ -269,7 +269,6 @@
     object-fit: cover;
     display: block;
   }
-  /* 썸네일 내부 숨겨진 컬러 피커 입력창 */
   .hidden-avatar-color-input {
     position: absolute;
     top: 0;
@@ -629,7 +628,9 @@
     max-width: 95%;
     position: relative;
     align-items: flex-start;
+    cursor: grab;
   }
+  .msg-row:active { cursor: grabbing; }
 
   .msg-row.left { align-self: flex-start; }
   .msg-row.right { align-self: flex-end; flex-direction: row-reverse; }
@@ -638,6 +639,10 @@
     outline: 2px dashed var(--accent-green);
     outline-offset: 3px;
     border-radius: 4px;
+  }
+
+  .msg-row.drag-over {
+    border-top: 2px dashed var(--accent-blue);
   }
 
   .avatar-crop-box {
@@ -662,7 +667,6 @@
     gap: 4px;
     position: relative;
     max-width: 270px;
-    cursor: pointer;
   }
 
   .msg-content-wrap.voice-content-wrap {
@@ -968,56 +972,31 @@
   .msg-row.left .msg-actions { left: 100%; margin-left: 6px; }
   .msg-row.right .msg-actions { right: 100%; margin-right: 6px; }
   
-  .delete-msg-btn { 
-    opacity: 0; 
-    transform: scale(0.85); 
-    pointer-events: none; 
-    background: #ffffff; 
-    border: 1px solid var(--border-color); 
-    color: #ff4757; 
-    width: 26px; 
-    height: 26px; 
-    border-radius: 50%; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    cursor: pointer; 
-    font-size: 13px; 
-    font-weight: 700;
+  .action-icon-btn {
+    opacity: 0;
+    transform: scale(0.85);
+    pointer-events: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-    transition: opacity 0.18s ease, transform 0.18s ease; 
+    transition: opacity 0.18s ease, transform 0.18s ease;
   }
-  .delete-msg-btn.visible { 
-    opacity: 1; 
-    transform: scale(1); 
-    pointer-events: auto; 
+  .action-icon-btn.visible {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
   }
 
-  .edit-icon-btn { 
-    width: 26px; 
-    height: 26px; 
-    border-radius: 50%; 
-    background: #ffffff; 
-    border: 1px solid var(--border-color); 
-    color: var(--accent-blue); 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    flex-shrink: 0; 
-    cursor: pointer; 
-    padding: 0; 
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); 
-    opacity: 0; 
-    transform: scale(0.85); 
-    pointer-events: none; 
-    transition: opacity 0.18s ease, transform 0.18s ease; 
-  }
-  .edit-icon-btn.visible { 
-    opacity: 1; 
-    transform: scale(1); 
-    pointer-events: auto; 
-  }
-  .edit-icon-btn svg { width: 14px; height: 14px; }
+  .delete-msg-btn { color: #ff4757; font-size: 13px; font-weight: 700; }
+  .edit-icon-btn { color: var(--accent-blue); }
+  .edit-icon-btn svg { width: 13px; height: 13px; }
 
   /* 이미지 자르기 크롭 모달 */
   .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(20, 26, 40, 0.65); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; }
@@ -1123,28 +1102,26 @@
 
     <div class="control-row">
       <div class="card-box" style="flex:1;">
-        <label>👤 상대방 프로필 (좌) <span style="font-size:10px; color:var(--text-sub); font-weight:normal;">(미리보기 클릭시 색상 변경)</span></label>
+        <label>👤 상대방 프로필 (좌)</label>
         <div class="file-btn-wrap">
           <label class="file-btn" for="leftAvatarFileInput">사진 선택</label>
           <button class="btn-del-small" onclick="deleteAvatar('left')" title="프로필 삭제">삭제</button>
-          <!-- 프로필 미리보기 썸네일 클릭 시 단색 변경 가능하도록 컬러 피커 내장 -->
           <div class="avatar-preview-thumb" id="leftThumbWrap" title="클릭하여 단색 프로필 색상 변경">
             <img id="leftThumbImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%239db2d8'/%3E%3C/svg%3E">
-            <input type="color" class="hidden-avatar-color-input" id="leftColorInput" value="#9db2d8" oninput="changeAvatarColor('left', this.value)" title="단색 배경 변경">
+            <input type="color" class="hidden-avatar-color-input" id="leftColorInput" value="#9db2d8" oninput="changeAvatarColor('left', this.value)">
           </div>
         </div>
         <input type="file" id="leftAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'left')">
       </div>
 
       <div class="card-box" style="flex:1;">
-        <label>👤 내 프로필 (우) <span style="font-size:10px; color:var(--text-sub); font-weight:normal;">(미리보기 클릭시 색상 변경)</span></label>
+        <label>👤 내 프로필 (우)</label>
         <div class="file-btn-wrap">
           <label class="file-btn" for="rightAvatarFileInput">사진 선택</label>
           <button class="btn-del-small" onclick="deleteAvatar('right')" title="프로필 삭제">삭제</button>
-          <!-- 프로필 미리보기 썸네일 클릭 시 단색 변경 가능하도록 컬러 피커 내장 -->
           <div class="avatar-preview-thumb" id="rightThumbWrap" title="클릭하여 단색 프로필 색상 변경">
             <img id="rightThumbImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23F69CB6'/%3E%3C/svg%3E">
-            <input type="color" class="hidden-avatar-color-input" id="rightColorInput" value="#F69CB6" oninput="changeAvatarColor('right', this.value)" title="단색 배경 변경">
+            <input type="color" class="hidden-avatar-color-input" id="rightColorInput" value="#F69CB6" oninput="changeAvatarColor('right', this.value)">
           </div>
         </div>
         <input type="file" id="rightAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'right')">
@@ -1239,7 +1216,7 @@
 
   <!-- ================= RIGHT: 스마트폰 미리보기 ================= -->
   <div class="preview-side">
-    <div class="preview-notice">💡 원하는 채팅을 누르면 수정 및 삭제할 수 있습니다.</div>
+    <div class="preview-notice">💡 채팅을 드래그하여 순서를 변경하거나 클릭하여 수정할 수 있습니다.</div>
 
     <div class="phone-screen" id="phoneScreen">
       
@@ -1369,6 +1346,8 @@
   let initialImageOffsetX = 0;
   let initialImageOffsetY = 0;
 
+  let draggedIndex = null;
+
   function updateRoomTitle() {
     document.getElementById('roomTitle').innerText = document.getElementById('titleInput').value;
   }
@@ -1381,7 +1360,6 @@
     updateBgOpacity(0);
   }
 
-  /* ================= 프로필 단색 배경 변경 함수 ================= */
   function changeAvatarColor(side, color) {
     const encodedColor = color.replace('#', '%23');
     const svgUrl = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='${encodedColor}'/%3E%3C/svg%3E`;
@@ -1484,6 +1462,48 @@
     if (editingIndex !== null) cancelEditing();
     resetFormToCreateMode();
     renderAllMessages();
+  }
+
+  /* ================= 드래그 앤 드롭 이벤트 핸들러 ================= */
+  function handleDragStart(e, index) {
+    draggedIndex = index;
+    e.dataTransfer.effectAllowed = 'move';
+    hideAllEditIcons();
+  }
+
+  function handleDragOver(e, index) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const row = document.getElementById(`msg-row-${index}`);
+    if (row) row.classList.add('drag-over');
+  }
+
+  function handleDragLeave(e, index) {
+    const row = document.getElementById(`msg-row-${index}`);
+    if (row) row.classList.remove('drag-over');
+  }
+
+  function handleDrop(e, dropIndex) {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) return;
+
+    const item = messages.splice(draggedIndex, 1)[0];
+    messages.splice(dropIndex, 0, item);
+
+    if (editingIndex === draggedIndex) {
+      editingIndex = dropIndex;
+    } else if (editingIndex !== null) {
+      if (draggedIndex < editingIndex && dropIndex >= editingIndex) editingIndex--;
+      else if (draggedIndex > editingIndex && dropIndex <= editingIndex) editingIndex++;
+    }
+
+    draggedIndex = null;
+    renderAllMessages();
+  }
+
+  function handleDragEnd() {
+    draggedIndex = null;
+    document.querySelectorAll('.msg-row').forEach(row => row.classList.remove('drag-over'));
   }
 
   /* ================= 이미지 다운로드 ================= */
@@ -1913,20 +1933,21 @@
     }
   }
 
-  /* ================= 메시지 렌더링 ================= */
+  /* ================= 메시지 렌더링 (드래그 앤 드롭 전용) ================= */
   function buildMessageHtml(data, isDraft = false, index = null) {
     if (data.type === 'divider') {
       const dividerClickAttr = !isDraft ? `onclick="event.stopPropagation(); showEditIcon(${index})"` : '';
-      const deleteBtn = !isDraft ? `<button class="delete-msg-btn" id="deleteIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); deleteMessage(${index})">✕</button>` : '';
+      const deleteBtn = !isDraft ? `<button class="action-icon-btn delete-msg-btn" id="deleteIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); deleteMessage(${index})">✕</button>` : '';
       const editIconBtn = !isDraft ? `
-        <button class="edit-icon-btn" id="editIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); enterEditFromIcon(${index})" title="수정하기">
+        <button class="action-icon-btn edit-icon-btn" id="editIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); enterEditFromIcon(${index})" title="수정하기">
           <svg viewBox="0 0 24 24"><path d="M4 20.5v-3.3L16.5 4.7a1 1 0 0 1 1.4 0l1.4 1.4a1 1 0 0 1 0 1.4L6.8 20l-2.8.5z" fill="currentColor"/></svg>
         </button>
       ` : '';
+
       const actionButtonsHtml = !isDraft ? `<div class="msg-actions">${editIconBtn}${deleteBtn}</div>` : '';
 
       return `
-        <div style="width:100%; position:relative;" ${dividerClickAttr}>
+        <div style="width:100%; position:relative;" ${dividerClickAttr} ${!isDraft ? `draggable="true" ondragstart="handleDragStart(event, ${index})" ondragover="handleDragOver(event, ${index})" ondragleave="handleDragLeave(event, ${index})" ondrop="handleDrop(event, ${index})" ondragend="handleDragEnd()"` : ''}>
           <div class="divider-row">
             <div class="divider-line"></div>
           </div>
@@ -1940,12 +1961,13 @@
 
     const bubbleClickAttr = !isDraft ? `onclick="event.stopPropagation(); showEditIcon(${index})"` : '';
 
-    const deleteBtn = !isDraft ? `<button class="delete-msg-btn" id="deleteIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); deleteMessage(${index})">✕</button>` : '';
+    const deleteBtn = !isDraft ? `<button class="action-icon-btn delete-msg-btn" id="deleteIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); deleteMessage(${index})">✕</button>` : '';
     const editIconBtn = !isDraft ? `
-      <button class="edit-icon-btn" id="editIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); enterEditFromIcon(${index})" title="수정하기">
+      <button class="action-icon-btn edit-icon-btn" id="editIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); enterEditFromIcon(${index})" title="수정하기">
         <svg viewBox="0 0 24 24"><path d="M4 20.5v-3.3L16.5 4.7a1 1 0 0 1 1.4 0l1.4 1.4a1 1 0 0 1 0 1.4L6.8 20l-2.8.5z" fill="currentColor"/></svg>
       </button>
     ` : '';
+
     const actionButtonsHtml = !isDraft ? `<div class="msg-actions">${editIconBtn}${deleteBtn}</div>` : '';
 
     if (data.type === 'text') {
@@ -2072,7 +2094,9 @@
     const isCurrentEditing = (editingIndex === index);
 
     return `
-      <div class="msg-row ${data.sender} ${isCurrentEditing ? 'is-editing' : ''}">
+      <div class="msg-row ${data.sender} ${isCurrentEditing ? 'is-editing' : ''}" 
+           id="msg-row-${index}" 
+           ${!isDraft ? `draggable="true" ondragstart="handleDragStart(event, ${index})" ondragover="handleDragOver(event, ${index})" ondragleave="handleDragLeave(event, ${index})" ondrop="handleDrop(event, ${index})" ondragend="handleDragEnd()"` : ''}>
         ${avatarHtml}
         ${contentHtml}
       </div>
@@ -2192,29 +2216,26 @@
   }
 
   function showEditIcon(idx) {
-    document.querySelectorAll('.edit-icon-btn.visible').forEach(btn => btn.classList.remove('visible'));
-    document.querySelectorAll('.delete-msg-btn.visible').forEach(btn => btn.classList.remove('visible'));
+    document.querySelectorAll('.action-icon-btn.visible').forEach(btn => btn.classList.remove('visible'));
 
     const editIcon = document.getElementById(`editIcon-${idx}`);
     const deleteIcon = document.getElementById(`deleteIcon-${idx}`);
-    if (!editIcon || !deleteIcon) return;
 
-    editIcon.classList.add('visible');
-    deleteIcon.classList.add('visible');
+    if (editIcon) editIcon.classList.add('visible');
+    if (deleteIcon) deleteIcon.classList.add('visible');
 
     if (editIconTimers[idx]) clearTimeout(editIconTimers[idx]);
     editIconTimers[idx] = setTimeout(() => {
-      editIcon.classList.remove('visible');
-      deleteIcon.classList.remove('visible');
+      if (editIcon) editIcon.classList.remove('visible');
+      if (deleteIcon) deleteIcon.classList.remove('visible');
       delete editIconTimers[idx];
-    }, 1500);
+    }, 2500);
   }
 
   function hideAllEditIcons() {
     Object.keys(editIconTimers).forEach(idx => clearTimeout(editIconTimers[idx]));
     editIconTimers = {};
-    document.querySelectorAll('.edit-icon-btn.visible').forEach(btn => btn.classList.remove('visible'));
-    document.querySelectorAll('.delete-msg-btn.visible').forEach(btn => btn.classList.remove('visible'));
+    document.querySelectorAll('.action-icon-btn.visible').forEach(btn => btn.classList.remove('visible'));
   }
 
   function enterEditFromIcon(idx) {

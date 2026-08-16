@@ -12,22 +12,24 @@
 <style>
   :root {
     --left-bubble-bg: #ffffff;
-    --right-bubble-bg: #ff94b0;
+    --right-bubble-bg: #F69CB6;    /* 내 채팅 기본 색상 */
     --left-text-color: #4A4A4A;   /* 상대방 글씨 색상 */
     --right-text-color: #ffffff;  /* 내 채팅 글씨 색상 */
     --text-main: #4A4A4A;
     --text-sub: #71788e;
     --accent-blue: #4a8bf5;
     --accent-green: #2ecc71;
-    --accent-red: #ff4757;
+    --accent-red: #DA5D5D;        /* 상대 부재중 전화용 색상 */
+    --lucky-red: #EB6D79;         /* 럭키머니 고유 색상 */
+    --lucky-received-bg: #F4AEB8; /* 럭키머니 수령 완료 색상 */
     --convert-btn-bg: #ADCFFF;
-    --cam-color: #838383;
+    --cam-color: #F69CB6;        /* 상단 카메라 아이콘 색상 (내 채팅 기본값 연동) */
     --status-color: #9C9C9C;
     --bg-page: #f0f2f7;
     --panel-bg: #ffffff;
     --card-bg: #f8f9fc;
     --border-color: #e2e6f0;
-    --phone-bg: #e8ecf4;
+    --phone-bg: #F7F7F7; /* 기본 바탕색 */
     --bubble-radius: 4px;
     --bubble-font-size: 13.5px;
   }
@@ -47,6 +49,7 @@
     justify-content: center;
     align-items: flex-start;
     padding: 28px 16px;
+    overflow-x: hidden;
   }
 
   .app-container {
@@ -113,6 +116,7 @@
     font-size: 12px;
     color: var(--text-sub);
     font-weight: 700;
+    font-family: "Noto Sans KR", sans-serif;
   }
 
   input[type="text"], select, textarea {
@@ -124,6 +128,7 @@
     font-size: 13.5px;
     outline: none;
     transition: all 0.2s;
+    font-family: "Noto Sans KR", sans-serif;
   }
 
   input[type="text"]:focus, select:focus, textarea:focus {
@@ -189,16 +194,40 @@
     cursor: pointer;
     transition: background 0.2s;
     white-space: nowrap;
+    font-family: "Noto Sans KR", sans-serif;
   }
   .btn-reset-small:hover { background: #dce1ed; }
+
+  .btn-del-small {
+    background: #ffebee;
+    color: #d32f2f;
+    border: 1px solid #ffcdd2;
+    border-radius: 8px;
+    padding: 0 10px;
+    height: 40px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+    font-family: "Noto Sans KR", sans-serif;
+  }
+  .btn-del-small:hover { background: #ffcdd2; }
 
   textarea {
     resize: vertical;
     min-height: 65px;
+    font-family: "Noto Sans KR", sans-serif;
   }
 
   input[type="file"] {
     display: none;
+  }
+
+  .file-btn-wrap {
+    display: flex;
+    gap: 8px;
+    align-items: center;
   }
 
   .file-btn {
@@ -212,13 +241,31 @@
     cursor: pointer;
     border: 1px solid var(--border-color);
     display: block;
+    flex: 1;
     transition: all 0.2s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    font-family: "Noto Sans KR", sans-serif;
   }
   .file-btn:hover { 
     background: #f0f4ff; 
     border-color: #cbd8fc;
     color: var(--accent-blue);
+  }
+
+  .avatar-preview-thumb {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    background: #e2e6f0;
+    flex-shrink: 0;
+  }
+  .avatar-preview-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .btn-primary {
@@ -232,9 +279,26 @@
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
     box-shadow: 0 4px 12px rgba(74, 139, 245, 0.3);
+    font-family: "Noto Sans KR", sans-serif;
   }
   .btn-primary:hover { background: #3876dc; }
   .btn-primary:active { transform: scale(0.99); }
+
+  .btn-divider-add {
+    background: #6c757d;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 11px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 2px 6px rgba(108, 117, 125, 0.2);
+    font-family: "Noto Sans KR", sans-serif;
+  }
+  .btn-divider-add:hover { background: #5a6268; }
+  .btn-divider-add:active { transform: scale(0.99); }
 
   .btn-save-edit {
     background: var(--accent-green);
@@ -247,6 +311,7 @@
     cursor: pointer;
     flex: 2;
     transition: background 0.2s;
+    font-family: "Noto Sans KR", sans-serif;
   }
   .btn-save-edit:hover { background: #27ae60; }
 
@@ -260,6 +325,7 @@
     font-weight: 600;
     cursor: pointer;
     flex: 1;
+    font-family: "Noto Sans KR", sans-serif;
   }
 
   /* ================= RIGHT: 스마트폰 미리보기 ================= */
@@ -307,6 +373,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: background 0.2s, transform 0.1s;
     white-space: nowrap;
+    font-family: "Noto Sans KR", sans-serif;
   }
   .download-btn:hover { background: #1a1e27; }
   .download-btn:active { transform: scale(0.99); }
@@ -315,6 +382,16 @@
     background: #4a5568;
   }
   .download-btn.secondary-dl:hover { background: #374151; }
+
+  .download-warning-text {
+    font-size: 11px;
+    color: var(--text-sub);
+    text-align: center;
+    margin-top: -4px;
+    line-height: 1.3;
+    font-weight: 500;
+    font-family: "Noto Sans KR", sans-serif;
+  }
 
   .phone-screen {
     width: 380px;
@@ -328,46 +405,10 @@
     position: relative;
   }
 
-  /* 채팅 스크롤 영역 (배경 전용 영역) */
-  .chat-scroll-area {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    position: relative;
-    background-color: var(--phone-bg);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-  }
-
-  /* 배경 위에만 깔리는 화이트 오버레이 레이어 (메시지는 영향을 받지 않음) */
-  .bg-overlay-layer {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #ffffff;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  /* 실제 대화 내용 컨테이너 (오버레이보다 위인 z-index: 2에 위치하여 투명도 영향 안 받음) */
-  .chat-content-container {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    width: 100%;
-  }
-
-  /* 상단 헤더 */
+  /* 상단 헤더 컨테이너 */
   .chat-header-container {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    background: #EBEBEB;
+    border-bottom: none;
     z-index: 10;
     position: relative;
     display: flex;
@@ -423,6 +464,7 @@
     white-space: nowrap;
     z-index: 1;
     letter-spacing: -0.3px;
+    font-family: "Noto Sans KR", sans-serif;
   }
 
   .header-right {
@@ -462,13 +504,74 @@
     transform: rotate(45deg);
   }
 
-  /* ================= 하단 메세지 발송 창 ================= */
-  .chat-footer {
-    height: 55px;
-    background: #ebebf0;
+  /* 스크롤 영역 */
+  .chat-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0;
+    position: relative;
+    background-color: var(--phone-bg);
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: 380px 610px;
+    background-attachment: local;
+  }
+
+  .chat-scroll-area::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+
+  .bg-overlay-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    background-color: #ffffff;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .chat-content-container {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 14px;
+    width: 100%;
+    padding: 16px 10px;
+    min-height: 100%;
+  }
+
+  /* ================= 구분선 스타일 ================= */
+  .divider-row {
+    width: 100%;
     display: flex;
     align-items: center;
-    padding: 8px 14px;
+    justify-content: center;
+    padding: 8px 0;
+    position: relative;
+  }
+
+  .divider-line {
+    width: calc(100% - 11px); 
+    height: 2.2px;
+    background-color: #8c929d;
+    opacity: 0.7;
+  }
+
+  /* ================= 하단 메세지 발송 창 ================= */
+  .chat-footer {
+    height: 49px;
+    background: #ebebf0;
+    display: flex;
+    align-items: flex-start;
+    padding: 10px 14px 0 14px;
     gap: 10px;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
     z-index: 10;
@@ -476,20 +579,20 @@
 
   .fake-input {
     flex: 1;
-    height: 35px;
+    height: 29px;
     background: #dedfe4;
     border-radius: var(--bubble-radius);
   }
 
   .fake-btn {
     min-width: 82px;
-    height: 35px;
-    background: #9fa0a4;
+    height: 29px;
+    background: #a0a0a0;
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 600;
     letter-spacing: 2px;
     padding-left: 2px;
@@ -503,7 +606,7 @@
   .msg-row {
     display: flex;
     gap: 11px;
-    max-width: 91%;
+    max-width: 95%;
     position: relative;
     align-items: flex-start;
   }
@@ -538,12 +641,12 @@
     flex-direction: column;
     gap: 4px;
     position: relative;
-    max-width: 190px;
+    max-width: 270px;
     cursor: pointer;
   }
 
   .msg-content-wrap.voice-content-wrap {
-    max-width: 225px;
+    max-width: 270px;
   }
 
   .bubble-text {
@@ -557,14 +660,16 @@
     word-break: break-word;
     box-shadow: none;
     letter-spacing: -0.5px;
+    font-weight: 400;
     
     display: inline-block;
     text-align: left;
     align-self: flex-start;
-    max-width: 190px;
+    max-width: 250px;
     
     transform: scaleY(1.05);
     transform-origin: top left;
+    font-family: "Noto Sans KR", sans-serif;
   }
 
   .msg-row.left .bubble-text {
@@ -602,39 +707,184 @@
     border-color: transparent transparent transparent var(--right-bubble-bg);
   }
 
-  /* ================= 음성 메시지 박스 ================= */
-  .voice-pill-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  /* ================= 럭키머니 ================= */
+  .lucky-money-wrap {
     position: relative;
-  }
-
-  .msg-row.right .voice-pill-wrap {
-    flex-direction: row-reverse;
-  }
-
-  .voice-pill {
-    position: relative;
-    background: var(--left-bubble-bg);
-    height: 38px;
-    min-width: 175px;
-    padding: 0 16px;
-    border-radius: var(--bubble-radius);
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: inline-block;
+    width: 240px;
+    border-radius: 6px;
     box-shadow: none;
   }
-
-  .msg-row.right .voice-pill {
-    background: var(--right-bubble-bg);
+  .lucky-money-box {
+    display: flex;
+    flex-direction: column;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .lucky-money-top {
+    background: var(--lucky-red);
+    padding: 16px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #ffffff;
+  }
+  .lucky-money-wrap.received .lucky-money-top {
+    background: var(--lucky-received-bg);
   }
 
-  .msg-row.left .voice-pill::before {
+  .lucky-money-icon {
+    width: 26px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .lucky-money-icon svg {
+    width: 26px;
+    height: 36px;
+  }
+  
+  .lucky-money-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .lucky-money-title {
+    font-size: 14.5px;
+    font-weight: 400;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    transform: scaleY(1.04);
+    font-family: "Noto Sans KR", sans-serif;
+  }
+  .lucky-money-status {
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.9;
+    letter-spacing: -0.4px;
+    font-family: "Noto Sans KR", sans-serif;
+  }
+
+  .lucky-money-bottom {
+    background: #ffffff;
+    padding: 6px 16px;
+    font-size: 11.5px;
+    color: #b0b4bc;
+    font-weight: 400;
+    letter-spacing: -0.5px;
+    font-family: "Noto Sans KR", sans-serif;
+  }
+
+  .msg-row.left .lucky-money-wrap::before {
     content: '';
     position: absolute;
-    top: 14px;
+    top: 22px;
+    left: -7px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 8px 5px 0;
+    border-color: transparent var(--lucky-red) transparent transparent;
+    z-index: 5;
+  }
+  .msg-row.right .lucky-money-wrap::before {
+    content: '';
+    position: absolute;
+    top: 22px;
+    right: -7px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 0 5px 8px;
+    border-color: transparent transparent transparent var(--lucky-red);
+    z-index: 5;
+  }
+  .msg-row.left .lucky-money-wrap.received::before {
+    border-color: transparent var(--lucky-received-bg) transparent transparent;
+  }
+  .msg-row.right .lucky-money-wrap.received::before {
+    border-color: transparent transparent transparent var(--lucky-received-bg);
+  }
+
+  /* ================= 부재중 전화 및 통화 완료 ================= */
+  .call-bubble-wrap {
+    position: relative;
+    display: inline-flex;
+    background: #ffffff;
+    border-radius: var(--bubble-radius);
+    min-height: 36px;
+    padding: 8px 10px;
+    align-items: center;
+    gap: 3px; 
+    width: fit-content;
+    max-width: 250px;
+    box-shadow: none;
+    font-family: "Noto Sans KR", sans-serif;
+    transform: scaleY(1.05);
+    flex-direction: row; 
+  }
+
+  .msg-row.left .call-bubble-wrap {
+    transform-origin: top left;
+  }
+
+  .msg-row.right .call-bubble-wrap {
+    transform-origin: top right;
+  }
+
+  /* 부재중 전화 색상 */
+  .msg-row.left .call-bubble-wrap.missed { background: var(--left-bubble-bg); }
+  .msg-row.left .call-bubble-text.missed { color: var(--accent-red) !important; }
+  .msg-row.left .call-bubble-icon.missed path { fill: var(--accent-red) !important; }
+
+  .msg-row.right .call-bubble-wrap.missed { background: var(--right-bubble-bg); }
+  .msg-row.right .call-bubble-text.missed { color: var(--right-text-color) !important; }
+  .msg-row.right .call-bubble-icon.missed path { fill: var(--right-text-color) !important; }
+
+  /* 통화 완료 색상 */
+  .msg-row.left .call-bubble-wrap.complete { background: var(--left-bubble-bg); }
+  .msg-row.left .call-bubble-text.complete { color: var(--left-text-color) !important; }
+  .msg-row.left .call-bubble-icon.complete path { fill: var(--left-text-color) !important; }
+
+  .msg-row.right .call-bubble-wrap.complete { background: var(--right-bubble-bg); }
+  .msg-row.right .call-bubble-text.complete { color: var(--right-text-color) !important; }
+  .msg-row.right .call-bubble-icon.complete path { fill: var(--right-text-color) !important; }
+
+  .call-bubble-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transform: translateY(1.5px); 
+  }
+  
+  .call-bubble-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .call-bubble-icon path {
+    fill: #D69494; 
+  }
+  
+  .call-bubble-text {
+    font-size: var(--bubble-font-size);
+    font-weight: 400;
+    letter-spacing: -0.5px;
+    line-height: 1.38;
+    font-family: "Noto Sans KR", sans-serif;
+    white-space: nowrap;
+    transform: translateY(-0.5px);
+  }
+
+  .msg-row.left .call-bubble-wrap::before {
+    content: '';
+    position: absolute;
+    top: 13px;
     left: -7px;
     width: 0;
     height: 0;
@@ -642,11 +892,10 @@
     border-width: 5px 8px 5px 0;
     border-color: transparent var(--left-bubble-bg) transparent transparent;
   }
-
-  .msg-row.right .voice-pill::before {
+  .msg-row.right .call-bubble-wrap::before {
     content: '';
     position: absolute;
-    top: 14px;
+    top: 13px;
     right: -7px;
     width: 0;
     height: 0;
@@ -655,347 +904,143 @@
     border-color: transparent transparent transparent var(--right-bubble-bg);
   }
 
+  /* 채팅창 사진 메시지 */
+  .chat-photo-bubble {
+    max-width: 200px;
+    max-height: 250px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: block;
+    box-shadow: none;
+  }
+  .chat-photo-bubble img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  /* 음성 메시지 */
+  .voice-pill-wrap { display: flex; align-items: center; gap: 8px; position: relative; }
+  .msg-row.right .voice-pill-wrap { flex-direction: row-reverse; }
+  .voice-pill { position: relative; background: var(--left-bubble-bg); height: 38px; min-width: 175px; padding: 0 16px; border-radius: var(--bubble-radius); display: flex; align-items: center; gap: 10px; box-shadow: none; }
+  .msg-row.right .voice-pill { background: var(--right-bubble-bg); }
+  .msg-row.left .voice-pill::before { content: ''; position: absolute; top: 14px; left: -7px; width: 0; height: 0; border-style: solid; border-width: 5px 8px 5px 0; border-color: transparent var(--left-bubble-bg) transparent transparent; }
+  .msg-row.right .voice-pill::before { content: ''; position: absolute; top: 14px; right: -7px; width: 0; height: 0; border-style: solid; border-width: 5px 0 5px 8px; border-color: transparent transparent transparent var(--right-bubble-bg); }
   .msg-row.left .voice-pill .voice-wave-icon svg circle { fill: var(--left-text-color); }
   .msg-row.left .voice-pill .voice-wave-icon svg path { stroke: var(--left-text-color); }
   .msg-row.left .voice-pill .voice-sec { color: var(--left-text-color); }
-
   .msg-row.right .voice-pill .voice-wave-icon svg circle { fill: var(--right-text-color); }
   .msg-row.right .voice-pill .voice-wave-icon svg path { stroke: var(--right-text-color); }
   .msg-row.right .voice-pill .voice-sec { color: var(--right-text-color); }
-
-  .voice-wave-icon {
-    width: 19px;
-    height: 19px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+  .voice-wave-icon { width: 19px; height: 19px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .voice-sec { font-size: 15.5px; font-weight: 400; letter-spacing: 0.2px; transform: scaleY(1.05); display: inline-block; font-family: "Noto Sans KR", sans-serif; }
+  .voice-toggle-btn { width: 26px; height: 26px; border-radius: 50%; background: var(--convert-btn-bg); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; padding: 0; flex-shrink: 0; box-shadow: none; transition: transform 0.1s ease, filter 0.2s ease; }
+  .voice-toggle-btn:hover { filter: brightness(0.96); }
+  .voice-toggle-btn:active { transform: scale(0.94); }
+  .voice-toggle-btn svg { fill: #ffffff; width: 22px; height: 22px; display: block; }
+  .msg-content-wrap.voice-content-wrap { display: flex; flex-direction: column; align-items: flex-start; }
+  .msg-row.right .msg-content-wrap.voice-content-wrap { align-items: flex-end; }
+  .transcribed-box { background: var(--left-bubble-bg); border-radius: var(--bubble-radius); padding: 8px 12px; box-shadow: none; margin-top: 4px; transform: scaleY(1.05); transform-origin: top left; }
+  .msg-row.right .transcribed-box { background: var(--right-bubble-bg); }
+  .transcribed-text-content { font-size: var(--bubble-font-size); color: var(--left-text-color); line-height: 1.38; letter-spacing: -0.5px; word-break: break-word; text-align: left; font-family: "Noto Sans KR", sans-serif; font-weight: 400; }
+  .msg-row.right .transcribed-text-content { color: var(--right-text-color); }
+  .transcribed-status { margin-top: 4px; font-size: 9.5px; color: var(--left-text-color); opacity: 0.75; display: flex; align-items: center; gap: 3.5px; font-weight: 400; font-family: "Noto Sans KR", sans-serif; }
+  .msg-row.right .transcribed-status { color: var(--right-text-color); opacity: 0.85; }
+  .msg-row.left .check-circle-icon circle { fill: var(--left-text-color); opacity: 0.75; }
+  .msg-row.right .check-circle-icon circle { fill: var(--right-text-color); opacity: 0.7; }
+  .check-circle-icon { width: 10px; height: 10px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1; }
+  
+  /* ================= 수정 및 삭제 아이콘 세로 배치 ================= */
+  .msg-actions { 
+    position: absolute; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 4px; 
+    z-index: 5; 
   }
-
-  .voice-sec {
-    font-size: 15.5px;
-    font-weight: 500;
-    letter-spacing: 0.2px;
-    transform: scaleY(1.05);
-    display: inline-block;
-  }
-
-  .voice-toggle-btn {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: var(--convert-btn-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: none;
-    padding: 0;
-    flex-shrink: 0;
-    box-shadow: none;
-    transition: transform 0.1s ease, filter 0.2s ease;
-  }
-
-  .voice-toggle-btn:hover {
-    filter: brightness(0.96);
-  }
-
-  .voice-toggle-btn:active {
-    transform: scale(0.94);
-  }
-
-  .voice-toggle-btn svg {
-    fill: #ffffff;
-    width: 22px;
-    height: 22px;
-    display: block;
-  }
-
-  .msg-content-wrap.voice-content-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .msg-row.right .msg-content-wrap.voice-content-wrap {
-    align-items: flex-end;
-  }
-
-  .transcribed-box {
-    background: var(--left-bubble-bg);
-    border-radius: var(--bubble-radius);
-    padding: 8px 12px;
-    box-shadow: none;
-    margin-top: 4px;
-    transform: scaleY(1.05);
-    transform-origin: top left;
-  }
-
-  .msg-row.right .transcribed-box {
-    background: var(--right-bubble-bg);
-  }
-
-  .transcribed-text-content {
-    font-size: var(--bubble-font-size);
-    color: var(--left-text-color);
-    line-height: 1.38;
-    letter-spacing: -0.5px;
-    word-break: break-word;
-    text-align: left;
-  }
-
-  .msg-row.right .transcribed-text-content {
-    color: var(--right-text-color);
-  }
-
-  .transcribed-status {
-    margin-top: 4px;
-    font-size: 9.5px;
-    color: var(--left-text-color);
-    opacity: 0.75;
-    display: flex;
-    align-items: center;
-    gap: 3.5px;
-    font-weight: 500;
-  }
-
-  .msg-row.right .transcribed-status {
-    color: var(--right-text-color);
-    opacity: 0.85;
-  }
-
-  .msg-row.left .check-circle-icon circle {
-    fill: var(--left-text-color);
-    opacity: 0.75;
-  }
-  .msg-row.right .check-circle-icon circle {
-    fill: var(--right-text-color);
-    opacity: 0.7;
-  }
-
-  .check-circle-icon {
-    width: 10px;
-    height: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    line-height: 1;
-  }
-
-  .msg-actions {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    z-index: 5;
-  }
-
-  .msg-row.left .msg-actions {
-    left: 100%;
-    margin-left: 8px;
-  }
-
-  .msg-row.right .msg-actions {
-    right: 100%;
-    margin-right: 8px;
-    flex-direction: row-reverse;
-  }
-
-  .delete-msg-btn {
-    opacity: 0;
-    background: transparent;
-    border: none;
-    color: #ff4757;
-    cursor: pointer;
-    font-size: 13px;
-    padding: 0 4px;
-    transition: opacity 0.2s ease;
-  }
-
-  .msg-row:hover .delete-msg-btn {
-    opacity: 1;
-  }
-
-  .edit-icon-btn {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 1px solid var(--border-color);
-    color: var(--accent-blue);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    cursor: pointer;
-    padding: 0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-    opacity: 0;
-    transform: scale(0.85);
-    pointer-events: none;
-    transition: opacity 0.18s ease, transform 0.18s ease;
-  }
-
-  .edit-icon-btn.visible {
-    opacity: 1;
-    transform: scale(1);
-    pointer-events: auto;
-  }
-
-  .edit-icon-btn svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  /* ================= 이미지 자르기 크롭 박스 모달 ================= */
-  .modal-backdrop {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(20, 26, 40, 0.65);
-    backdrop-filter: blur(5px);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .modal-card {
-    background: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    width: 95%;
-    max-width: 480px;
-    padding: 22px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
-  }
-
-  .modal-title {
-    font-size: 16px;
+  .msg-row.left .msg-actions { left: 100%; margin-left: 6px; }
+  .msg-row.right .msg-actions { right: 100%; margin-right: 6px; }
+  
+  .delete-msg-btn { 
+    opacity: 0; 
+    transform: scale(0.85); 
+    pointer-events: none; 
+    background: #ffffff; 
+    border: 1px solid var(--border-color); 
+    color: #ff4757; 
+    width: 26px; 
+    height: 26px; 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    cursor: pointer; 
+    font-size: 13px; 
     font-weight: 700;
-    color: var(--text-main);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    transition: opacity 0.18s ease, transform 0.18s ease; 
+  }
+  .delete-msg-btn.visible { 
+    opacity: 1; 
+    transform: scale(1); 
+    pointer-events: auto; 
   }
 
-  .crop-stage-container {
-    background: #1a1d26;
-    border-radius: 12px;
-    padding: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+  .edit-icon-btn { 
+    width: 26px; 
+    height: 26px; 
+    border-radius: 50%; 
+    background: #ffffff; 
+    border: 1px solid var(--border-color); 
+    color: var(--accent-blue); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    flex-shrink: 0; 
+    cursor: pointer; 
+    padding: 0; 
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); 
+    opacity: 0; 
+    transform: scale(0.85); 
+    pointer-events: none; 
+    transition: opacity 0.18s ease, transform 0.18s ease; 
   }
-
-  .crop-stage {
-    position: relative;
-    display: inline-block;
-    user-select: none;
+  .edit-icon-btn.visible { 
+    opacity: 1; 
+    transform: scale(1); 
+    pointer-events: auto; 
   }
+  .edit-icon-btn svg { width: 14px; height: 14px; }
 
-  .crop-stage img {
-    display: block;
-    max-width: 400px;
-    max-height: 380px;
-    pointer-events: none;
-    user-select: none;
-  }
-
-  .crop-box {
-    position: absolute;
-    border: 2px solid var(--accent-blue);
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
-    cursor: move;
-    box-sizing: border-box;
-  }
-
-  .crop-box::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    border: 1px dashed rgba(255, 255, 255, 0.4);
-    pointer-events: none;
-  }
-
-  .crop-handle {
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    background: #ffffff;
-    border: 2px solid var(--accent-blue);
-    border-radius: 50%;
-  }
-
+  /* 이미지 자르기 크롭 모달 (마우스 휠 스크롤 및 드래그 이동 적용) */
+  .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(20, 26, 40, 0.65); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; }
+  .modal-card { background: #ffffff; border: 1px solid var(--border-color); border-radius: 20px; width: 95%; max-width: 480px; padding: 22px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2); }
+  .modal-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; justify-content: space-between; align-items: center; }
+  .crop-stage-container { background: #1a1d26; border-radius: 12px; padding: 12px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+  .crop-stage { position: relative; display: inline-block; user-select: none; width: 400px; height: 380px; overflow: hidden; cursor: grab; }
+  .crop-stage:active { cursor: grabbing; }
+  .crop-stage img { position: absolute; top: 0; left: 0; display: block; max-width: none; pointer-events: none; user-select: none; transform-origin: 0 0; }
+  .crop-box { position: absolute; border: 2px solid var(--accent-blue); box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6); cursor: move; box-sizing: border-box; z-index: 10; }
+  .crop-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 1px dashed rgba(255, 255, 255, 0.4); pointer-events: none; }
+  .crop-handle { position: absolute; width: 14px; height: 14px; background: #ffffff; border: 2px solid var(--accent-blue); border-radius: 50%; }
   .crop-handle.tl { top: -7px; left: -7px; cursor: nwse-resize; }
   .crop-handle.tr { top: -7px; right: -7px; cursor: nesw-resize; }
   .crop-handle.bl { bottom: -7px; left: -7px; cursor: nesw-resize; }
   .crop-handle.br { bottom: -7px; right: -7px; cursor: nwse-resize; }
-
-  .modal-hint {
-    font-size: 12px;
-    color: var(--text-sub);
-    text-align: center;
-  }
-
-  .modal-btn-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 4px;
-  }
-
-  .btn-secondary {
-    background: #eaedf4;
-    color: #495057;
-    border: none;
-    border-radius: 8px;
-    padding: 11px;
-    flex: 1;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .btn-modal-apply {
-    background: var(--accent-blue);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 11px;
-    flex: 1;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-  }
+  .modal-hint { font-size: 12px; color: var(--text-sub); text-align: center; }
+  .modal-btn-row { display: flex; gap: 10px; margin-top: 4px; }
+  .btn-secondary { background: #eaedf4; color: #495057; border: none; border-radius: 8px; padding: 11px; flex: 1; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-modal-apply { background: var(--accent-blue); color: #fff; border: none; border-radius: 8px; padding: 11px; flex: 1; font-size: 13px; font-weight: 700; cursor: pointer; }
 
   @media (max-width: 860px) {
-    body {
-      align-items: stretch;
-      padding: 16px 8px;
-    }
-    .app-container {
-      flex-direction: column-reverse;
-      align-items: center;
-      gap: 24px;
-    }
-    .controller-side, .preview-side {
-      width: 100%;
-      max-width: 380px;
-      position: static;
-    }
-    .crop-stage img {
-      max-width: 300px;
-      max-height: 300px;
-    }
+    body { align-items: stretch; padding: 16px 8px; }
+    .app-container { flex-direction: column-reverse; align-items: center; gap: 24px; }
+    .controller-side, .preview-side { width: 100%; max-width: 380px; position: static; }
+    .crop-stage { width: 300px; height: 300px; }
   }
 </style>
 </head>
@@ -1036,7 +1081,7 @@
         <label>🎨 내 채팅(우)</label>
         <div class="control-group" style="gap: 4px;">
           <div class="color-picker-row">
-            <input type="color" id="myBubbleColorPicker" class="color-trigger-btn" value="#ff94b0" oninput="updateBubbleColor('right', this.value)">
+            <input type="color" id="myBubbleColorPicker" class="color-trigger-btn" value="#F69CB6" oninput="updateBubbleColor('right', this.value)">
             <button class="btn-reset-small" onclick="resetMyBubbleColor()">초기화</button>
           </div>
           <select id="rightTextColorSelect" class="styled-select" onchange="updateRightTextColor(this.value)">
@@ -1051,7 +1096,7 @@
         <label>🖼️ 배경 기본색</label>
         <div class="control-group" style="gap: 4px;">
           <div class="color-picker-row" style="height: 40px; align-items: center;">
-            <input type="color" id="phoneBgColorPicker" class="color-trigger-btn" value="#e8ecf4" oninput="updatePhoneBgColor(this.value)" style="height: 40px;">
+            <input type="color" id="phoneBgColorPicker" class="color-trigger-btn" value="#F7F7F7" oninput="updatePhoneBgColor(this.value)" style="height: 40px;">
             <button class="btn-reset-small" onclick="resetPhoneBgColor()">초기화</button>
           </div>
           <div style="height: 36px;"></div>
@@ -1059,15 +1104,18 @@
       </div>
     </div>
 
-    <!-- 배경 이미지 및 투명도(흰색 레이어 오퍼시티) 조절 설정 -->
+    <!-- 배경 이미지 및 투명도 조절 설정 (배경 삭제 버튼 추가) -->
     <div class="card-box">
       <label>🖼️ 채팅 배경 이미지 업로드 & 투명도</label>
-      <label class="file-btn" for="bgFileInput">배경 선택 및 자르기</label>
+      <div class="file-btn-wrap">
+        <label class="file-btn" for="bgFileInput">배경 선택 및 자르기</label>
+        <button class="btn-del-small" onclick="deleteBgImage()" title="배경 사진 삭제">배경 삭제</button>
+      </div>
       <input type="file" id="bgFileInput" accept="image/*" onchange="openCropModal(event, 'bg')">
       
       <div class="control-group" style="margin-top: 4px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <label style="margin: 0;">배경 투명도 (화이트 오버레이)</label>
+          <label style="margin: 0;">배경 투명도</label>
           <span id="bgOpacityVal" style="font-size: 11.5px; font-weight: 700; color: var(--text-sub);">0%</span>
         </div>
         <input type="range" id="bgOpacityRange" min="0" max="1" step="0.05" value="0" oninput="updateBgOpacity(this.value)" style="width: 100%; cursor: pointer; accent-color: var(--accent-blue);">
@@ -1077,13 +1125,25 @@
     <div class="control-row">
       <div class="card-box" style="flex:1;">
         <label>👤 상대방 프로필 (좌)</label>
-        <label class="file-btn" for="leftAvatarFileInput">선택 & 자르기</label>
+        <div class="file-btn-wrap">
+          <label class="file-btn" for="leftAvatarFileInput">선택</label>
+          <button class="btn-del-small" onclick="deleteAvatar('left')" title="프로필 삭제">삭제</button>
+          <div class="avatar-preview-thumb" id="leftThumbWrap">
+            <img id="leftThumbImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%239db2d8'/%3E%3C/svg%3E">
+          </div>
+        </div>
         <input type="file" id="leftAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'left')">
       </div>
 
       <div class="card-box" style="flex:1;">
         <label>👤 내 프로필 (우)</label>
-        <label class="file-btn" for="rightAvatarFileInput">선택 & 자르기</label>
+        <div class="file-btn-wrap">
+          <label class="file-btn" for="rightAvatarFileInput">선택</label>
+          <button class="btn-del-small" onclick="deleteAvatar('right')" title="프로필 삭제">삭제</button>
+          <div class="avatar-preview-thumb" id="rightThumbWrap">
+            <img id="rightThumbImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23F69CB6'/%3E%3C/svg%3E">
+          </div>
+        </div>
         <input type="file" id="rightAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'right')">
       </div>
     </div>
@@ -1098,8 +1158,8 @@
         <div class="control-group">
           <label>발신자</label>
           <select id="senderSelect" onchange="handleInputChange()">
-            <option value="left">상대방 (왼쪽)</option>
-            <option value="right" selected>나 (오른쪽)</option>
+            <option value="left" selected>상대방 (왼쪽)</option>
+            <option value="right">나 (오른쪽)</option>
           </select>
         </div>
         <div class="control-group">
@@ -1107,6 +1167,11 @@
           <select id="typeSelect" onchange="handleTypeChange()">
             <option value="text">일반 텍스트</option>
             <option value="voice">음성 메시지</option>
+            <option value="photo">사진 메시지</option>
+            <option value="lucky">럭키머니 (봉투)</option>
+            <option value="luckyReceived">럭키머니 (수령 완료)</option>
+            <option value="missedCall">부재중 전화</option>
+            <option value="callComplete">통화 완료</option>
           </select>
         </div>
       </div>
@@ -1127,7 +1192,43 @@
         </div>
       </div>
 
+      <div id="photoGroup" style="display: none;" class="control-group">
+        <label>채팅 사진 업로드 및 자유 자르기</label>
+        <div class="file-btn-wrap">
+          <label class="file-btn" for="msgPhotoFileInput">사진 선택 및 자르기</label>
+          <div class="avatar-preview-thumb" id="msgPhotoThumbWrap" style="display:none;">
+            <img id="msgPhotoThumbImg" src="">
+          </div>
+        </div>
+        <input type="file" id="msgPhotoFileInput" accept="image/*" onchange="openCropModal(event, 'chatPhoto')">
+      </div>
+
+      <!-- 럭키머니 입력 그룹 -->
+      <div id="luckyGroup" style="display: none;" class="control-group">
+        <div class="control-group">
+          <label>상단 타이틀 (예: 럭키머니)</label>
+          <input type="text" id="luckyTitleInput" value="럭키머니" oninput="handleInputChange()">
+        </div>
+        <div class="control-group" style="margin-top: 6px;">
+          <label>하단 설명 (예: 핸드폰 럭키머니)</label>
+          <input type="text" id="luckyDescInput" value="핸드폰 럭키머니" oninput="handleInputChange()">
+        </div>
+      </div>
+
+      <!-- 부재중 전화 입력 그룹 -->
+      <div id="missedCallGroup" style="display: none;" class="control-group">
+        <label>부재중 전화 문구</label>
+        <input type="text" id="missedCallTextInput" value="부재중 전화" oninput="handleInputChange()">
+      </div>
+
+      <!-- 통화 완료 입력 그룹 -->
+      <div id="callCompleteGroup" style="display: none;" class="control-group">
+        <label>통화 완료 문구</label>
+        <input type="text" id="callCompleteTextInput" value="통화 종료" oninput="handleInputChange()">
+      </div>
+
       <button class="btn-primary" id="addBtn" onclick="confirmDraftMessage()">➕ 대화 목록에 추가</button>
+      <button class="btn-divider-add" id="dividerAddBtn" onclick="addDividerMessage()">➖ 대화 목록에 구분선 추가하기</button>
 
       <div id="editBtnRow" style="display: none; gap: 8px;">
         <button class="btn-cancel-edit" onclick="cancelEditing()">취소</button>
@@ -1180,18 +1281,16 @@
         </div>
       </div>
 
-      <!-- 배경과 메시지 영역이 철저하게 분리된 스크롤 영역 -->
+      <!-- 스크롤 영역 -->
       <div class="chat-scroll-area" id="chatArea">
-        <!-- 배경 전용 오버레이 레이어 (여기에만 투명도 적용됨) -->
         <div class="bg-overlay-layer" id="bgOverlayLayer"></div>
-        
-        <!-- 메시지 콘텐츠 영역 (오버레이보다 위 계층에 있어 투명도 영향 받지 않음) -->
         <div class="chat-content-container">
           <div id="confirmedList" style="display: contents;"></div>
           <div id="liveDraftBox" style="display: contents;"></div>
         </div>
       </div>
 
+      <!-- 하단 발송 창 -->
       <div class="chat-footer">
         <div class="fake-input"></div>
         <div class="fake-btn">발송</div>
@@ -1203,6 +1302,7 @@
       <button class="download-btn" onclick="downloadPreviewImage(false)">보이는 화면 그대로 다운로드</button>
       <button class="download-btn secondary-dl" onclick="downloadPreviewImage(true)">채팅 길이에 맞춰 다운로드</button>
     </div>
+    <div class="download-warning-text">채팅 길이에 맞춰 다운로드시 배경이 끝까지 출력되지 않을 수 있습니다.</div>
   </div>
 
 </div>
@@ -1212,7 +1312,12 @@
   <div class="modal-card">
     <div class="modal-title">
       <span id="cropModalTitle">이미지 자르기</span>
-      <span style="cursor:pointer; font-size:18px; color: #888;" onclick="closeCropModal()">✕</span>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button class="btn-reset-small" onclick="adjustCropImageScale(1.15)" title="확대">🔍+</button>
+        <button class="btn-reset-small" onclick="adjustCropImageScale(0.85)" title="축소">🔍-</button>
+        <button class="btn-reset-small" onclick="initCropBox()" title="초기화">초기화</button>
+        <span style="cursor:pointer; font-size:18px; color: #888;" onclick="closeCropModal()">✕</span>
+      </div>
     </div>
 
     <div class="crop-stage-container">
@@ -1227,7 +1332,7 @@
       </div>
     </div>
 
-    <div class="modal-hint">💡 상자 안을 잡아 이동하고, 모서리 점을 당겨 자를 영역의 크기를 조절하세요.</div>
+    <div class="modal-hint">💡 마우스 휠 스크롤로 확대/축소, 드래그로 이동이 가능합니다.</div>
 
     <div class="modal-btn-row">
       <button class="btn-secondary" onclick="closeCropModal()">취소</button>
@@ -1238,26 +1343,54 @@
 
 <script>
   let leftAvatarUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%239db2d8'/%3E%3C/svg%3E";
-  let rightAvatarUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23ff94b0'/%3E%3C/svg%3E";
+  let rightAvatarUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23F69CB6'/%3E%3C/svg%3E";
   let bgUrl = '';
+  let draftChatPhotoUrl = '';
 
   let messages = [];
   let editingIndex = null;
   let draftBackup = null;
   let editIconTimers = {};
+  let openTranscriptions = {};
 
   let currentTarget = null;
   let rawImageObj = new Image();
-  let targetAspectRatio = 1;
+  let targetAspectRatio = 380 / 610;
 
   let cropState = { x: 0, y: 0, w: 100, h: 100 };
+  let imageScale = 1;
+  let imageOffsetX = 0;
+  let imageOffsetY = 0;
+
   let dragMode = null;
   let dragStartX = 0;
   let dragStartY = 0;
   let initialCropState = {};
+  let initialImageOffsetX = 0;
+  let initialImageOffsetY = 0;
 
   function updateRoomTitle() {
     document.getElementById('roomTitle').innerText = document.getElementById('titleInput').value;
+  }
+
+  /* ================= 프로필 및 배경 삭제 함수 ================= */
+  function deleteBgImage() {
+    bgUrl = '';
+    const chatArea = document.getElementById('chatArea');
+    chatArea.style.backgroundImage = 'none';
+    document.getElementById('bgOpacityRange').value = 0;
+    updateBgOpacity(0);
+  }
+
+  function deleteAvatar(side) {
+    if (side === 'left') {
+      leftAvatarUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%239db2d8'/%3E%3C/svg%3E";
+      document.getElementById('leftThumbImg').src = leftAvatarUrl;
+    } else {
+      rightAvatarUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23F69CB6'/%3E%3C/svg%3E";
+      document.getElementById('rightThumbImg').src = rightAvatarUrl;
+    }
+    renderAllMessages();
   }
 
   /* ================= 색상 및 투명도 조절 처리 ================= */
@@ -1266,6 +1399,7 @@
       document.documentElement.style.setProperty('--left-bubble-bg', color);
     } else if (type === 'right') {
       document.documentElement.style.setProperty('--right-bubble-bg', color);
+      document.documentElement.style.setProperty('--cam-color', color);
     }
   }
 
@@ -1291,7 +1425,7 @@
   }
 
   function resetMyBubbleColor() {
-    const defaultColor = '#ff94b0';
+    const defaultColor = '#F69CB6';
     document.getElementById('myBubbleColorPicker').value = defaultColor;
     document.getElementById('rightTextColorSelect').value = '#ffffff';
     updateBubbleColor('right', defaultColor);
@@ -1307,14 +1441,13 @@
   }
 
   function resetPhoneBgColor() {
-    const defaultBgColor = '#e8ecf4';
+    const defaultBgColor = '#F7F7F7';
     document.getElementById('phoneBgColorPicker').value = defaultBgColor;
     updatePhoneBgColor(defaultBgColor);
     document.getElementById('bgOpacityRange').value = 0;
     updateBgOpacity(0);
   }
 
-  /* 전체 채팅 설정 및 대화 내용 초기화 */
   function resetAllChatSettings() {
     if (!confirm('방 이름, 모든 색상 설정 및 대화 내용이 초기화됩니다. 계속하시겠습니까?')) return;
 
@@ -1325,17 +1458,18 @@
     resetLeftBubbleColor();
     resetPhoneBgColor();
 
-    bgUrl = '';
-    const chatArea = document.getElementById('chatArea');
-    chatArea.style.backgroundImage = 'none';
+    deleteBgImage();
+    deleteAvatar('left');
+    deleteAvatar('right');
 
     messages = [];
+    openTranscriptions = {};
     if (editingIndex !== null) cancelEditing();
     resetFormToCreateMode();
     renderAllMessages();
   }
 
-  /* ================= 이미지 다운로드 (FHD+ 고해상도 출력) ================= */
+  /* ================= 이미지 다운로드 ================= */
   function downloadPreviewImage(isFullLength = false) {
     const phoneElement = document.getElementById('phoneScreen');
     const chatArea = document.getElementById('chatArea');
@@ -1364,7 +1498,15 @@
           if (isFullLength) {
             clonedPhone.style.height = 'auto';
             const clonedChatArea = clonedDoc.getElementById('chatArea');
-            if (clonedChatArea) clonedChatArea.style.overflowY = 'visible';
+            if (clonedChatArea) {
+              clonedChatArea.style.overflowY = 'visible';
+              clonedChatArea.style.height = 'auto';
+            }
+          }
+          const clonedOverlay = clonedDoc.getElementById('bgOverlayLayer');
+          const clonedContent = clonedDoc.querySelector('.chat-content-container');
+          if (clonedOverlay && clonedContent) {
+            clonedOverlay.style.height = `${Math.max(clonedContent.scrollHeight, 610)}px`;
           }
         }
       }
@@ -1389,7 +1531,7 @@
     });
   }
 
-  /* ================= 크롭 모달 열기 ================= */
+  /* ================= 크롭 모달 및 스크롤 확대/축소, 드래그 이동 ================= */
   function openCropModal(event, target) {
     const file = event.target.files[0];
     if (!file) return;
@@ -1403,13 +1545,20 @@
         const modalTitle = document.getElementById('cropModalTitle');
 
         stageImg.src = e.target.result;
+        imageScale = 1;
+        imageOffsetX = 0;
+        imageOffsetY = 0;
+        updateImageTransform();
 
         if (target === 'bg') {
           targetAspectRatio = 380 / 610;
           modalTitle.innerText = '채팅 배경 자르기';
-        } else {
+        } else if (target === 'left' || target === 'right') {
           targetAspectRatio = 1;
           modalTitle.innerText = target === 'left' ? '상대방(좌) 프로필 자르기' : '내(우) 프로필 자르기';
+        } else if (target === 'chatPhoto') {
+          targetAspectRatio = 0;
+          modalTitle.innerText = '채팅 사진 자르기 (자유 비율)';
         }
 
         document.getElementById('cropModal').style.display = 'flex';
@@ -1431,26 +1580,71 @@
 
   function initCropBox() {
     const stageImg = document.getElementById('stageImg');
-    const imgW = stageImg.clientWidth;
-    const imgH = stageImg.clientHeight;
+    const stageContainer = document.getElementById('cropStage');
+    
+    const natW = rawImageObj.naturalWidth;
+    const natH = rawImageObj.naturalHeight;
+    const stageW = stageContainer.clientWidth;
+    const stageH = stageContainer.clientHeight;
+
+    let initW, initH;
+    if (natW / natH > stageW / stageH) {
+      initH = stageH;
+      initW = natW * (stageH / natH);
+    } else {
+      initW = stageW;
+      initH = natH * (stageW / natW);
+    }
+
+    stageImg.style.width = `${initW}px`;
+    stageImg.style.height = `${initH}px`;
+
+    imageScale = 1;
+    imageOffsetX = (stageW - initW) / 2;
+    imageOffsetY = (stageH - initH) / 2;
+    updateImageTransform();
 
     let boxW, boxH;
-    if (imgW / imgH > targetAspectRatio) {
-      boxH = imgH * 0.85;
-      boxW = boxH * targetAspectRatio;
+    if (targetAspectRatio === 0) {
+      boxW = stageW * 0.8;
+      boxH = stageH * 0.8;
     } else {
-      boxW = imgW * 0.85;
-      boxH = boxW / targetAspectRatio;
+      if (stageW / stageH > targetAspectRatio) {
+        boxH = stageH * 0.85;
+        boxW = boxH * targetAspectRatio;
+      } else {
+        boxW = stageW * 0.85;
+        boxH = boxW / targetAspectRatio;
+      }
     }
 
     cropState = {
-      x: (imgW - boxW) / 2,
-      y: (imgH - boxH) / 2,
+      x: (stageW - boxW) / 2,
+      y: (stageH - boxH) / 2,
       w: boxW,
       h: boxH
     };
 
     updateCropBoxDOM();
+  }
+
+  function adjustCropImageScale(factor) {
+    imageScale *= factor;
+    imageScale = Math.max(0.3, Math.min(imageScale, 5.0));
+    updateImageTransform();
+  }
+
+  // 마우스 휠 스크롤을 이용한 확대/축소 이벤트 추가
+  const cropStageEl = document.getElementById('cropStage');
+  cropStageEl.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+    adjustCropImageScale(zoomFactor);
+  }, { passive: false });
+
+  function updateImageTransform() {
+    const stageImg = document.getElementById('stageImg');
+    stageImg.style.transform = `translate(${imageOffsetX}px, ${imageOffsetY}px) scale(${imageScale})`;
   }
 
   function updateCropBoxDOM() {
@@ -1468,6 +1662,8 @@
     dragStartX = clientX;
     dragStartY = clientY;
     initialCropState = { ...cropState };
+    initialImageOffsetX = imageOffsetX;
+    initialImageOffsetY = imageOffsetY;
   }
 
   function onPointerMove(clientX, clientY) {
@@ -1475,41 +1671,59 @@
 
     const dx = clientX - dragStartX;
     const dy = clientY - dragStartY;
-    const stageImg = document.getElementById('stageImg');
-    const maxW = stageImg.clientWidth;
-    const maxH = stageImg.clientHeight;
+    const maxW = cropStageEl.clientWidth;
+    const maxH = cropStageEl.clientHeight;
 
     if (dragMode === 'move') {
-      let newX = initialCropState.x + dx;
-      let newY = initialCropState.y + dy;
-
-      newX = Math.max(0, Math.min(newX, maxW - cropState.w));
-      newY = Math.max(0, Math.min(newY, maxH - cropState.h));
-
-      cropState.x = newX;
-      cropState.y = newY;
+      imageOffsetX = initialImageOffsetX + dx;
+      imageOffsetY = initialImageOffsetY + dy;
+      updateImageTransform();
+    } else if (dragMode === 'pan-stage') {
+      imageOffsetX = initialImageOffsetX + dx;
+      imageOffsetY = initialImageOffsetY + dy;
+      updateImageTransform();
     } else {
       let newW = initialCropState.w;
       let newH = initialCropState.h;
       let newX = initialCropState.x;
       let newY = initialCropState.y;
 
-      if (dragMode === 'br') {
-        newW = initialCropState.w + dx;
-        newH = newW / targetAspectRatio;
-      } else if (dragMode === 'tr') {
-        newW = initialCropState.w + dx;
-        newH = newW / targetAspectRatio;
-        newY = initialCropState.y - (newH - initialCropState.h);
-      } else if (dragMode === 'bl') {
-        newW = initialCropState.w - dx;
-        newH = newW / targetAspectRatio;
-        newX = initialCropState.x + (initialCropState.w - newW);
-      } else if (dragMode === 'tl') {
-        newW = initialCropState.w - dx;
-        newH = newW / targetAspectRatio;
-        newX = initialCropState.x + (initialCropState.w - newW);
-        newY = initialCropState.y - (newH - initialCropState.h);
+      if (targetAspectRatio === 0) {
+        if (dragMode === 'br') {
+          newW = initialCropState.w + dx;
+          newH = initialCropState.h + dy;
+        } else if (dragMode === 'tr') {
+          newW = initialCropState.w + dx;
+          newH = initialCropState.h - dy;
+          newY = initialCropState.y + dy;
+        } else if (dragMode === 'bl') {
+          newW = initialCropState.w - dx;
+          newX = initialCropState.x + dx;
+          newH = initialCropState.h + dy;
+        } else if (dragMode === 'tl') {
+          newW = initialCropState.w - dx;
+          newX = initialCropState.x + dx;
+          newH = initialCropState.h - dy;
+          newY = initialCropState.y + dy;
+        }
+      } else {
+        if (dragMode === 'br') {
+          newW = initialCropState.w + dx;
+          newH = newW / targetAspectRatio;
+        } else if (dragMode === 'tr') {
+          newW = initialCropState.w + dx;
+          newH = newW / targetAspectRatio;
+          newY = initialCropState.y - (newH - initialCropState.h);
+        } else if (dragMode === 'bl') {
+          newW = initialCropState.w - dx;
+          newH = newW / targetAspectRatio;
+          newX = initialCropState.x + (initialCropState.w - newW);
+        } else if (dragMode === 'tl') {
+          newW = initialCropState.w - dx;
+          newH = newW / targetAspectRatio;
+          newX = initialCropState.x + (initialCropState.w - newW);
+          newY = initialCropState.y - (newH - initialCropState.h);
+        }
       }
 
       if (newW > 40 && newH > 40 && newX >= 0 && newY >= 0 && newX + newW <= maxW && newY + newH <= maxH) {
@@ -1524,6 +1738,13 @@
     dragMode = null;
   }
 
+  cropStageEl.addEventListener('mousedown', (e) => {
+    if (e.target === cropStageEl || e.target === document.getElementById('stageImg')) {
+      onPointerDown(e.clientX, e.clientY, 'pan-stage');
+      e.stopPropagation();
+    }
+  });
+
   cropBox.addEventListener('mousedown', (e) => {
     const handle = e.target.getAttribute('data-handle');
     onPointerDown(e.clientX, e.clientY, handle || 'move');
@@ -1536,6 +1757,13 @@
 
   window.addEventListener('mouseup', onPointerUp);
 
+  cropStageEl.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      onPointerDown(e.touches[0].clientX, e.touches[0].clientY, 'pan-stage');
+      e.stopPropagation();
+    }
+  });
+
   cropBox.addEventListener('touchstart', (e) => {
     if (e.touches.length === 1) {
       const handle = e.target.getAttribute('data-handle');
@@ -1545,7 +1773,7 @@
   });
 
   window.addEventListener('touchmove', (e) => {
-    if (!isDragging && dragMode && e.touches.length === 1) {
+    if (dragMode && e.touches.length === 1) {
       onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
     }
   });
@@ -1554,18 +1782,27 @@
 
   function applyBoxCrop() {
     const stageImg = document.getElementById('stageImg');
-    const scaleRatio = rawImageObj.naturalWidth / stageImg.clientWidth;
+    const natW = rawImageObj.naturalWidth;
+    const currentRenderW = stageImg.clientWidth * imageScale;
+    const scaleRatio = natW / currentRenderW;
 
-    const sourceX = cropState.x * scaleRatio;
-    const sourceY = cropState.y * scaleRatio;
+    const sourceX = (cropState.x - imageOffsetX) * scaleRatio;
+    const sourceY = (cropState.y - imageOffsetY) * scaleRatio;
     const sourceW = cropState.w * scaleRatio;
     const sourceH = cropState.h * scaleRatio;
 
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
-    const outW = currentTarget === 'bg' ? 380 * 2 : 200 * 2;
-    const outH = currentTarget === 'bg' ? 610 * 2 : 200 * 2;
+    let outW, outH;
+    if (currentTarget === 'bg') {
+      outW = 380 * 2; outH = 610 * 2;
+    } else if (currentTarget === 'left' || currentTarget === 'right') {
+      outW = 200 * 2; outH = 200 * 2;
+    } else if (currentTarget === 'chatPhoto') {
+      outW = Math.round(sourceW * 2);
+      outH = Math.round(sourceH * 2);
+    }
 
     canvas.width = outW;
     canvas.height = outH;
@@ -1576,12 +1813,27 @@
 
     if (currentTarget === 'left') {
       leftAvatarUrl = croppedDataUrl;
+      document.getElementById('leftThumbImg').src = croppedDataUrl;
     } else if (currentTarget === 'right') {
       rightAvatarUrl = croppedDataUrl;
+      document.getElementById('rightThumbImg').src = croppedDataUrl;
     } else if (currentTarget === 'bg') {
       bgUrl = croppedDataUrl;
       const chatArea = document.getElementById('chatArea');
       chatArea.style.backgroundImage = `url('${bgUrl}')`;
+      chatArea.style.backgroundSize = '380px 610px';
+      chatArea.style.backgroundPosition = 'center top';
+    } else if (currentTarget === 'chatPhoto') {
+      draftChatPhotoUrl = croppedDataUrl;
+      const thumbWrap = document.getElementById('msgPhotoThumbWrap');
+      const thumbImg = document.getElementById('msgPhotoThumbImg');
+      thumbWrap.style.display = 'block';
+      thumbImg.src = croppedDataUrl;
+      if (editingIndex !== null) {
+        handleInputChange();
+      } else {
+        syncLiveDraft();
+      }
     }
 
     renderAllMessages();
@@ -1600,29 +1852,59 @@
   function updateTypeGroupsVisibility(type) {
     document.getElementById('textGroup').style.display = (type === 'text') ? 'flex' : 'none';
     document.getElementById('voiceGroup').style.display = (type === 'voice') ? 'flex' : 'none';
+    document.getElementById('photoGroup').style.display = (type === 'photo') ? 'flex' : 'none';
+    document.getElementById('luckyGroup').style.display = (type === 'lucky' || type === 'luckyReceived') ? 'flex' : 'none';
+    document.getElementById('missedCallGroup').style.display = (type === 'missedCall') ? 'flex' : 'none';
+    document.getElementById('callCompleteGroup').style.display = (type === 'callComplete') ? 'flex' : 'none';
   }
 
   function handleTypeChange() {
     const type = document.getElementById('typeSelect').value;
     updateTypeGroupsVisibility(type);
-    handleInputChange();
+    if (editingIndex === null) {
+      syncLiveDraft();
+    }
   }
 
-  function toggleTranscription(id, event) {
+  function toggleTranscription(id, key, event) {
     if (event) event.stopPropagation();
+    const currentStatus = !!openTranscriptions[key];
+    openTranscriptions[key] = !currentStatus;
+
     const el = document.getElementById(id);
-    if (!el) return;
-    el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+    if (el) {
+      el.style.display = openTranscriptions[key] ? 'block' : 'none';
+    }
   }
 
   /* ================= 메시지 렌더링 ================= */
   function buildMessageHtml(data, isDraft = false, index = null) {
+    if (data.type === 'divider') {
+      const dividerClickAttr = !isDraft ? `onclick="event.stopPropagation(); showEditIcon(${index})"` : '';
+      const deleteBtn = !isDraft ? `<button class="delete-msg-btn" id="deleteIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); deleteMessage(${index})">✕</button>` : '';
+      const editIconBtn = !isDraft ? `
+        <button class="edit-icon-btn" id="editIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); enterEditFromIcon(${index})" title="수정하기">
+          <svg viewBox="0 0 24 24"><path d="M4 20.5v-3.3L16.5 4.7a1 1 0 0 1 1.4 0l1.4 1.4a1 1 0 0 1 0 1.4L6.8 20l-2.8.5z" fill="currentColor"/></svg>
+        </button>
+      ` : '';
+      const actionButtonsHtml = !isDraft ? `<div class="msg-actions">${editIconBtn}${deleteBtn}</div>` : '';
+
+      return `
+        <div style="width:100%; position:relative;" ${dividerClickAttr}>
+          <div class="divider-row">
+            <div class="divider-line"></div>
+          </div>
+          ${actionButtonsHtml}
+        </div>
+      `;
+    }
+
     const avatarHtml = getAvatarHtml(data.sender);
     let contentHtml = '';
 
     const bubbleClickAttr = !isDraft ? `onclick="event.stopPropagation(); showEditIcon(${index})"` : '';
 
-    const deleteBtn = !isDraft ? `<button class="delete-msg-btn" onclick="event.stopPropagation(); deleteMessage(${index})">✕</button>` : '';
+    const deleteBtn = !isDraft ? `<button class="delete-msg-btn" id="deleteIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); deleteMessage(${index})">✕</button>` : '';
     const editIconBtn = !isDraft ? `
       <button class="edit-icon-btn" id="editIcon-${index}" data-idx="${index}" onclick="event.stopPropagation(); enterEditFromIcon(${index})" title="수정하기">
         <svg viewBox="0 0 24 24"><path d="M4 20.5v-3.3L16.5 4.7a1 1 0 0 1 1.4 0l1.4 1.4a1 1 0 0 1 0 1.4L6.8 20l-2.8.5z" fill="currentColor"/></svg>
@@ -1639,13 +1921,82 @@
           ${actionButtonsHtml}
         </div>
       `;
+    } else if (data.type === 'photo') {
+      contentHtml = `
+        <div class="msg-content-wrap" ${bubbleClickAttr}>
+          <div class="chat-photo-bubble" style="${isDraft ? 'border: 2px dashed var(--accent-blue);' : ''}">
+            <img src="${data.photoUrl || ''}" alt="chat photo">
+          </div>
+          ${actionButtonsHtml}
+        </div>
+      `;
+    } else if (data.type === 'lucky' || data.type === 'luckyReceived') {
+      const isReceived = data.type === 'luckyReceived';
+      contentHtml = `
+        <div class="msg-content-wrap" ${bubbleClickAttr}>
+          <div class="lucky-money-wrap ${isReceived ? 'received' : ''}" style="${isDraft ? 'border: 2px dashed var(--accent-blue);' : ''}">
+            <div class="lucky-money-box">
+              <div class="lucky-money-top">
+                <div class="lucky-money-icon">
+                  <svg viewBox="0 0 24 32">
+                    ${isReceived ? `
+                      <path d="M7 4H17V8H7V3Z" fill="#ffffff" />
+                      <path d="M4 9L12 15L20 9" fill="none" stroke="#EB6D79" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M4 9V27C4 27.5523 4.44772 28 5 28H19C19.5523 28 20 27.5523 20 27V9H4Z" fill="#ffffff" />
+                    ` : `
+                      <path d="M4 4H20C20.5523 4 21 4.44772 21 5V27C21 27.5523 20.5523 28 20 28H4C3.44772 28 3 27.5523 3 27V5C3 4.44772 3.44772 4 4 4Z" fill="#ffffff"/>
+                      <path d="M4 7L12 14L20 7" fill="none" stroke="#EB6D79" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    `}
+                  </svg>
+                </div>
+                <div class="lucky-money-text-group">
+                  <div class="lucky-money-title">${data.luckyTitle || '럭키머니'}</div>
+                  ${isReceived ? `<div class="lucky-money-status">수령 완료</div>` : ''}
+                </div>
+              </div>
+              <div class="lucky-money-bottom">${data.luckyDesc || '핸드폰 럭키머니'}</div>
+            </div>
+          </div>
+          ${actionButtonsHtml}
+        </div>
+      `;
+    } else if (data.type === 'missedCall') {
+      contentHtml = `
+        <div class="msg-content-wrap" ${bubbleClickAttr}>
+          <div class="call-bubble-wrap missed" style="${isDraft ? 'border: 2px dashed var(--accent-blue);' : ''}">
+            <div class="call-bubble-icon missed">
+              <svg viewBox="0 0 24 24">
+                <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+              </svg>
+            </div>
+            <div class="call-bubble-text missed">${data.missedCallText || '부재중 전화'}</div>
+          </div>
+          ${actionButtonsHtml}
+        </div>
+      `;
+    } else if (data.type === 'callComplete') {
+      contentHtml = `
+        <div class="msg-content-wrap" ${bubbleClickAttr}>
+          <div class="call-bubble-wrap complete" style="${isDraft ? 'border: 2px dashed var(--accent-blue);' : ''}">
+            <div class="call-bubble-icon complete">
+              <svg viewBox="0 0 24 24">
+                <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+              </svg>
+            </div>
+            <div class="call-bubble-text complete">${data.callCompleteText || '통화 종료'}</div>
+          </div>
+          ${actionButtonsHtml}
+        </div>
+      `;
     } else {
+      const transKey = isDraft ? 'draft' : `msg-${index}`;
       const transId = isDraft ? 'draft-trans' : `trans-${index}`;
+      const isOpen = !!openTranscriptions[transKey];
+
       contentHtml = `
         <div class="msg-content-wrap voice-content-wrap" ${bubbleClickAttr}>
           <div class="voice-pill-wrap">
             <div class="voice-pill">
-              <!-- •)) 음성 아이콘 -->
               <span class="voice-wave-icon">
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
                   <circle cx="4.5" cy="12" r="2.3" fill="currentColor"/>
@@ -1656,7 +2007,7 @@
               <span class="voice-sec">${data.duration || '2.5'} "</span>
             </div>
             ${data.transText ? `
-              <button class="voice-toggle-btn" onclick="toggleTranscription('${transId}', event)" title="글로 변환">
+              <button class="voice-toggle-btn" onclick="toggleTranscription('${transId}', '${transKey}', event)" title="글로 변환">
                 <svg viewBox="0 0 24 24">
                   <path d="M7 6l-3.5 3.5L7 13v-2.5h10V8.5H7V6zm10 12l3.5-3.5L17 11v2.5H7v2h10V18z"/>
                 </svg>
@@ -1664,7 +2015,7 @@
             ` : ''}
           </div>
           ${data.transText ? `
-            <div class="transcribed-box" id="${transId}" style="${isDraft ? 'display:block;' : 'display:none;'}">
+            <div class="transcribed-box" id="${transId}" style="${isOpen ? 'display:block;' : 'display:none;'}">
               <div class="transcribed-text-content">${data.transText.replace(/\n/g, '<br>')}</div>
               <div class="transcribed-status">
                 <span class="check-circle-icon">
@@ -1703,9 +2054,58 @@
 
       if (type === 'text') {
         messages[editingIndex].text = document.getElementById('msgTextInput').value;
-      } else {
+        delete messages[editingIndex].duration;
+        delete messages[editingIndex].transText;
+        delete messages[editingIndex].photoUrl;
+        delete messages[editingIndex].luckyTitle;
+        delete messages[editingIndex].luckyDesc;
+        delete messages[editingIndex].missedCallText;
+        delete messages[editingIndex].callCompleteText;
+      } else if (type === 'voice') {
         messages[editingIndex].duration = document.getElementById('voiceDurationInput').value;
         messages[editingIndex].transText = document.getElementById('voiceTextInput').value;
+        delete messages[editingIndex].text;
+        delete messages[editingIndex].photoUrl;
+        delete messages[editingIndex].luckyTitle;
+        delete messages[editingIndex].luckyDesc;
+        delete messages[editingIndex].missedCallText;
+        delete messages[editingIndex].callCompleteText;
+      } else if (type === 'photo') {
+        if (draftChatPhotoUrl) messages[editingIndex].photoUrl = draftChatPhotoUrl;
+        delete messages[editingIndex].text;
+        delete messages[editingIndex].duration;
+        delete messages[editingIndex].transText;
+        delete messages[editingIndex].luckyTitle;
+        delete messages[editingIndex].luckyDesc;
+        delete messages[editingIndex].missedCallText;
+        delete messages[editingIndex].callCompleteText;
+      } else if (type === 'lucky' || type === 'luckyReceived') {
+        messages[editingIndex].luckyTitle = document.getElementById('luckyTitleInput').value;
+        messages[editingIndex].luckyDesc = document.getElementById('luckyDescInput').value;
+        delete messages[editingIndex].text;
+        delete messages[editingIndex].duration;
+        delete messages[editingIndex].transText;
+        delete messages[editingIndex].photoUrl;
+        delete messages[editingIndex].missedCallText;
+        delete messages[editingIndex].callCompleteText;
+      } else if (type === 'missedCall') {
+        messages[editingIndex].missedCallText = document.getElementById('missedCallTextInput').value;
+        delete messages[editingIndex].text;
+        delete messages[editingIndex].duration;
+        delete messages[editingIndex].transText;
+        delete messages[editingIndex].photoUrl;
+        delete messages[editingIndex].luckyTitle;
+        delete messages[editingIndex].luckyDesc;
+        delete messages[editingIndex].callCompleteText;
+      } else if (type === 'callComplete') {
+        messages[editingIndex].callCompleteText = document.getElementById('callCompleteTextInput').value;
+        delete messages[editingIndex].text;
+        delete messages[editingIndex].duration;
+        delete messages[editingIndex].transText;
+        delete messages[editingIndex].photoUrl;
+        delete messages[editingIndex].luckyTitle;
+        delete messages[editingIndex].luckyDesc;
+        delete messages[editingIndex].missedCallText;
       }
       renderAllMessages();
     } else {
@@ -1714,6 +2114,7 @@
   }
 
   function syncLiveDraft() {
+    if (editingIndex !== null) return;
     const sender = document.getElementById('senderSelect').value;
     const type = document.getElementById('typeSelect').value;
     const liveDraftBox = document.getElementById('liveDraftBox');
@@ -1726,29 +2127,52 @@
         liveDraftBox.innerHTML = '';
         return;
       }
-    } else {
+    } else if (type === 'voice') {
       data.duration = document.getElementById('voiceDurationInput').value;
       data.transText = document.getElementById('voiceTextInput').value;
+    } else if (type === 'photo') {
+      if (!draftChatPhotoUrl) {
+        liveDraftBox.innerHTML = '';
+        return;
+      }
+      data.photoUrl = draftChatPhotoUrl;
+    } else if (type === 'lucky' || type === 'luckyReceived') {
+      data.luckyTitle = document.getElementById('luckyTitleInput').value;
+      data.luckyDesc = document.getElementById('luckyDescInput').value;
+    } else if (type === 'missedCall') {
+      data.missedCallText = document.getElementById('missedCallTextInput').value;
+    } else if (type === 'callComplete') {
+      data.callCompleteText = document.getElementById('callCompleteTextInput').value;
     }
 
     liveDraftBox.innerHTML = buildMessageHtml(data, true);
     scrollChatBottom();
   }
 
-  /* ================= 말풍선 클릭 시 수정 아이콘 노출 (1.5초 후 자동 소멸) ================= */
+  /* ================= 독립된 구분선 추가 함수 ================= */
+  function addDividerMessage() {
+    if (editingIndex !== null) return;
+    messages.push({ type: 'divider' });
+    renderAllMessages();
+    scrollChatBottom();
+  }
+
+  /* ================= 말풍선 클릭 시 수정 및 삭제 아이콘 동시 노출 ================= */
   function showEditIcon(idx) {
-    document.querySelectorAll('.edit-icon-btn.visible').forEach(btn => {
-      if (btn.id !== `editIcon-${idx}`) btn.classList.remove('visible');
-    });
+    document.querySelectorAll('.edit-icon-btn.visible').forEach(btn => btn.classList.remove('visible'));
+    document.querySelectorAll('.delete-msg-btn.visible').forEach(btn => btn.classList.remove('visible'));
 
-    const icon = document.getElementById(`editIcon-${idx}`);
-    if (!icon) return;
+    const editIcon = document.getElementById(`editIcon-${idx}`);
+    const deleteIcon = document.getElementById(`deleteIcon-${idx}`);
+    if (!editIcon || !deleteIcon) return;
 
-    icon.classList.add('visible');
+    editIcon.classList.add('visible');
+    deleteIcon.classList.add('visible');
 
     if (editIconTimers[idx]) clearTimeout(editIconTimers[idx]);
     editIconTimers[idx] = setTimeout(() => {
-      icon.classList.remove('visible');
+      editIcon.classList.remove('visible');
+      deleteIcon.classList.remove('visible');
       delete editIconTimers[idx];
     }, 1500);
   }
@@ -1757,6 +2181,7 @@
     Object.keys(editIconTimers).forEach(idx => clearTimeout(editIconTimers[idx]));
     editIconTimers = {};
     document.querySelectorAll('.edit-icon-btn.visible').forEach(btn => btn.classList.remove('visible'));
+    document.querySelectorAll('.delete-msg-btn.visible').forEach(btn => btn.classList.remove('visible'));
   }
 
   function enterEditFromIcon(idx) {
@@ -1777,30 +2202,51 @@
         type: document.getElementById('typeSelect').value,
         text: document.getElementById('msgTextInput').value,
         duration: document.getElementById('voiceDurationInput').value,
-        transText: document.getElementById('voiceTextInput').value
+        transText: document.getElementById('voiceTextInput').value,
+        photoUrl: draftChatPhotoUrl,
+        luckyTitle: document.getElementById('luckyTitleInput').value,
+        luckyDesc: document.getElementById('luckyDescInput').value,
+        missedCallText: document.getElementById('missedCallTextInput').value,
+        callCompleteText: document.getElementById('callCompleteTextInput').value
       };
     }
 
     editingIndex = idx;
     const item = messages[idx];
 
+    if (item.type === 'divider') return;
+
     document.getElementById('formTitle').innerText = `✏️ ${idx + 1}번째 메시지 수정`;
     document.getElementById('editBadge').style.display = 'inline';
     document.getElementById('msgCardBox').classList.add('editing-mode');
     document.getElementById('addBtn').style.display = 'none';
+    document.getElementById('dividerAddBtn').style.display = 'none';
     document.getElementById('editBtnRow').style.display = 'flex';
 
     document.getElementById('liveDraftBox').innerHTML = '';
 
-    document.getElementById('senderSelect').value = item.sender;
+    document.getElementById('senderSelect').value = item.sender || 'left';
     document.getElementById('typeSelect').value = item.type;
     updateTypeGroupsVisibility(item.type);
 
     if (item.type === 'text') {
       document.getElementById('msgTextInput').value = item.text || '';
-    } else {
+    } else if (item.type === 'voice') {
       document.getElementById('voiceDurationInput').value = item.duration || '2.5';
       document.getElementById('voiceTextInput').value = item.transText || '';
+    } else if (item.type === 'photo') {
+      draftChatPhotoUrl = item.photoUrl || '';
+      if (draftChatPhotoUrl) {
+        document.getElementById('msgPhotoThumbWrap').style.display = 'block';
+        document.getElementById('msgPhotoThumbImg').src = draftChatPhotoUrl;
+      }
+    } else if (item.type === 'lucky' || item.type === 'luckyReceived') {
+      document.getElementById('luckyTitleInput').value = item.luckyTitle || '럭키머니';
+      document.getElementById('luckyDescInput').value = item.luckyDesc || '핸드폰 럭키머니';
+    } else if (item.type === 'missedCall') {
+      document.getElementById('missedCallTextInput').value = item.missedCallText || '부재중 전화';
+    } else if (item.type === 'callComplete') {
+      document.getElementById('callCompleteTextInput').value = item.callCompleteText || '통화 종료';
     }
 
     renderAllMessages();
@@ -1823,23 +2269,20 @@
     document.getElementById('editBadge').style.display = 'none';
     document.getElementById('msgCardBox').classList.remove('editing-mode');
     document.getElementById('addBtn').style.display = 'block';
+    document.getElementById('dividerAddBtn').style.display = 'block';
     document.getElementById('editBtnRow').style.display = 'none';
 
-    if (draftBackup) {
-      document.getElementById('senderSelect').value = draftBackup.sender;
-      document.getElementById('typeSelect').value = draftBackup.type;
-      updateTypeGroupsVisibility(draftBackup.type);
-      document.getElementById('msgTextInput').value = draftBackup.text || '';
-      document.getElementById('voiceDurationInput').value = draftBackup.duration || '2.5';
-      document.getElementById('voiceTextInput').value = draftBackup.transText || '';
-      draftBackup = null;
-      syncLiveDraft();
-    } else {
-      document.getElementById('msgTextInput').value = '';
-      document.getElementById('voiceDurationInput').value = '2.5';
-      document.getElementById('voiceTextInput').value = '';
-      document.getElementById('liveDraftBox').innerHTML = '';
-    }
+    document.getElementById('msgTextInput').value = '';
+    document.getElementById('voiceDurationInput').value = '2.5';
+    document.getElementById('voiceTextInput').value = '';
+    document.getElementById('msgPhotoThumbWrap').style.display = 'none';
+    document.getElementById('luckyTitleInput').value = '럭키머니';
+    document.getElementById('luckyDescInput').value = '핸드폰 럭키머니';
+    document.getElementById('missedCallTextInput').value = '부재중 전화';
+    document.getElementById('callCompleteTextInput').value = '통화 종료';
+    draftChatPhotoUrl = '';
+    document.getElementById('liveDraftBox').innerHTML = '';
+    draftBackup = null;
   }
 
   function confirmDraftMessage() {
@@ -1852,10 +2295,25 @@
       item.text = document.getElementById('msgTextInput').value;
       if (!item.text.trim()) return;
       document.getElementById('msgTextInput').value = '';
-    } else {
+    } else if (type === 'voice') {
       item.duration = document.getElementById('voiceDurationInput').value || '2.5';
       item.transText = document.getElementById('voiceTextInput').value;
       document.getElementById('voiceTextInput').value = '';
+    } else if (type === 'photo') {
+      if (!draftChatPhotoUrl) {
+        alert('업로드된 사진이 없습니다.');
+        return;
+      }
+      item.photoUrl = draftChatPhotoUrl;
+      document.getElementById('msgPhotoThumbWrap').style.display = 'none';
+      draftChatPhotoUrl = '';
+    } else if (type === 'lucky' || type === 'luckyReceived') {
+      item.luckyTitle = document.getElementById('luckyTitleInput').value || '럭키머니';
+      item.luckyDesc = document.getElementById('luckyDescInput').value || '핸드폰 럭키머니';
+    } else if (type === 'missedCall') {
+      item.missedCallText = document.getElementById('missedCallTextInput').value || '부재중 전화';
+    } else if (type === 'callComplete') {
+      item.callCompleteText = document.getElementById('callCompleteTextInput').value || '통화 종료';
     }
 
     messages.push(item);
@@ -1871,6 +2329,7 @@
       editingIndex--;
     }
     messages.splice(idx, 1);
+    delete openTranscriptions[`msg-${idx}`];
     renderAllMessages();
   }
 
@@ -1887,11 +2346,8 @@
   }
 
   window.onload = () => {
-    messages.push(
-      { sender: 'left', type: 'text', text: '상대방 채팅 예시입니다.' },
-      { sender: 'right', type: 'text', text: '내 채팅 예시입니다.' }
-    );
     renderAllMessages();
+    syncLiveDraft();
   };
 </script>
 </body>

@@ -13,6 +13,8 @@
   :root {
     --left-bubble-bg: #ffffff;
     --right-bubble-bg: #ff94b0;
+    --left-text-color: #4A4A4A;   /* 상대방 글씨 색상 */
+    --right-text-color: #ffffff;  /* 내 채팅 글씨 색상 */
     --text-main: #4A4A4A;
     --text-sub: #71788e;
     --accent-blue: #4a8bf5;
@@ -147,22 +149,32 @@
     align-items: center;
   }
 
-  input[type="color"] {
-    -webkit-appearance: none;
-    border: 1px solid var(--border-color);
+  .color-trigger-btn {
     flex: 1;
-    height: 38px;
+    height: 40px;
     border-radius: 8px;
+    border: 1px solid var(--border-color);
     cursor: pointer;
-    background: #ffffff;
-    padding: 2px 4px;
-  }
-  input[type="color"]::-webkit-color-swatch-wrapper {
+    background: transparent;
     padding: 0;
   }
-  input[type="color"]::-webkit-color-swatch {
+  .color-trigger-btn::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  .color-trigger-btn::-webkit-color-swatch {
     border: none;
-    border-radius: 6px;
+    border-radius: 7px;
+  }
+
+  .styled-select {
+    width: 100%;
+    height: 36px;
+    font-size: 11px;
+    padding: 0 6px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    text-overflow: ellipsis;
   }
 
   .btn-reset-small {
@@ -171,7 +183,7 @@
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 0 10px;
-    height: 38px;
+    height: 40px;
     font-size: 11.5px;
     font-weight: 600;
     cursor: pointer;
@@ -316,18 +328,70 @@
     position: relative;
   }
 
+  /* 채팅 스크롤 영역 (배경 전용 영역) */
+  .chat-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    background-color: var(--phone-bg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+  }
+
+  /* 배경 위에만 깔리는 화이트 오버레이 레이어 (메시지는 영향을 받지 않음) */
+  .bg-overlay-layer {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ffffff;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* 실제 대화 내용 컨테이너 (오버레이보다 위인 z-index: 2에 위치하여 투명도 영향 안 받음) */
+  .chat-content-container {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+  }
+
   /* 상단 헤더 */
-  .chat-header {
-    height: 55px;
+  .chat-header-container {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    z-index: 10;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .unofficial-notice-in {
+    width: 100%;
+    text-align: right;
+    font-size: 10px;
+    color: #B4B4B4;
+    font-weight: 500;
+    padding: 8px 6px 0 0;
+    letter-spacing: -0.4px;
+    line-height: 1;
+    background: transparent;
+  }
+
+  .chat-header {
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    z-index: 10;
-    position: relative;
   }
 
   .header-left {
@@ -396,20 +460,6 @@
     height: 3.5px;
     background-color: var(--text-main);
     transform: rotate(45deg);
-  }
-
-  .chat-scroll-area {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    position: relative;
-    background-color: var(--phone-bg);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
   }
 
   /* ================= 하단 메세지 발송 창 ================= */
@@ -519,7 +569,7 @@
 
   .msg-row.left .bubble-text {
     background: var(--left-bubble-bg);
-    color: var(--text-main);
+    color: var(--left-text-color);
   }
 
   .msg-row.left .bubble-text::before {
@@ -536,7 +586,7 @@
 
   .msg-row.right .bubble-text {
     background: var(--right-bubble-bg);
-    color: #ffffff;
+    color: var(--right-text-color);
     transform-origin: top right;
   }
 
@@ -566,7 +616,7 @@
 
   .voice-pill {
     position: relative;
-    background: #ffffff;
+    background: var(--left-bubble-bg);
     height: 38px;
     min-width: 175px;
     padding: 0 16px;
@@ -590,7 +640,7 @@
     height: 0;
     border-style: solid;
     border-width: 5px 8px 5px 0;
-    border-color: transparent #ffffff transparent transparent;
+    border-color: transparent var(--left-bubble-bg) transparent transparent;
   }
 
   .msg-row.right .voice-pill::before {
@@ -605,15 +655,13 @@
     border-color: transparent transparent transparent var(--right-bubble-bg);
   }
 
-  .msg-row.right .voice-pill .voice-wave-icon svg circle {
-    fill: #ffffff;
-  }
-  .msg-row.right .voice-pill .voice-wave-icon svg path {
-    stroke: #ffffff;
-  }
-  .msg-row.right .voice-pill .voice-sec {
-    color: #ffffff;
-  }
+  .msg-row.left .voice-pill .voice-wave-icon svg circle { fill: var(--left-text-color); }
+  .msg-row.left .voice-pill .voice-wave-icon svg path { stroke: var(--left-text-color); }
+  .msg-row.left .voice-pill .voice-sec { color: var(--left-text-color); }
+
+  .msg-row.right .voice-pill .voice-wave-icon svg circle { fill: var(--right-text-color); }
+  .msg-row.right .voice-pill .voice-wave-icon svg path { stroke: var(--right-text-color); }
+  .msg-row.right .voice-pill .voice-sec { color: var(--right-text-color); }
 
   .voice-wave-icon {
     width: 19px;
@@ -627,7 +675,6 @@
   .voice-sec {
     font-size: 15.5px;
     font-weight: 500;
-    color: var(--text-main);
     letter-spacing: 0.2px;
     transform: scaleY(1.05);
     display: inline-block;
@@ -675,7 +722,7 @@
   }
 
   .transcribed-box {
-    background: rgba(255, 255, 255, 0.96);
+    background: var(--left-bubble-bg);
     border-radius: var(--bubble-radius);
     padding: 8px 12px;
     box-shadow: none;
@@ -690,7 +737,7 @@
 
   .transcribed-text-content {
     font-size: var(--bubble-font-size);
-    color: var(--text-main);
+    color: var(--left-text-color);
     line-height: 1.38;
     letter-spacing: -0.5px;
     word-break: break-word;
@@ -698,13 +745,14 @@
   }
 
   .msg-row.right .transcribed-text-content {
-    color: #ffffff;
+    color: var(--right-text-color);
   }
 
   .transcribed-status {
     margin-top: 4px;
     font-size: 9.5px;
-    color: var(--status-color);
+    color: var(--left-text-color);
+    opacity: 0.75;
     display: flex;
     align-items: center;
     gap: 3.5px;
@@ -712,7 +760,17 @@
   }
 
   .msg-row.right .transcribed-status {
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--right-text-color);
+    opacity: 0.85;
+  }
+
+  .msg-row.left .check-circle-icon circle {
+    fill: var(--left-text-color);
+    opacity: 0.75;
+  }
+  .msg-row.right .check-circle-icon circle {
+    fill: var(--right-text-color);
+    opacity: 0.7;
   }
 
   .check-circle-icon {
@@ -958,35 +1016,62 @@
     </div>
 
     <div class="color-pickers-container">
+      <!-- 상대 채팅 색상 및 글자색 선택 -->
       <div class="color-picker-column">
         <label>🎨 상대 채팅(좌)</label>
-        <div class="color-picker-row">
-          <input type="color" id="leftBubbleColorInput" value="#ffffff" oninput="updateLeftBubbleColor(this.value)">
-          <button class="btn-reset-small" onclick="resetLeftBubbleColor()">초기화</button>
+        <div class="control-group" style="gap: 4px;">
+          <div class="color-picker-row">
+            <input type="color" id="leftBubbleColorPicker" class="color-trigger-btn" value="#ffffff" oninput="updateBubbleColor('left', this.value)">
+            <button class="btn-reset-small" onclick="resetLeftBubbleColor()">초기화</button>
+          </div>
+          <select id="leftTextColorSelect" class="styled-select" onchange="updateLeftTextColor(this.value)">
+            <option value="#4A4A4A">글씨: 진한 회색</option>
+            <option value="#ffffff">글씨: 흰색</option>
+          </select>
         </div>
       </div>
 
+      <!-- 내 채팅 색상 및 글자색 선택 -->
       <div class="color-picker-column">
         <label>🎨 내 채팅(우)</label>
-        <div class="color-picker-row">
-          <input type="color" id="myBubbleColorInput" value="#ff94b0" oninput="updateMyBubbleColor(this.value)">
-          <button class="btn-reset-small" onclick="resetMyBubbleColor()">초기화</button>
+        <div class="control-group" style="gap: 4px;">
+          <div class="color-picker-row">
+            <input type="color" id="myBubbleColorPicker" class="color-trigger-btn" value="#ff94b0" oninput="updateBubbleColor('right', this.value)">
+            <button class="btn-reset-small" onclick="resetMyBubbleColor()">초기화</button>
+          </div>
+          <select id="rightTextColorSelect" class="styled-select" onchange="updateRightTextColor(this.value)">
+            <option value="#ffffff">글씨: 흰색</option>
+            <option value="#4A4A4A">글씨: 진한 회색</option>
+          </select>
         </div>
       </div>
 
+      <!-- 배경 기본색 -->
       <div class="color-picker-column">
         <label>🖼️ 배경 기본색</label>
-        <div class="color-picker-row">
-          <input type="color" id="phoneBgColorInput" value="#e8ecf4" oninput="updatePhoneBgColor(this.value)">
-          <button class="btn-reset-small" onclick="resetPhoneBgColor()">초기화</button>
+        <div class="control-group" style="gap: 4px;">
+          <div class="color-picker-row" style="height: 40px; align-items: center;">
+            <input type="color" id="phoneBgColorPicker" class="color-trigger-btn" value="#e8ecf4" oninput="updatePhoneBgColor(this.value)" style="height: 40px;">
+            <button class="btn-reset-small" onclick="resetPhoneBgColor()">초기화</button>
+          </div>
+          <div style="height: 36px;"></div>
         </div>
       </div>
     </div>
 
+    <!-- 배경 이미지 및 투명도(흰색 레이어 오퍼시티) 조절 설정 -->
     <div class="card-box">
-      <label>🖼️ 채팅 배경 이미지 업로드</label>
+      <label>🖼️ 채팅 배경 이미지 업로드 & 투명도</label>
       <label class="file-btn" for="bgFileInput">배경 선택 및 자르기</label>
       <input type="file" id="bgFileInput" accept="image/*" onchange="openCropModal(event, 'bg')">
+      
+      <div class="control-group" style="margin-top: 4px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label style="margin: 0;">배경 투명도 (화이트 오버레이)</label>
+          <span id="bgOpacityVal" style="font-size: 11.5px; font-weight: 700; color: var(--text-sub);">0%</span>
+        </div>
+        <input type="range" id="bgOpacityRange" min="0" max="1" step="0.05" value="0" oninput="updateBgOpacity(this.value)" style="width: 100%; cursor: pointer; accent-color: var(--accent-blue);">
+      </div>
     </div>
 
     <div class="control-row">
@@ -1057,43 +1142,54 @@
 
     <div class="phone-screen" id="phoneScreen">
       
-      <div class="chat-header">
-        <div class="header-left">
-          <span class="back-btn-icon">
-            <svg viewBox="0 0 35 24">
-              <path d="M11.5 4.5L3.5 12L11.5 19.5" stroke="#4A4A4A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-              <g transform="translate(13.5, 12) rotate(45)">
-                <rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#4A4A4A"/>
-              </g>
-              <g transform="translate(18.2, 12) rotate(45)">
-                <rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#4A4A4A"/>
-              </g>
-              <g transform="translate(26.2, 12) rotate(45)">
-                <rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#4A4A4A"/>
-              </g>
-            </svg>
-          </span>
-        </div>
+      <!-- 상단 헤더 컨테이너 -->
+      <div class="chat-header-container">
+        <div class="unofficial-notice-in">※이 이미지는 비공식 이미지입니다.</div>
+        <div class="chat-header">
+          <div class="header-left">
+            <span class="back-btn-icon">
+              <svg viewBox="0 0 35 24">
+                <path d="M11.5 4.5L3.5 12L11.5 19.5" stroke="#4A4A4A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <g transform="translate(13.5, 12) rotate(45)">
+                  <rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#4A4A4A"/>
+                </g>
+                <g transform="translate(18.2, 12) rotate(45)">
+                  <rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#4A4A4A"/>
+                </g>
+                <g transform="translate(26.2, 12) rotate(45)">
+                  <rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#4A4A4A"/>
+                </g>
+              </svg>
+            </span>
+          </div>
 
-        <div class="header-title" id="roomTitle">채팅방 이름</div>
+          <div class="header-title" id="roomTitle">채팅방 이름</div>
 
-        <div class="header-right">
-          <span class="header-cam-icon">
-            <svg viewBox="0 0 24 24">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M2.5 7.5C2.5 5.843 3.843 4.5 5.5 4.5h9c1.657 0 3 1.343 3 3v1.382l3.447-2.298A1 1 0 0 1 22.5 7.416v9.168a1 1 0 0 1-1.553.832L17.5 15.118V16.5c0 1.657-1.343 3-3 3h-9c-1.657 0-3-1.343-3-3v-9zm5.3 1.7a.6.6 0 0 0-.9.52v4.56a.6.6 0 0 0 .9.52l4.0-2.28a.6.6 0 0 0 0-1.04L7.8 9.2z"/>
-            </svg>
-          </span>
-          <div class="diamonds-icon">
-            <div class="diamond-dot"></div>
-            <div class="diamond-dot"></div>
-            <div class="diamond-dot"></div>
+          <div class="header-right">
+            <span class="header-cam-icon">
+              <svg viewBox="0 0 24 24">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M2.5 7.5C2.5 5.843 3.843 4.5 5.5 4.5h9c1.657 0 3 1.343 3 3v1.382l3.447-2.298A1 1 0 0 1 22.5 7.416v9.168a1 1 0 0 1-1.553.832L17.5 15.118V16.5c0 1.657-1.343 3-3 3h-9c-1.657 0-3-1.343-3-3v-9zm5.3 1.7a.6.6 0 0 0-.9.52v4.56a.6.6 0 0 0 .9.52l4.0-2.28a.6.6 0 0 0 0-1.04L7.8 9.2z"/>
+              </svg>
+            </span>
+            <div class="diamonds-icon">
+              <div class="diamond-dot"></div>
+              <div class="diamond-dot"></div>
+              <div class="diamond-dot"></div>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- 배경과 메시지 영역이 철저하게 분리된 스크롤 영역 -->
       <div class="chat-scroll-area" id="chatArea">
-        <div id="confirmedList" style="display: contents;"></div>
-        <div id="liveDraftBox" style="display: contents;"></div>
+        <!-- 배경 전용 오버레이 레이어 (여기에만 투명도 적용됨) -->
+        <div class="bg-overlay-layer" id="bgOverlayLayer"></div>
+        
+        <!-- 메시지 콘텐츠 영역 (오버레이보다 위 계층에 있어 투명도 영향 받지 않음) -->
+        <div class="chat-content-container">
+          <div id="confirmedList" style="display: contents;"></div>
+          <div id="liveDraftBox" style="display: contents;"></div>
+        </div>
       </div>
 
       <div class="chat-footer">
@@ -1141,8 +1237,8 @@
 </div>
 
 <script>
-  let leftAvatarUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%239db2d8'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='13' font-weight='bold' fill='%23fff'%3ELeft%3C/text%3E%3C/svg%3E";
-  let rightAvatarUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23ff94b0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='13' font-weight='bold' fill='%23fff'%3ERight%3C/text%3E%3C/svg%3E";
+  let leftAvatarUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%239db2d8'/%3E%3C/svg%3E";
+  let rightAvatarUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23ff94b0'/%3E%3C/svg%3E";
   let bgUrl = '';
 
   let messages = [];
@@ -1164,25 +1260,42 @@
     document.getElementById('roomTitle').innerText = document.getElementById('titleInput').value;
   }
 
-  /* ================= 색상 및 설정 초기화 함수들 ================= */
-  function updateMyBubbleColor(color) {
-    document.documentElement.style.setProperty('--right-bubble-bg', color);
+  /* ================= 색상 및 투명도 조절 처리 ================= */
+  function updateBubbleColor(type, color) {
+    if (type === 'left') {
+      document.documentElement.style.setProperty('--left-bubble-bg', color);
+    } else if (type === 'right') {
+      document.documentElement.style.setProperty('--right-bubble-bg', color);
+    }
   }
 
-  function resetMyBubbleColor() {
-    const defaultColor = '#ff94b0';
-    document.getElementById('myBubbleColorInput').value = defaultColor;
-    updateMyBubbleColor(defaultColor);
+  function updateLeftTextColor(color) {
+    document.documentElement.style.setProperty('--left-text-color', color);
   }
 
-  function updateLeftBubbleColor(color) {
-    document.documentElement.style.setProperty('--left-bubble-bg', color);
+  function updateRightTextColor(color) {
+    document.documentElement.style.setProperty('--right-text-color', color);
+  }
+
+  function updateBgOpacity(val) {
+    document.getElementById('bgOverlayLayer').style.opacity = val;
+    document.getElementById('bgOpacityVal').innerText = `${Math.round(val * 100)}%`;
   }
 
   function resetLeftBubbleColor() {
     const defaultColor = '#ffffff';
-    document.getElementById('leftBubbleColorInput').value = defaultColor;
-    updateLeftBubbleColor(defaultColor);
+    document.getElementById('leftBubbleColorPicker').value = defaultColor;
+    document.getElementById('leftTextColorSelect').value = '#4A4A4A';
+    updateBubbleColor('left', defaultColor);
+    updateLeftTextColor('#4A4A4A');
+  }
+
+  function resetMyBubbleColor() {
+    const defaultColor = '#ff94b0';
+    document.getElementById('myBubbleColorPicker').value = defaultColor;
+    document.getElementById('rightTextColorSelect').value = '#ffffff';
+    updateBubbleColor('right', defaultColor);
+    updateRightTextColor('#ffffff');
   }
 
   function updatePhoneBgColor(color) {
@@ -1195,12 +1308,10 @@
 
   function resetPhoneBgColor() {
     const defaultBgColor = '#e8ecf4';
-    document.getElementById('phoneBgColorInput').value = defaultBgColor;
-    const chatArea = document.getElementById('chatArea');
-    chatArea.style.backgroundColor = defaultBgColor;
-    if (bgUrl) {
-      chatArea.style.backgroundImage = `url('${bgUrl}')`;
-    }
+    document.getElementById('phoneBgColorPicker').value = defaultBgColor;
+    updatePhoneBgColor(defaultBgColor);
+    document.getElementById('bgOpacityRange').value = 0;
+    updateBgOpacity(0);
   }
 
   /* 전체 채팅 설정 및 대화 내용 초기화 */
@@ -1537,9 +1648,9 @@
               <!-- •)) 음성 아이콘 -->
               <span class="voice-wave-icon">
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
-                  <circle cx="4.5" cy="12" r="2.3" fill="#4A4A4A"/>
-                  <path d="M9.5 7.5c2.4 2.5 2.4 6.5 0 9" stroke="#4A4A4A" stroke-width="2.2" stroke-linecap="round"/>
-                  <path d="M14.5 4.5c4.1 4.1 4.1 10.9 0 15" stroke="#4A4A4A" stroke-width="2.2" stroke-linecap="round"/>
+                  <circle cx="4.5" cy="12" r="2.3" fill="currentColor"/>
+                  <path d="M9.5 7.5c2.4 2.5 2.4 6.5 0 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                  <path d="M14.5 4.5c4.1 4.1 4.1 10.9 0 15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
                 </svg>
               </span>
               <span class="voice-sec">${data.duration || '2.5'} "</span>
@@ -1558,7 +1669,7 @@
               <div class="transcribed-status">
                 <span class="check-circle-icon">
                   <svg viewBox="0 0 16 16" width="10" height="10">
-                    <circle cx="8" cy="8" r="8" fill="#9C9C9C"/>
+                    <circle cx="8" cy="8" r="8"/>
                     <path d="M4.5 8.2l2.3 2.3 4.7-4.7" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                   </svg>
                 </span>

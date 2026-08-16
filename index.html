@@ -1353,9 +1353,6 @@
   let initialImageOffsetX = 0;
   let initialImageOffsetY = 0;
 
-  // 다운로드 순서 카운터 변수 추가
-  let downloadCounter = 1;
-
   function updateRoomTitle() {
     document.getElementById('roomTitle').innerText = document.getElementById('titleInput').value;
   }
@@ -1448,14 +1445,13 @@
     deleteAvatar('right');
 
     messages = [];
-    downloadCounter = 1; // 초기화 시 다운로드 카운터도 1로 리셋
     openTranscriptions = {};
     if (editingIndex !== null) cancelEditing();
     resetFormToCreateMode();
     renderAllMessages();
   }
 
-  /* ================= 이미지 다운로드 (순차적 번호 적용) ================= */
+  /* ================= 이미지 다운로드 (현재 날짜/시간/분/초 타임스탬프 적용) ================= */
   function downloadPreviewImage(isFullLength = false) {
     const phoneElement = document.getElementById('phoneScreen');
     const chatArea = document.getElementById('chatArea');
@@ -1512,9 +1508,19 @@
       phoneElement.style.height = originalHeight;
       chatArea.style.overflowY = originalOverflow;
 
+      // 현재 날짜/시간/분/초를 YYYYMMDD_HHMMSS 형식으로 생성
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const year = now.getFullYear();
+      const month = pad(now.getMonth() + 1);
+      const day = pad(now.getDate());
+      const hours = pad(now.getHours());
+      const minutes = pad(now.getMinutes());
+      const seconds = pad(now.getSeconds());
+      const timestamp = `${year}${month}${day}_${hours}${minutes}${seconds}`;
+
       const link = document.createElement('a');
-      // 다운로드할 때마다 숫자가 1씩 증가하도록 순차적 번호 반영
-      link.download = `chat-screenshot-${downloadCounter++}.png`;
+      link.download = `chat-screenshot-${timestamp}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
       

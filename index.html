@@ -416,7 +416,7 @@
     position: relative;
   }
 
-  /* 상단 헤더 컨테이너 (배경색을 살짝 더 밝게 수정: #EBEBEB -> #F2F2F2) */
+  /* 상단 헤더 컨테이너 */
   .chat-header-container {
     background: #F2F2F2;
     border-bottom: none;
@@ -2258,18 +2258,8 @@
 
   function startEditingMessage(idx) {
     if (editingIndex === null) {
-      draftBackup = {
-        sender: document.getElementById('senderSelect').value,
-        type: document.getElementById('typeSelect').value,
-        text: document.getElementById('msgTextInput').value,
-        duration: document.getElementById('voiceDurationInput').value,
-        transText: document.getElementById('voiceTextInput').value,
-        photoUrl: draftChatPhotoUrl,
-        luckyTitle: document.getElementById('luckyTitleInput').value,
-        luckyDesc: document.getElementById('luckyDescInput').value,
-        missedCallText: document.getElementById('missedCallTextInput').value,
-        callCompleteText: document.getElementById('callCompleteTextInput').value
-      };
+      // 수정 시작 시점의 원본 데이터를 깊은 복사(Deep Copy)하여 백업
+      draftBackup = JSON.parse(JSON.stringify(messages[idx]));
     }
 
     editingIndex = idx;
@@ -2315,12 +2305,18 @@
 
   function saveEditedMessage() {
     editingIndex = null;
+    draftBackup = null;
     resetFormToCreateMode();
     renderAllMessages();
   }
 
   function cancelEditing() {
+    // 취소 시 백업해 둔 이전 내용으로 원복
+    if (editingIndex !== null && draftBackup) {
+      messages[editingIndex] = draftBackup;
+    }
     editingIndex = null;
+    draftBackup = null;
     resetFormToCreateMode();
     renderAllMessages();
   }
@@ -2343,7 +2339,6 @@
     document.getElementById('callCompleteTextInput').value = '통화 종료';
     draftChatPhotoUrl = '';
     document.getElementById('liveDraftBox').innerHTML = '';
-    draftBackup = null;
   }
 
   function confirmDraftMessage() {

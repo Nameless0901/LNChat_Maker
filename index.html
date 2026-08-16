@@ -568,21 +568,30 @@
     min-height: 100%;
   }
 
-  /* ================= 구분선 스타일 ================= */
+  /* ================= 구분선 스타일 (일정한 굵기 보장) ================= */
+  .divider-container {
+    width: 100%;
+    position: relative;
+    cursor: grab;
+  }
+  .divider-container:active { cursor: grabbing; }
+
   .divider-row {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 8px 0;
-    position: relative;
   }
 
   .divider-line {
     width: calc(100% - 11px); 
-    height: 2.2px;
+    height: 2px !important; /* 항상 일정한 굵기 유지 */
+    min-height: 2px;
+    max-height: 2px;
     background-color: #8c929d;
     opacity: 0.7;
+    flex-shrink: 0;
   }
 
   /* ================= 하단 메세지 발송 창 ================= */
@@ -641,7 +650,7 @@
     border-radius: 4px;
   }
 
-  .msg-row.drag-over {
+  .msg-row.drag-over, .divider-container.drag-over {
     border-top: 2px dashed var(--accent-blue);
   }
 
@@ -969,6 +978,7 @@
     gap: 4px; 
     z-index: 5; 
   }
+  .divider-container .msg-actions { right: 0; left: auto; }
   .msg-row.left .msg-actions { left: 100%; margin-left: 6px; }
   .msg-row.right .msg-actions { right: 100%; margin-right: 6px; }
   
@@ -1503,7 +1513,7 @@
 
   function handleDragEnd() {
     draggedIndex = null;
-    document.querySelectorAll('.msg-row').forEach(row => row.classList.remove('drag-over'));
+    document.querySelectorAll('.msg-row, .divider-container').forEach(row => row.classList.remove('drag-over'));
   }
 
   /* ================= 이미지 다운로드 ================= */
@@ -1933,7 +1943,7 @@
     }
   }
 
-  /* ================= 메시지 렌더링 (드래그 앤 드롭 전용) ================= */
+  /* ================= 메시지 렌더링 (구분선 굵기 고정 및 드래그 적용) ================= */
   function buildMessageHtml(data, isDraft = false, index = null) {
     if (data.type === 'divider') {
       const dividerClickAttr = !isDraft ? `onclick="event.stopPropagation(); showEditIcon(${index})"` : '';
@@ -1943,11 +1953,10 @@
           <svg viewBox="0 0 24 24"><path d="M4 20.5v-3.3L16.5 4.7a1 1 0 0 1 1.4 0l1.4 1.4a1 1 0 0 1 0 1.4L6.8 20l-2.8.5z" fill="currentColor"/></svg>
         </button>
       ` : '';
-
       const actionButtonsHtml = !isDraft ? `<div class="msg-actions">${editIconBtn}${deleteBtn}</div>` : '';
 
       return `
-        <div style="width:100%; position:relative;" ${dividerClickAttr} ${!isDraft ? `draggable="true" ondragstart="handleDragStart(event, ${index})" ondragover="handleDragOver(event, ${index})" ondragleave="handleDragLeave(event, ${index})" ondrop="handleDrop(event, ${index})" ondragend="handleDragEnd()"` : ''}>
+        <div class="divider-container" id="msg-row-${index}" ${dividerClickAttr} ${!isDraft ? `draggable="true" ondragstart="handleDragStart(event, ${index})" ondragover="handleDragOver(event, ${index})" ondragleave="handleDragLeave(event, ${index})" ondrop="handleDrop(event, ${index})" ondragend="handleDragEnd()"` : ''}>
           <div class="divider-row">
             <div class="divider-line"></div>
           </div>

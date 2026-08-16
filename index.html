@@ -433,6 +433,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
+    position: relative; /* 자식 요소 절대 위치의 기준점 명시 */
   }
 
   .header-left {
@@ -457,7 +458,8 @@
   .header-title {
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
+    top: 50%;
+    transform: translate(-50%, -50%); /* X축 및 Y축 모두 완벽한 정중앙 정렬 */
     font-size: 15px;
     font-weight: 400;
     color: var(--text-main);
@@ -652,7 +654,7 @@
     position: relative;
     box-sizing: border-box;
     min-height: 36px;
-    padding: 7px 13px 9px 13px; /* 위아래 패딩 균형 조정으로 쏠림 방지 */
+    padding: 7px 13px 9px 13px;
     border-radius: var(--bubble-radius);
     font-size: var(--bubble-font-size);
     line-height: 1.4;
@@ -1442,7 +1444,7 @@
     renderAllMessages();
   }
 
-  /* ================= 이미지 다운로드 (텍스트 오차 보정 포함) ================= */
+  /* ================= 이미지 다운로드 (텍스트 및 헤더 제목 중앙 오차 보정) ================= */
   function downloadPreviewImage(isFullLength = false) {
     const phoneElement = document.getElementById('phoneScreen');
     const chatArea = document.getElementById('chatArea');
@@ -1469,11 +1471,16 @@
           clonedPhone.style.borderRadius = '0px';
           clonedPhone.style.boxShadow = 'none';
 
-          // 캔버스 변환 시 텍스트 쏠림 방지 및 정렬 보정
-          clonedDoc.querySelectorAll('.bubble-text, .call-bubble-text, .header-title').forEach(el => {
+          // 캔버스 변환 시 텍스트 왜곡 및 상단 타이틀 정렬 어긋남 방지
+          clonedDoc.querySelectorAll('.bubble-text, .call-bubble-text').forEach(el => {
             el.style.transform = 'none';
             el.style.lineHeight = '1.4';
           });
+
+          const clonedTitle = clonedDoc.querySelector('.header-title');
+          if (clonedTitle) {
+            clonedTitle.style.transform = 'translate(-50%, -50%)';
+          }
 
           if (isFullLength) {
             clonedPhone.style.height = 'auto';

@@ -416,9 +416,9 @@
     position: relative;
   }
 
-  /* 상단 헤더 컨테이너 */
+  /* 상단 헤더 컨테이너 (배경색을 살짝 더 밝게 수정: #EBEBEB -> #F2F2F2) */
   .chat-header-container {
-    background: #EBEBEB;
+    background: #F2F2F2;
     border-bottom: none;
     z-index: 10;
     position: relative;
@@ -568,7 +568,7 @@
     min-height: 100%;
   }
 
-  /* ================= 구분선 스타일 (일정한 굵기 보장) ================= */
+  /* ================= 구분선 스타일 ================= */
   .divider-container {
     width: 100%;
     position: relative;
@@ -586,7 +586,7 @@
 
   .divider-line {
     width: calc(100% - 11px); 
-    height: 2px !important; /* 항상 일정한 굵기 유지 */
+    height: 2px !important;
     min-height: 2px;
     max-height: 2px;
     background-color: #8c929d;
@@ -1943,7 +1943,7 @@
     }
   }
 
-  /* ================= 메시지 렌더링 (구분선 굵기 고정 및 드래그 적용) ================= */
+  /* ================= 메시지 렌더링 ================= */
   function buildMessageHtml(data, isDraft = false, index = null) {
     if (data.type === 'divider') {
       const dividerClickAttr = !isDraft ? `onclick="event.stopPropagation(); showEditIcon(${index})"` : '';
@@ -2008,7 +2008,6 @@
                   <svg viewBox="0 0 24 32">
                     ${isReceived ? `
                       <path d="M7 4H17V8H7V3Z" fill="#ffffff" />
-                      <path d="M4 9L12 15L20 9" fill="none" stroke="#EB6D79" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                       <path d="M4 9V27C4 27.5523 4.44772 28 5 28H19C19.5523 28 20 27.5523 20 27V9H4Z" fill="#ffffff" />
                     ` : `
                       <path d="M4 4H20C20.5523 4 21 4.44772 21 5V27C21 27.5523 20.5523 28 20 28H4C3.44772 28 3 27.5523 3 27V5C3 4.44772 3.44772 4 4 4Z" fill="#ffffff"/>

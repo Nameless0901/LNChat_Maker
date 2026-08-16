@@ -1353,6 +1353,9 @@
   let initialImageOffsetX = 0;
   let initialImageOffsetY = 0;
 
+  // 다운로드 순서 카운터 변수 추가
+  let downloadCounter = 1;
+
   function updateRoomTitle() {
     document.getElementById('roomTitle').innerText = document.getElementById('titleInput').value;
   }
@@ -1445,13 +1448,14 @@
     deleteAvatar('right');
 
     messages = [];
+    downloadCounter = 1; // 초기화 시 다운로드 카운터도 1로 리셋
     openTranscriptions = {};
     if (editingIndex !== null) cancelEditing();
     resetFormToCreateMode();
     renderAllMessages();
   }
 
-  /* ================= 이미지 다운로드 ================= */
+  /* ================= 이미지 다운로드 (순차적 번호 적용) ================= */
   function downloadPreviewImage(isFullLength = false) {
     const phoneElement = document.getElementById('phoneScreen');
     const chatArea = document.getElementById('chatArea');
@@ -1509,7 +1513,8 @@
       chatArea.style.overflowY = originalOverflow;
 
       const link = document.createElement('a');
-      link.download = `chat-screenshot-fhd-${Date.now()}.png`;
+      // 다운로드할 때마다 숫자가 1씩 증가하도록 순차적 번호 반영
+      link.download = `chat-screenshot-${downloadCounter++}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
       
@@ -1667,7 +1672,6 @@
     const maxH = cropStageEl.clientHeight;
 
     if (dragMode === 'move') {
-      // 크롭 박스 드래그 이동 (박스가 스테이지 영역을 벗어나지 않도록 제한)
       let newX = initialCropState.x + dx;
       let newY = initialCropState.y + dy;
 
@@ -1677,7 +1681,6 @@
       cropState.x = newX;
       cropState.y = newY;
     } else if (dragMode === 'pan-stage') {
-      // 배경 이미지 이동
       imageOffsetX = initialImageOffsetX + dx;
       imageOffsetY = initialImageOffsetY + dy;
       updateImageTransform();

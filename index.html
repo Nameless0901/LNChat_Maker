@@ -129,7 +129,6 @@
     box-shadow: 0 0 0 3px rgba(74, 139, 245, 0.12);
   }
 
-  /* 색상 선택기 일렬 정렬 영역 컨테이너 (상대 채팅, 내 채팅, 배경 기본색 순서) */
   .color-pickers-container {
     display: flex;
     gap: 10px;
@@ -262,7 +261,17 @@
     gap: 12px;
   }
 
-  /* 다운로드 버튼 2개를 가로로 일자로 나란히 정렬 */
+  .preview-notice {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 600;
+    background: #ffffff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+
   .download-buttons-container {
     width: 100%;
     display: flex;
@@ -378,7 +387,7 @@
   .diamonds-icon {
     display: flex;
     align-items: center;
-    gap: 6.5px;
+    gap: 5.5px;
     cursor: pointer;
   }
 
@@ -446,6 +455,7 @@
     gap: 11px;
     max-width: 91%;
     position: relative;
+    align-items: flex-start;
   }
 
   .msg-row.left { align-self: flex-start; }
@@ -567,6 +577,10 @@
     box-shadow: none;
   }
 
+  .msg-row.right .voice-pill {
+    background: var(--right-bubble-bg);
+  }
+
   .msg-row.left .voice-pill::before {
     content: '';
     position: absolute;
@@ -588,7 +602,17 @@
     height: 0;
     border-style: solid;
     border-width: 5px 0 5px 8px;
-    border-color: transparent transparent transparent #ffffff;
+    border-color: transparent transparent transparent var(--right-bubble-bg);
+  }
+
+  .msg-row.right .voice-pill .voice-wave-icon svg circle {
+    fill: #ffffff;
+  }
+  .msg-row.right .voice-pill .voice-wave-icon svg path {
+    stroke: #ffffff;
+  }
+  .msg-row.right .voice-pill .voice-sec {
+    color: #ffffff;
   }
 
   .voice-wave-icon {
@@ -640,14 +664,28 @@
     display: block;
   }
 
+  .msg-content-wrap.voice-content-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .msg-row.right .msg-content-wrap.voice-content-wrap {
+    align-items: flex-end;
+  }
+
   .transcribed-box {
     background: rgba(255, 255, 255, 0.96);
     border-radius: var(--bubble-radius);
     padding: 8px 12px;
     box-shadow: none;
-    margin-top: 3px;
+    margin-top: 4px;
     transform: scaleY(1.05);
     transform-origin: top left;
+  }
+
+  .msg-row.right .transcribed-box {
+    background: var(--right-bubble-bg);
   }
 
   .transcribed-text-content {
@@ -659,6 +697,10 @@
     text-align: left;
   }
 
+  .msg-row.right .transcribed-text-content {
+    color: #ffffff;
+  }
+
   .transcribed-status {
     margin-top: 4px;
     font-size: 9.5px;
@@ -667,6 +709,10 @@
     align-items: center;
     gap: 3.5px;
     font-weight: 500;
+  }
+
+  .msg-row.right .transcribed-status {
+    color: rgba(255, 255, 255, 0.85);
   }
 
   .check-circle-icon {
@@ -874,13 +920,19 @@
   }
 
   @media (max-width: 860px) {
+    body {
+      align-items: stretch;
+      padding: 16px 8px;
+    }
     .app-container {
       flex-direction: column-reverse;
       align-items: center;
+      gap: 24px;
     }
-    .preview-side, .controller-side {
+    .controller-side, .preview-side {
       width: 100%;
       max-width: 380px;
+      position: static;
     }
     .crop-stage img {
       max-width: 300px;
@@ -905,9 +957,7 @@
       <input type="text" id="titleInput" value="채팅방 이름" oninput="updateRoomTitle()">
     </div>
 
-    <!-- 색상 변경 UI를 일렬(가로)로 나란히 배치 (상대 채팅, 내 채팅, 배경 기본색 순서) -->
     <div class="color-pickers-container">
-      <!-- 상대 채팅 배경색 -->
       <div class="color-picker-column">
         <label>🎨 상대 채팅(좌)</label>
         <div class="color-picker-row">
@@ -916,7 +966,6 @@
         </div>
       </div>
 
-      <!-- 내 채팅 배경색 -->
       <div class="color-picker-column">
         <label>🎨 내 채팅(우)</label>
         <div class="color-picker-row">
@@ -925,7 +974,6 @@
         </div>
       </div>
 
-      <!-- 배경 기본색 -->
       <div class="color-picker-column">
         <label>🖼️ 배경 기본색</label>
         <div class="color-picker-row">
@@ -935,14 +983,12 @@
       </div>
     </div>
 
-    <!-- 배경 이미지 자르기 설정 -->
     <div class="card-box">
       <label>🖼️ 채팅 배경 이미지 업로드</label>
       <label class="file-btn" for="bgFileInput">배경 선택 및 자르기</label>
       <input type="file" id="bgFileInput" accept="image/*" onchange="openCropModal(event, 'bg')">
     </div>
 
-    <!-- 프로필 설정 -->
     <div class="control-row">
       <div class="card-box" style="flex:1;">
         <label>👤 상대방 프로필 (좌)</label>
@@ -957,7 +1003,6 @@
       </div>
     </div>
 
-    <!-- 2. 대화 작성 & 수정 섹션 -->
     <div class="section-title">
       <span id="formTitle">💬 2. 대화 메시지 작성</span>
       <span id="editBadge" style="display:none; font-size:12px; color:var(--accent-green); font-weight:700;">[수정 중]</span>
@@ -983,7 +1028,7 @@
 
       <div class="control-group" id="textGroup">
         <label>텍스트 내용 (작성 즉시 우측에 반영)</label>
-        <textarea id="msgTextInput" placeholder="작성하는 내용이 오른쪽에 바로 나타납니다..." oninput="handleInputChange()">내 채팅 예시입니다.</textarea>
+        <textarea id="msgTextInput" placeholder="작성하는 내용이 오른쪽에 바로 나타납니다..." oninput="handleInputChange()"></textarea>
       </div>
 
       <div id="voiceGroup" style="display: none;" class="control-group">
@@ -997,10 +1042,8 @@
         </div>
       </div>
 
-      <!-- 신규 추가 버튼 -->
       <button class="btn-primary" id="addBtn" onclick="confirmDraftMessage()">➕ 대화 목록에 추가</button>
 
-      <!-- 수정 완료/취소 버튼 세트 (수정 모드일 때만 노출) -->
       <div id="editBtnRow" style="display: none; gap: 8px;">
         <button class="btn-cancel-edit" onclick="cancelEditing()">취소</button>
         <button class="btn-save-edit" onclick="saveEditedMessage()">💾 수정 완료</button>
@@ -1010,9 +1053,10 @@
 
   <!-- ================= RIGHT: 스마트폰 미리보기 ================= -->
   <div class="preview-side">
+    <div class="preview-notice">💡 원하는 채팅을 누르면 수정 및 삭제할 수 있습니다.</div>
+
     <div class="phone-screen" id="phoneScreen">
       
-      <!-- 헤더 -->
       <div class="chat-header">
         <div class="header-left">
           <span class="back-btn-icon">
@@ -1052,7 +1096,6 @@
         <div id="liveDraftBox" style="display: contents;"></div>
       </div>
 
-      <!-- 하단 발송 창 -->
       <div class="chat-footer">
         <div class="fake-input"></div>
         <div class="fake-btn">발송</div>
@@ -1060,10 +1103,9 @@
 
     </div>
 
-    <!-- 미리보기 하단: 가로로 나란히 정렬된 다운로드 버튼 2개 -->
     <div class="download-buttons-container">
-      <button class="download-btn" onclick="downloadPreviewImage(false)">현재 화면 다운로드</button>
-      <button class="download-btn secondary-dl" onclick="downloadPreviewImage(true)">전체 메시지 길게 다운로드</button>
+      <button class="download-btn" onclick="downloadPreviewImage(false)">보이는 화면 그대로 다운로드</button>
+      <button class="download-btn secondary-dl" onclick="downloadPreviewImage(true)">채팅 길이에 맞춰 다운로드</button>
     </div>
   </div>
 
@@ -1182,7 +1224,7 @@
     renderAllMessages();
   }
 
-  /* ================= 이미지 다운로드 (현재 화면 vs 전체 메시지 길게) ================= */
+  /* ================= 이미지 다운로드 (FHD+ 고해상도 출력) ================= */
   function downloadPreviewImage(isFullLength = false) {
     const phoneElement = document.getElementById('phoneScreen');
     const chatArea = document.getElementById('chatArea');
@@ -1200,7 +1242,7 @@
     }
 
     html2canvas(phoneElement, {
-      scale: 2,
+      scale: 3,
       useCORS: true,
       backgroundColor: null,
       onclone: (clonedDoc) => {
@@ -1220,7 +1262,7 @@
       chatArea.style.overflowY = originalOverflow;
 
       const link = document.createElement('a');
-      link.download = `chat-screenshot-${Date.now()}.png`;
+      link.download = `chat-screenshot-fhd-${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
       
@@ -1432,7 +1474,6 @@
     }
 
     renderAllMessages();
-    if (editingIndex === null) syncLiveDraft();
     closeCropModal();
   }
 
@@ -1583,7 +1624,7 @@
     scrollChatBottom();
   }
 
-  /* ================= 말풍선 클릭 시 수정 아이콘 노출 ================= */
+  /* ================= 말풍선 클릭 시 수정 아이콘 노출 (1.5초 후 자동 소멸) ================= */
   function showEditIcon(idx) {
     document.querySelectorAll('.edit-icon-btn.visible').forEach(btn => {
       if (btn.id !== `editIcon-${idx}`) btn.classList.remove('visible');
@@ -1598,7 +1639,7 @@
     editIconTimers[idx] = setTimeout(() => {
       icon.classList.remove('visible');
       delete editIconTimers[idx];
-    }, 3000);
+    }, 1500);
   }
 
   function hideAllEditIcons() {

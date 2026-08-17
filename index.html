@@ -15,11 +15,12 @@
     --right-bubble-bg: #F69CB6;    /* 내 채팅 기본 색상 */
     --left-text-color: #4A4A4A;   /* 상대방 글씨 색상 */
     --right-text-color: #ffffff;  /* 내 채팅 글씨 색상 */
+    --missed-text-color: #DA5D5D; /* 부재중 전화 글씨 색상 */
     --text-main: #4A4A4A;
     --text-sub: #71788e;
     --accent-blue: #4a8bf5;
     --accent-green: #2ecc71;
-    --accent-red: #DA5D5D;        /* 상대 부재중 전화용 색상 */
+    --accent-red: #DA5D5D;        
     --lucky-red: #EB6D79;         /* 럭키머니 고유 색상 */
     --lucky-received-bg: #F4AEB8; /* 럭키머니 수령 완료 색상 */
     --convert-btn-bg: #ADCFFF;
@@ -32,6 +33,8 @@
     --phone-bg: #F7F7F7; /* 기본 바탕색 */
     --bubble-radius: 4px;
     --bubble-font-size: 13.5px;
+    --phone-width: 380px;        
+    --phone-height: 720px;       
   }
 
   * {
@@ -64,6 +67,52 @@
   /* ================= LEFT: 조작 패널 ================= */
   .controller-side {
     flex: 1.1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .menu-tabs-container {
+    display: flex;
+    gap: 8px;
+    background: #e2e6f0;
+    padding: 6px;
+    border-radius: 16px;
+  }
+
+  .menu-tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-sub);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: "Noto Sans KR", sans-serif;
+  }
+
+  .menu-tab-btn.active {
+    background: #ffffff;
+    color: var(--accent-blue);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .tab-content {
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .tab-content.active {
+    display: flex;
+  }
+
+  .control-block {
     background: var(--panel-bg);
     border: 1px solid var(--border-color);
     border-radius: 24px;
@@ -158,17 +207,18 @@
     flex: 1;
     height: 40px;
     border-radius: 8px;
-    border: 1px solid var(--border-color);
+    border: none;
     cursor: pointer;
     background: transparent;
     padding: 0;
+    overflow: hidden;
   }
   .color-trigger-btn::-webkit-color-swatch-wrapper {
     padding: 0;
   }
   .color-trigger-btn::-webkit-color-swatch {
     border: none;
-    border-radius: 7px;
+    border-radius: 8px;
   }
 
   .styled-select {
@@ -278,6 +328,74 @@
     opacity: 0;
     cursor: pointer;
   }
+
+  .custom-gallery-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 120px;
+    overflow-y: auto;
+    padding: 4px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    min-height: 50px;
+  }
+  .gallery-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.1s;
+  }
+  .gallery-thumb:hover { transform: scale(1.05); border-color: var(--accent-blue); }
+  .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  
+  .gallery-thumb-actions {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    display: flex;
+    gap: 2px;
+  }
+  .gallery-thumb-crop, .gallery-thumb-del {
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    font-size: 9px;
+    width: 15px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  .gallery-thumb-crop:hover { background: var(--accent-blue); }
+  .gallery-thumb-del:hover { background: #ff4757; }
+
+  .undo-redo-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .undo-btn, .redo-btn, .reset-chat-btn {
+    flex: 1;
+    background: #eaedf4;
+    color: #495057;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .undo-btn:hover:not(:disabled), .redo-btn:hover:not(:disabled), .reset-chat-btn:hover { background: #dce1ed; }
+  .undo-btn:disabled, .redo-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .reset-chat-btn { background: #ffebee; color: #d32f2f; border-color: #ffcdd2; }
+  .reset-chat-btn:hover { background: #ffcdd2; }
 
   .btn-primary {
     background: var(--accent-blue);
@@ -405,8 +523,8 @@
   }
 
   .phone-screen {
-    width: 380px;
-    height: 720px;
+    width: var(--phone-width);
+    height: var(--phone-height);
     background: var(--phone-bg);
     border-radius: 0px;
     box-shadow: none;
@@ -414,6 +532,7 @@
     flex-direction: column;
     overflow: hidden;
     position: relative;
+    transition: width 0.2s, height 0.2s;
   }
 
   /* 상단 헤더 컨테이너 */
@@ -470,7 +589,7 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scaleY(1.08);
     font-size: 15px;
     font-weight: 400;
     color: var(--text-main);
@@ -527,7 +646,7 @@
     background-color: var(--phone-bg);
     background-repeat: no-repeat;
     background-position: center top;
-    background-size: 380px 610px;
+    background-size: var(--phone-width) 610px;
     background-attachment: local;
   }
 
@@ -689,7 +808,7 @@
     padding: 7px 13px 9px 13px;
     border-radius: var(--bubble-radius);
     font-size: var(--bubble-font-size);
-    line-height: 1.4;
+    line-height: 1.45;
     word-break: break-word;
     box-shadow: none;
     letter-spacing: -0.5px;
@@ -700,6 +819,8 @@
     align-self: flex-start;
     max-width: 250px;
     font-family: "Noto Sans KR", sans-serif;
+    transform: scaleY(1.08);
+    transform-origin: top left;
   }
 
   .msg-row.left .bubble-text {
@@ -722,6 +843,7 @@
   .msg-row.right .bubble-text {
     background: var(--right-bubble-bg);
     color: var(--right-text-color);
+    transform-origin: top right;
   }
 
   .msg-row.right .bubble-text::before {
@@ -743,6 +865,7 @@
     width: 240px;
     border-radius: 6px;
     box-shadow: none;
+    cursor: pointer; 
   }
   .lucky-money-box {
     display: flex;
@@ -786,6 +909,8 @@
     letter-spacing: -0.5px;
     line-height: 1.2;
     font-family: "Noto Sans KR", sans-serif;
+    transform: scaleY(1.08);
+    transform-origin: top left;
   }
   .lucky-money-status {
     font-size: 11px;
@@ -793,6 +918,8 @@
     opacity: 0.9;
     letter-spacing: -0.4px;
     font-family: "Noto Sans KR", sans-serif;
+    transform: scaleY(1.08);
+    transform-origin: top left;
   }
 
   .lucky-money-bottom {
@@ -803,6 +930,8 @@
     font-weight: 400;
     letter-spacing: -0.5px;
     font-family: "Noto Sans KR", sans-serif;
+    transform: scaleY(1.08);
+    transform-origin: top left;
   }
 
   .msg-row.left .lucky-money-wrap::before {
@@ -854,12 +983,12 @@
   }
 
   .msg-row.left .call-bubble-wrap.missed { background: var(--left-bubble-bg); }
-  .msg-row.left .call-bubble-text.missed { color: var(--accent-red) !important; }
-  .msg-row.left .call-bubble-icon.missed path { fill: var(--accent-red) !important; }
+  .msg-row.left .call-bubble-text.missed { color: var(--missed-text-color) !important; }
+  .msg-row.left .call-bubble-icon.missed path { fill: var(--missed-text-color) !important; }
 
   .msg-row.right .call-bubble-wrap.missed { background: var(--right-bubble-bg); }
-  .msg-row.right .call-bubble-text.missed { color: var(--right-text-color) !important; }
-  .msg-row.right .call-bubble-icon.missed path { fill: var(--right-text-color) !important; }
+  .msg-row.right .call-bubble-text.missed { color: var(--missed-text-color) !important; }
+  .msg-row.right .call-bubble-icon.missed path { fill: var(--missed-text-color) !important; }
 
   .msg-row.left .call-bubble-wrap.complete { background: var(--left-bubble-bg); }
   .msg-row.left .call-bubble-text.complete { color: var(--left-text-color) !important; }
@@ -895,6 +1024,8 @@
     line-height: 1.4;
     font-family: "Noto Sans KR", sans-serif;
     white-space: nowrap;
+    transform: scaleY(1.08);
+    transform-origin: top left;
   }
 
   .msg-row.left .call-bubble-wrap::before {
@@ -922,8 +1053,8 @@
 
   /* 채팅창 사진 메시지 */
   .chat-photo-bubble {
-    max-width: 200px;
-    max-height: 250px;
+    width: var(--msg-img-w, 200px);
+    max-height: 350px;
     border-radius: 8px;
     overflow: hidden;
     display: block;
@@ -950,7 +1081,7 @@
   .msg-row.right .voice-pill .voice-wave-icon svg path { stroke: var(--right-text-color); }
   .msg-row.right .voice-pill .voice-sec { color: var(--right-text-color); }
   .voice-wave-icon { width: 19px; height: 19px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .voice-sec { font-size: 15.5px; font-weight: 400; letter-spacing: 0.2px; display: inline-block; font-family: "Noto Sans KR", sans-serif; }
+  .voice-sec { font-size: 15.5px; font-weight: 400; letter-spacing: 0.2px; display: inline-block; font-family: "Noto Sans KR", sans-serif; transform: scaleY(1.08); transform-origin: top left; }
   .voice-toggle-btn { width: 26px; height: 26px; border-radius: 50%; background: var(--convert-btn-bg); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; padding: 0; flex-shrink: 0; box-shadow: none; transition: transform 0.1s ease, filter 0.2s ease; }
   .voice-toggle-btn:hover { filter: brightness(0.96); }
   .voice-toggle-btn:active { transform: scale(0.94); }
@@ -959,9 +1090,9 @@
   .msg-row.right .msg-content-wrap.voice-content-wrap { align-items: flex-end; }
   .transcribed-box { background: var(--left-bubble-bg); border-radius: var(--bubble-radius); padding: 8px 12px; box-shadow: none; margin-top: 4px; }
   .msg-row.right .transcribed-box { background: var(--right-bubble-bg); }
-  .transcribed-text-content { font-size: var(--bubble-font-size); color: var(--left-text-color); line-height: 1.4; letter-spacing: -0.5px; word-break: break-word; text-align: left; font-family: "Noto Sans KR", sans-serif; font-weight: 400; }
+  .transcribed-text-content { font-size: var(--bubble-font-size); color: var(--left-text-color); line-height: 1.4; letter-spacing: -0.5px; word-break: break-word; text-align: left; font-family: "Noto Sans KR", sans-serif; font-weight: 400; transform: scaleY(1.08); transform-origin: top left; }
   .msg-row.right .transcribed-text-content { color: var(--right-text-color); }
-  .transcribed-status { margin-top: 4px; font-size: 9.5px; color: var(--left-text-color); opacity: 0.75; display: flex; align-items: center; gap: 3.5px; font-weight: 400; font-family: "Noto Sans KR", sans-serif; }
+  .transcribed-status { margin-top: 4px; font-size: 9.5px; color: var(--left-text-color); opacity: 0.75; display: flex; align-items: center; gap: 3.5px; font-weight: 400; font-family: "Noto Sans KR", sans-serif; transform: scaleY(1.08); transform-origin: top left; }
   .msg-row.right .transcribed-status { color: var(--right-text-color); opacity: 0.85; }
   .msg-row.left .check-circle-icon circle { fill: var(--left-text-color); opacity: 0.75; }
   .msg-row.right .check-circle-icon circle { fill: var(--right-text-color); opacity: 0.7; }
@@ -976,7 +1107,7 @@
     flex-direction: column; 
     align-items: center; 
     gap: 4px; 
-    z-index: 5; 
+    z-index: 10; 
   }
   .divider-container .msg-actions { right: 0; left: auto; }
   .msg-row.left .msg-actions { left: 100%; margin-left: 6px; }
@@ -1030,7 +1161,7 @@
 
   @media (max-width: 860px) {
     body { align-items: stretch; padding: 16px 8px; }
-    .app-container { flex-direction: column-reverse; align-items: center; gap: 24px; }
+    .app-container { flex-direction: column; align-items: center; gap: 24px; }
     .controller-side, .preview-side { width: 100%; max-width: 380px; position: static; }
     .crop-stage { width: 300px; height: 300px; }
   }
@@ -1042,186 +1173,265 @@
 
   <!-- ================= LEFT: 조작 패널 ================= -->
   <div class="controller-side">
-    <div class="section-title">
-      <span>⚙️ 1. 프로필 & 테마 설정</span>
-      <button class="btn-reset-small" onclick="resetAllChatSettings()" title="모든 설정을 처음 상태로 초기화합니다">전체 초기화</button>
+    
+    <!-- 상단 메뉴 탭 버튼 영역 -->
+    <div class="menu-tabs-container">
+      <button class="menu-tab-btn active" id="tabBtn1" onclick="switchTab(1)">⚙️ 프로필 & 테마 설정</button>
+      <button class="menu-tab-btn" id="tabBtn2" onclick="switchTab(2)">💬 대화 메시지 작성</button>
     </div>
 
-    <div class="control-group">
-      <label>방 이름 (상단 바 실시간 반영)</label>
-      <input type="text" id="titleInput" value="채팅방 이름" oninput="updateRoomTitle()">
-    </div>
-
-    <div class="color-pickers-container">
-      <div class="color-picker-column">
-        <label>🎨 상대 채팅(좌)</label>
-        <div class="control-group" style="gap: 4px;">
-          <div class="color-picker-row">
-            <input type="color" id="leftBubbleColorPicker" class="color-trigger-btn" value="#ffffff" oninput="updateBubbleColor('left', this.value)">
-            <button class="btn-reset-small" onclick="resetLeftBubbleColor()">초기화</button>
-          </div>
-          <select id="leftTextColorSelect" class="styled-select" onchange="updateLeftTextColor(this.value)">
-            <option value="#4A4A4A">글씨: 진한 회색</option>
-            <option value="#ffffff">글씨: 흰색</option>
-          </select>
+    <!-- TAB 1: 프로필 & 테마 설정 창 -->
+    <div class="tab-content active" id="tabContent1">
+      <div class="control-block">
+        <div class="section-title">
+          <span>⚙️ 프로필 & 테마 설정</span>
+          <button class="btn-reset-small" onclick="resetAllChatSettings()" title="모든 설정을 처음 상태로 초기화합니다">전체 초기화</button>
         </div>
-      </div>
 
-      <div class="color-picker-column">
-        <label>🎨 내 채팅(우)</label>
-        <div class="control-group" style="gap: 4px;">
-          <div class="color-picker-row">
-            <input type="color" id="myBubbleColorPicker" class="color-trigger-btn" value="#F69CB6" oninput="updateBubbleColor('right', this.value)">
-            <button class="btn-reset-small" onclick="resetMyBubbleColor()">초기화</button>
-          </div>
-          <select id="rightTextColorSelect" class="styled-select" onchange="updateRightTextColor(this.value)">
-            <option value="#ffffff">글씨: 흰색</option>
-            <option value="#4A4A4A">글씨: 진한 회색</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="color-picker-column">
-        <label>🖼️ 배경 기본색</label>
-        <div class="control-group" style="gap: 4px;">
-          <div class="color-picker-row" style="height: 40px; align-items: center;">
-            <input type="color" id="phoneBgColorPicker" class="color-trigger-btn" value="#F7F7F7" oninput="updatePhoneBgColor(this.value)" style="height: 40px;">
-            <button class="btn-reset-small" onclick="resetPhoneBgColor()">초기화</button>
-          </div>
-          <div style="height: 36px;"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card-box">
-      <label>🖼️ 채팅 배경 이미지 업로드 & 투명도</label>
-      <div class="file-btn-wrap">
-        <label class="file-btn" for="bgFileInput">배경 선택 및 자르기</label>
-        <button class="btn-del-small" onclick="deleteBgImage()" title="배경 사진 삭제">배경 삭제</button>
-      </div>
-      <input type="file" id="bgFileInput" accept="image/*" onchange="openCropModal(event, 'bg')">
-      
-      <div class="control-group" style="margin-top: 4px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <label style="margin: 0;">배경 투명도</label>
-          <span id="bgOpacityVal" style="font-size: 11.5px; font-weight: 700; color: var(--text-sub);">0%</span>
-        </div>
-        <input type="range" id="bgOpacityRange" min="0" max="1" step="0.05" value="0" oninput="updateBgOpacity(this.value)" style="width: 100%; cursor: pointer; accent-color: var(--accent-blue);">
-      </div>
-    </div>
-
-    <div class="control-row">
-      <div class="card-box" style="flex:1;">
-        <label>👤 상대방 프로필 (좌)</label>
-        <div class="file-btn-wrap">
-          <label class="file-btn" for="leftAvatarFileInput">사진 선택</label>
-          <button class="btn-del-small" onclick="deleteAvatar('left')" title="프로필 삭제">삭제</button>
-          <div class="avatar-preview-thumb" id="leftThumbWrap" title="클릭하여 단색 프로필 색상 변경">
-            <img id="leftThumbImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%239db2d8'/%3E%3C/svg%3E">
-            <input type="color" class="hidden-avatar-color-input" id="leftColorInput" value="#9db2d8" oninput="changeAvatarColor('left', this.value)">
-          </div>
-        </div>
-        <input type="file" id="leftAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'left')">
-      </div>
-
-      <div class="card-box" style="flex:1;">
-        <label>👤 내 프로필 (우)</label>
-        <div class="file-btn-wrap">
-          <label class="file-btn" for="rightAvatarFileInput">사진 선택</label>
-          <button class="btn-del-small" onclick="deleteAvatar('right')" title="프로필 삭제">삭제</button>
-          <div class="avatar-preview-thumb" id="rightThumbWrap" title="클릭하여 단색 프로필 색상 변경">
-            <img id="rightThumbImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23F69CB6'/%3E%3C/svg%3E">
-            <input type="color" class="hidden-avatar-color-input" id="rightColorInput" value="#F69CB6" oninput="changeAvatarColor('right', this.value)">
-          </div>
-        </div>
-        <input type="file" id="rightAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'right')">
-      </div>
-    </div>
-
-    <div class="section-title">
-      <span id="formTitle">💬 2. 대화 메시지 작성</span>
-      <span id="editBadge" style="display:none; font-size:12px; color:var(--accent-green); font-weight:700;">[수정 중]</span>
-    </div>
-
-    <div class="card-box" id="msgCardBox">
-      <div class="control-row">
         <div class="control-group">
-          <label>발신자</label>
-          <select id="senderSelect" onchange="handleInputChange()">
-            <option value="left" selected>상대방 (왼쪽)</option>
-            <option value="right">나 (오른쪽)</option>
-          </select>
+          <label>방 이름 (상단 바 실시간 반영)</label>
+          <input type="text" id="titleInput" value="채팅방 이름" oninput="updateRoomTitle(); saveThemeSettings();">
         </div>
-        <div class="control-group">
-          <label>메시지 형식</label>
-          <select id="typeSelect" onchange="handleTypeChange()">
-            <option value="text">일반 텍스트</option>
-            <option value="voice">음성 메시지</option>
-            <option value="photo">사진 메시지</option>
-            <option value="lucky">럭키머니 (봉투)</option>
-            <option value="luckyReceived">럭키머니 (수령 완료)</option>
-            <option value="missedCall">부재중 전화</option>
-            <option value="callComplete">통화 완료</option>
-          </select>
-        </div>
-      </div>
 
-      <div class="control-group" id="textGroup">
-        <label>텍스트 내용 (작성 즉시 우측에 반영)</label>
-        <textarea id="msgTextInput" placeholder="작성하는 내용이 오른쪽에 바로 나타납니다..." oninput="handleInputChange()"></textarea>
-      </div>
+        <div class="color-pickers-container">
+          <div class="color-picker-column">
+            <label>🎨 상대 채팅(좌)</label>
+            <div class="control-group" style="gap: 4px;">
+              <div class="color-picker-row">
+                <input type="color" id="leftBubbleColorPicker" class="color-trigger-btn" value="#ffffff" oninput="updateBubbleColor('left', this.value); saveThemeSettings();">
+                <button class="btn-reset-small" onclick="resetLeftBubbleColor()">초기화</button>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <select id="leftTextColorSelect" class="styled-select" onchange="handleTextColorPreset('left', this.value)">
+                  <option value="#4A4A4A">글씨: 진한 회색</option>
+                  <option value="#ffffff">글씨: 흰색</option>
+                  <option value="custom">자유 컬러 지정...</option>
+                </select>
+                <input type="color" id="leftCustomColorPicker" value="#4A4A4A" style="width: 36px; height: 36px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateTextColorCustom('left', this.value)" title="자유 글씨 색상 선택">
+              </div>
+            </div>
+          </div>
 
-      <div id="voiceGroup" style="display: none;" class="control-group">
-        <div class="control-group">
-          <label>음성 메시지 시간 (초)</label>
-          <input type="text" id="voiceDurationInput" value="2.5" oninput="handleInputChange()">
-        </div>
-        <div class="control-group" style="margin-top: 6px;">
-          <label>음성 변환 텍스트 (아이콘 누르면 열림)</label>
-          <textarea id="voiceTextInput" placeholder="글로 변환할 내용을 입력하세요..." oninput="handleInputChange()"></textarea>
-        </div>
-      </div>
+          <div class="color-picker-column">
+            <label>🎨 내 채팅(우)</label>
+            <div class="control-group" style="gap: 4px;">
+              <div class="color-picker-row">
+                <input type="color" id="myBubbleColorPicker" class="color-trigger-btn" value="#F69CB6" oninput="updateBubbleColor('right', this.value); saveThemeSettings();">
+                <button class="btn-reset-small" onclick="resetMyBubbleColor()">초기화</button>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <select id="rightTextColorSelect" class="styled-select" onchange="handleTextColorPreset('right', this.value)">
+                  <option value="#ffffff">글씨: 흰색</option>
+                  <option value="#4A4A4A">글씨: 진한 회색</option>
+                  <option value="custom">자유 컬러 지정...</option>
+                </select>
+                <input type="color" id="rightCustomColorPicker" value="#ffffff" style="width: 36px; height: 36px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateTextColorCustom('right', this.value)" title="자유 글씨 색상 선택">
+              </div>
+            </div>
+          </div>
 
-      <div id="photoGroup" style="display: none;" class="control-group">
-        <label>채팅 사진 업로드 및 자유 자르기</label>
-        <div class="file-btn-wrap">
-          <label class="file-btn" for="msgPhotoFileInput">사진 선택 및 자르기</label>
-          <div class="avatar-preview-thumb" id="msgPhotoThumbWrap" style="display:none; cursor:default;">
-            <img id="msgPhotoThumbImg" src="">
+          <div class="color-picker-column">
+            <label>🖼️ 배경 기본색</label>
+            <div class="control-group" style="gap: 4px;">
+              <div class="color-picker-row" style="height: 40px; align-items: center;">
+                <input type="color" id="phoneBgColorPicker" class="color-trigger-btn" value="#F7F7F7" oninput="updatePhoneBgColor(this.value); saveThemeSettings();" style="height: 40px;">
+                <button class="btn-reset-small" onclick="resetPhoneBgColor()">초기화</button>
+              </div>
+              <div style="height: 36px;"></div>
+            </div>
           </div>
         </div>
-        <input type="file" id="msgPhotoFileInput" accept="image/*" onchange="openCropModal(event, 'chatPhoto')">
-      </div>
 
-      <div id="luckyGroup" style="display: none;" class="control-group">
-        <div class="control-group">
-          <label>상단 타이틀 (예: 럭키머니)</label>
-          <input type="text" id="luckyTitleInput" value="럭키머니" oninput="handleInputChange()">
+        <div class="card-box">
+          <label>🖼️ 채팅 배경 이미지 업로드 & 투명도</label>
+          <div class="file-btn-wrap">
+            <label class="file-btn" for="bgFileInput">배경 선택 및 자르기</label>
+            <button class="btn-del-small" onclick="deleteBgImage()" title="배경 사진 삭제">배경 삭제</button>
+          </div>
+          <input type="file" id="bgFileInput" accept="image/*" onchange="openCropModal(event, 'bg')">
+          
+          <div class="control-group" style="margin-top: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label style="margin: 0;">배경 투명도</label>
+              <span id="bgOpacityVal" style="font-size: 11.5px; font-weight: 700; color: var(--text-sub);">0%</span>
+            </div>
+            <input type="range" id="bgOpacityRange" min="0" max="1" step="0.05" value="0" oninput="updateBgOpacity(this.value); saveThemeSettings();" style="width: 100%; cursor: pointer; accent-color: var(--accent-blue);">
+          </div>
         </div>
-        <div class="control-group" style="margin-top: 6px;">
-          <label>하단 설명 (예: 핸드폰 럭키머니)</label>
-          <input type="text" id="luckyDescInput" value="핸드폰 럭키머니" oninput="handleInputChange()">
+
+        <div class="control-row">
+          <div class="card-box" style="flex:1;">
+            <label>👤 상대방 프로필 (좌)</label>
+            <div class="file-btn-wrap">
+              <label class="file-btn" for="leftAvatarFileInput">사진 선택</label>
+              <button class="btn-del-small" onclick="deleteAvatar('left')" title="프로필 삭제">삭제</button>
+              <div class="avatar-preview-thumb" id="leftThumbWrap" title="클릭하여 단색 프로필 색상 변경">
+                <img id="leftThumbImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%239db2d8'/%3E%3C/svg%3E">
+                <input type="color" class="hidden-avatar-color-input" id="leftColorInput" value="#9db2d8" oninput="changeAvatarColor('left', this.value)">
+              </div>
+            </div>
+            <input type="file" id="leftAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'left')">
+          </div>
+
+          <div class="card-box" style="flex:1;">
+            <label>👤 내 프로필 (우)</label>
+            <div class="file-btn-wrap">
+              <label class="file-btn" for="rightAvatarFileInput">사진 선택</label>
+              <button class="btn-del-small" onclick="deleteAvatar('right')" title="프로필 삭제">삭제</button>
+              <div class="avatar-preview-thumb" id="rightThumbWrap" title="클릭하여 단색 프로필 색상 변경">
+                <img id="rightThumbImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23F69CB6'/%3E%3C/svg%3E">
+                <input type="color" class="hidden-avatar-color-input" id="rightColorInput" value="#F69CB6" oninput="changeAvatarColor('right', this.value)">
+              </div>
+            </div>
+            <input type="file" id="rightAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'right')">
+          </div>
         </div>
-      </div>
 
-      <div id="missedCallGroup" style="display: none;" class="control-group">
-        <label>부재중 전화 문구</label>
-        <input type="text" id="missedCallTextInput" value="부재중 전화" oninput="handleInputChange()">
-      </div>
+        <!-- 테마 프리셋 관리 박스 -->
+        <div class="card-box" style="background: #f0f4ff; border-color: #cbd8fc;">
+          <label style="color: var(--accent-blue);">📂 테마 프리셋 관리</label>
+          <div class="control-row">
+            <input type="text" id="presetNameInput" placeholder="저장할 테마 이름 입력..." style="flex: 2;">
+            <button class="btn-primary" onclick="saveThemePreset()" style="flex: 1; padding: 10px; font-size: 12.5px;">💾 현재 테마 저장</button>
+          </div>
+          <div class="control-row" style="margin-top: 4px;">
+            <select id="presetSelect" class="styled-select" style="height: 38px; font-size: 12.5px; flex: 2;" onchange="loadThemePreset(this.value)">
+              <option value="">-- 저장된 테마 선택하기 --</option>
+            </select>
+            <button class="btn-del-small" onclick="deleteCurrentPreset()" style="flex: 1; height: 38px;">🗑️ 삭제</button>
+          </div>
+        </div>
 
-      <div id="callCompleteGroup" style="display: none;" class="control-group">
-        <label>통화 완료 문구</label>
-        <input type="text" id="callCompleteTextInput" value="통화 종료" oninput="handleInputChange()">
-      </div>
-
-      <button class="btn-primary" id="addBtn" onclick="confirmDraftMessage()">➕ 대화 목록에 추가</button>
-      <button class="btn-divider-add" id="dividerAddBtn" onclick="addDividerMessage()">➖ 대화 목록에 구분선 추가하기</button>
-
-      <div id="editBtnRow" style="display: none; gap: 8px;">
-        <button class="btn-cancel-edit" onclick="cancelEditing()">취소</button>
-        <button class="btn-save-edit" onclick="saveEditedMessage()">💾 수정 완료</button>
       </div>
     </div>
+
+    <!-- TAB 2: 대화 메시지 작성 창 & 이미지 보관소 -->
+    <div class="tab-content" id="tabContent2">
+      <div class="control-block">
+        <div class="section-title">
+          <span id="formTitle">💬 대화 메시지 작성</span>
+          <span id="editBadge" style="display:none; font-size:12px; color:var(--accent-green); font-weight:700;">[수정 중]</span>
+        </div>
+
+        <div class="undo-redo-container">
+          <button class="undo-btn" id="undoBtn" onclick="undoAction()" disabled>⬅️ 되돌리기</button>
+          <button class="redo-btn" id="redoBtn" onclick="redoAction()" disabled>➡️ 다시 실행</button>
+          <button class="reset-chat-btn" onclick="resetOnlyChatMessages()">🗑️ 채팅만 초기화</button>
+        </div>
+
+        <div class="card-box">
+          <label>📁 이미지 보관소 (이미지의 ✂️ 버튼을 누르면 자를 수 있습니다)</label>
+          <div class="file-btn-wrap">
+            <label class="file-btn" for="customGalleryFileInput">이미지 등록하기</label>
+            <button class="btn-reset-small" onclick="clearCustomGallery()" title="보관소 비우기">전체 비우기</button>
+          </div>
+          <input type="file" id="customGalleryFileInput" accept="image/*" multiple onchange="addCustomImagesToGallery(event)">
+          <div class="custom-gallery-box" id="customGalleryBox">
+            <span style="font-size:11.5px; color:#aaa; align-self:center; width:100%; text-align:center;" id="galleryEmptyText">등록된 이미지가 없습니다.</span>
+          </div>
+        </div>
+
+        <div class="card-box" id="msgCardBox" style="background:#ffffff; border:none; padding:0;">
+          <div class="control-row">
+            <div class="control-group">
+              <label>발신자</label>
+              <select id="senderSelect" onchange="handleInputChange()">
+                <option value="left" selected>상대방 (왼쪽)</option>
+                <option value="right">나 (오른쪽)</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label>메시지 형식</label>
+              <select id="typeSelect" onchange="handleTypeChange()">
+                <option value="text">일반 텍스트</option>
+                <option value="voice">음성 메시지</option>
+                <option value="photo">사진 메시지</option>
+                <option value="lucky">럭키머니 (봉투)</option>
+                <option value="luckyReceived">럭키머니 (수령 완료)</option>
+                <option value="missedCall">부재중 전화</option>
+                <option value="callComplete">통화 종료</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="control-group" id="textGroup">
+            <label>텍스트 내용 (작성 즉시 우측에 반영)</label>
+            <textarea id="msgTextInput" placeholder="작성하는 내용이 오른쪽에 바로 나타납니다..." oninput="handleInputChange()"></textarea>
+          </div>
+
+          <div id="voiceGroup" style="display: none;" class="control-group">
+            <div class="control-group">
+              <label>음성 메시지 시간 (초)</label>
+              <input type="text" id="voiceDurationInput" value="2.50" oninput="handleInputChange()">
+            </div>
+            <div class="control-group" style="margin-top: 6px;">
+              <label>음성 변환 텍스트 (입력 시 1자당 0.15초 자동계산)</label>
+              <textarea id="voiceTextInput" placeholder="글로 변환할 내용을 입력하세요..." oninput="handleVoiceTextInput(this.value)"></textarea>
+            </div>
+          </div>
+
+          <div id="photoGroup" style="display: none;" class="control-group">
+            <label>채팅 사진 업로드 및 보관함에서 선택</label>
+            
+            <div class="control-group" style="margin-bottom: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label style="color:var(--accent-blue); margin:0;">해당 사진 가로 크기</label>
+                <span id="chatImgWidthVal" style="font-size: 11.5px; font-weight: 700; color: var(--text-sub);">200px</span>
+              </div>
+              <input type="range" id="chatImgWidthSlider" min="80" max="320" step="5" value="200" oninput="updateCurrentPhotoWidth(this.value)" style="width: 100%; cursor: pointer; accent-color: var(--accent-blue);">
+            </div>
+
+            <div class="file-btn-wrap">
+              <label class="file-btn" for="msgPhotoFileInput">새 사진 업로드</label>
+              <div class="avatar-preview-thumb" id="msgPhotoThumbWrap" style="display:none; cursor:default;">
+                <img id="msgPhotoThumbImg" src="">
+              </div>
+            </div>
+            <input type="file" id="msgPhotoFileInput" accept="image/*" onchange="openCropModal(event, 'chatPhoto')">
+            <div style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">💡 위 '이미지 보관소'에 등록된 이미지를 클릭해도 사진 메시지로 바로 추가됩니다!</div>
+          </div>
+
+          <div id="luckyGroup" style="display: none;" class="control-group">
+            <div class="control-group">
+              <label>상단 타이틀 (예: 럭키머니)</label>
+              <input type="text" id="luckyTitleInput" value="럭키머니" oninput="handleInputChange()">
+            </div>
+            <div class="control-group" style="margin-top: 6px;">
+              <label>하단 설명 (예: 핸드폰 럭키머니)</label>
+              <input type="text" id="luckyDescInput" value="핸드폰 럭키머니" oninput="handleInputChange()">
+            </div>
+          </div>
+
+          <div id="missedCallGroup" style="display: none;" class="control-group" style="gap: 10px;">
+            <div class="control-group">
+              <label>부재중 전화 문구</label>
+              <input type="text" id="missedCallTextInput" value="부재중 전화" oninput="handleInputChange()">
+            </div>
+            <div class="control-group" style="margin-top: 6px;">
+              <label>부재중 전화 전용 글씨 색상</label>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="color" id="missedColorPicker" value="#DA5D5D" style="width: 44px; height: 38px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; padding: 0; background: transparent;" oninput="handleInputChange()">
+                <span style="font-size: 11.5px; color: var(--text-sub);">선택한 색상으로 독립 적용됩니다.</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="callCompleteGroup" style="display: none;" class="control-group">
+            <label>통화 완료 문구</label>
+            <input type="text" id="callCompleteTextInput" value="통화 종료" oninput="handleInputChange()">
+          </div>
+
+          <button class="btn-primary" id="addBtn" onclick="confirmDraftMessage()" style="margin-top: 10px;">➕ 대화 목록에 추가</button>
+          <button class="btn-divider-add" id="dividerAddBtn" onclick="addDividerMessage()" style="margin-top: 6px;">➖ 대화 목록에 구분선 추가하기</button>
+
+          <div id="editBtnRow" style="display: none; gap: 8px; margin-top: 10px;">
+            <button class="btn-cancel-edit" onclick="cancelEditing()">취소</button>
+            <button class="btn-save-edit" onclick="saveEditedMessage()">💾 수정 완료</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ================= RIGHT: 스마트폰 미리보기 ================= -->
@@ -1333,6 +1543,7 @@
   let rightAvatarUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23F69CB6'/%3E%3C/svg%3E";
   let bgUrl = '';
   let draftChatPhotoUrl = '';
+  let draftPhotoWidth = '200px';
 
   let messages = [];
   let editingIndex = null;
@@ -1349,14 +1560,395 @@
   let imageOffsetX = 0;
   let imageOffsetY = 0;
 
-  let dragMode = null;
-  let dragStartX = 0;
-  let dragStartY = 0;
-  let initialCropState = {};
-  let initialImageOffsetX = 0;
-  let initialImageOffsetY = 0;
-
   let draggedIndex = null;
+  let customGallery = [];
+  let themePresets = {};
+
+  let editingGalleryIndex = null;
+
+  let historyStack = [];
+  let redoStack = [];
+
+  function pushHistory() {
+    historyStack.push(JSON.stringify(messages));
+    redoStack = [];
+    updateUndoRedoButtons();
+  }
+
+  function undoAction() {
+    if (historyStack.length === 0) return;
+    redoStack.push(JSON.stringify(messages));
+    const previousState = historyStack.pop();
+    messages = JSON.parse(previousState);
+    renderAllMessages();
+    updateUndoRedoButtons();
+  }
+
+  function redoAction() {
+    if (redoStack.length === 0) return;
+    historyStack.push(JSON.stringify(messages));
+    const nextState = redoStack.pop();
+    messages = JSON.parse(nextState);
+    renderAllMessages();
+    updateUndoRedoButtons();
+  }
+
+  function updateUndoRedoButtons() {
+    document.getElementById('undoBtn').disabled = historyStack.length === 0;
+    document.getElementById('redoBtn').disabled = redoStack.length === 0;
+  }
+
+  function handleVoiceTextInput(text) {
+    const charCountWithoutSpaces = text.replace(/\s+/g, '').length;
+    const calculatedDuration = (charCountWithoutSpaces * 0.15).toFixed(2);
+    
+    if (charCountWithoutSpaces > 0) {
+      document.getElementById('voiceDurationInput').value = calculatedDuration;
+    }
+    handleInputChange();
+  }
+
+  /* ================= 테마 프리셋 저장 및 불러오기 관리 ================= */
+  function saveThemePreset() {
+    const nameInput = document.getElementById('presetNameInput');
+    const presetName = nameInput.value.trim();
+    if (!presetName) {
+      alert('저장할 테마 이름을 입력해주세요.');
+      return;
+    }
+
+    const currentSettings = {
+      title: document.getElementById('titleInput').value,
+      leftBubbleColor: document.getElementById('leftBubbleColorPicker').value,
+      leftTextColorSelect: document.getElementById('leftTextColorSelect').value,
+      leftCustomColor: document.getElementById('leftCustomColorPicker').value,
+      myBubbleColor: document.getElementById('myBubbleColorPicker').value,
+      rightTextColorSelect: document.getElementById('rightTextColorSelect').value,
+      rightCustomColor: document.getElementById('rightCustomColorPicker').value,
+      phoneBgColor: document.getElementById('phoneBgColorPicker').value,
+      bgOpacity: document.getElementById('bgOpacityRange').value,
+      bgUrl: bgUrl,
+      leftAvatarUrl: leftAvatarUrl,
+      rightAvatarUrl: rightAvatarUrl,
+      leftColor: document.getElementById('leftColorInput').value,
+      rightColor: document.getElementById('rightColorInput').value
+    };
+
+    themePresets[presetName] = currentSettings;
+    localStorage.setItem('chatMakerThemePresets', JSON.stringify(themePresets));
+    localStorage.setItem('chatMakerThemeSettings', JSON.stringify(currentSettings));
+
+    updatePresetSelectOptions(presetName);
+    nameInput.value = '';
+    alert(`"${presetName}" 테마가 성공적으로 저장되었습니다!`);
+  }
+
+  function loadThemePreset(presetName) {
+    if (!presetName || !themePresets[presetName]) return;
+    applyThemeSettings(themePresets[presetName]);
+    localStorage.setItem('chatMakerThemeSettings', JSON.stringify(themePresets[presetName]));
+  }
+
+  function deleteCurrentPreset() {
+    const select = document.getElementById('presetSelect');
+    const presetName = select.value;
+    if (!presetName) {
+      alert('삭제할 테마를 선택해주세요.');
+      return;
+    }
+    if (confirm(`"${presetName}" 테마를 삭제하시겠습니까?`)) {
+      delete themePresets[presetName];
+      localStorage.setItem('chatMakerThemePresets', JSON.stringify(themePresets));
+      updatePresetSelectOptions('');
+    }
+  }
+
+  function updatePresetSelectOptions(selectedName = '') {
+    const select = document.getElementById('presetSelect');
+    let html = `<option value="">-- 저장된 테마 선택하기 --</option>`;
+    Object.keys(themePresets).forEach(name => {
+      const isSelected = name === selectedName ? 'selected' : '';
+      html += `<option value="${name}" ${isSelected}>${name}</option>`;
+    });
+    select.innerHTML = html;
+  }
+
+  function applyThemeSettings(s) {
+    if (s.title !== undefined) {
+      document.getElementById('titleInput').value = s.title;
+      updateRoomTitle();
+    }
+    if (s.leftBubbleColor) {
+      document.getElementById('leftBubbleColorPicker').value = s.leftBubbleColor;
+      updateBubbleColor('left', s.leftBubbleColor);
+    }
+    if (s.leftTextColorSelect) {
+      document.getElementById('leftTextColorSelect').value = s.leftTextColorSelect;
+      if (s.leftTextColorSelect === 'custom' && s.leftCustomColor) {
+        document.getElementById('leftCustomColorPicker').style.display = 'block';
+        document.getElementById('leftCustomColorPicker').value = s.leftCustomColor;
+        updateLeftTextColor(s.leftCustomColor);
+      } else {
+        document.getElementById('leftCustomColorPicker').style.display = 'none';
+        updateLeftTextColor(s.leftTextColorSelect);
+      }
+    }
+    if (s.myBubbleColor) {
+      document.getElementById('myBubbleColorPicker').value = s.myBubbleColor;
+      updateBubbleColor('right', s.myBubbleColor);
+    }
+    if (s.rightTextColorSelect) {
+      document.getElementById('rightTextColorSelect').value = s.rightTextColorSelect;
+      if (s.rightTextColorSelect === 'custom' && s.rightCustomColor) {
+        document.getElementById('rightCustomColorPicker').style.display = 'block';
+        document.getElementById('rightCustomColorPicker').value = s.rightCustomColor;
+        updateRightTextColor(s.rightCustomColor);
+      } else {
+        document.getElementById('rightCustomColorPicker').style.display = 'none';
+        updateRightTextColor(s.rightTextColorSelect);
+      }
+    }
+    if (s.phoneBgColor) {
+      document.getElementById('phoneBgColorPicker').value = s.phoneBgColor;
+      updatePhoneBgColor(s.phoneBgColor);
+    }
+    if (s.bgOpacity !== undefined) {
+      document.getElementById('bgOpacityRange').value = s.bgOpacity;
+      updateBgOpacity(s.bgOpacity);
+    }
+    if (s.bgUrl !== undefined) {
+      bgUrl = s.bgUrl;
+      const chatArea = document.getElementById('chatArea');
+      if (bgUrl) {
+        chatArea.style.backgroundImage = `url('${bgUrl}')`;
+        chatArea.style.backgroundSize = '380px 610px';
+        chatArea.style.backgroundPosition = 'center top';
+      } else {
+        chatArea.style.backgroundImage = 'none';
+      }
+    }
+    if (s.leftAvatarUrl) {
+      leftAvatarUrl = s.leftAvatarUrl;
+      document.getElementById('leftThumbImg').src = leftAvatarUrl;
+    }
+    if (s.rightAvatarUrl) {
+      rightAvatarUrl = s.rightAvatarUrl;
+      document.getElementById('rightThumbImg').src = rightAvatarUrl;
+    }
+    if (s.leftColor) document.getElementById('leftColorInput').value = s.leftColor;
+    if (s.rightColor) document.getElementById('rightColorInput').value = s.rightColor;
+  }
+
+  function saveThemeSettings() {
+    const currentSettings = {
+      title: document.getElementById('titleInput').value,
+      leftBubbleColor: document.getElementById('leftBubbleColorPicker').value,
+      leftTextColorSelect: document.getElementById('leftTextColorSelect').value,
+      leftCustomColor: document.getElementById('leftCustomColorPicker').value,
+      myBubbleColor: document.getElementById('myBubbleColorPicker').value,
+      rightTextColorSelect: document.getElementById('rightTextColorSelect').value,
+      rightCustomColor: document.getElementById('rightCustomColorPicker').value,
+      phoneBgColor: document.getElementById('phoneBgColorPicker').value,
+      bgOpacity: document.getElementById('bgOpacityRange').value,
+      bgUrl: bgUrl,
+      leftAvatarUrl: leftAvatarUrl,
+      rightAvatarUrl: rightAvatarUrl,
+      leftColor: document.getElementById('leftColorInput').value,
+      rightColor: document.getElementById('rightColorInput').value
+    };
+    localStorage.setItem('chatMakerThemeSettings', JSON.stringify(currentSettings));
+  }
+
+  function loadThemeSettings() {
+    const presetsSaved = localStorage.getItem('chatMakerThemePresets');
+    if (presetsSaved) {
+      try {
+        themePresets = JSON.parse(presetsSaved);
+        updatePresetSelectOptions();
+      } catch(e) {
+        themePresets = {};
+      }
+    }
+
+    const saved = localStorage.getItem('chatMakerThemeSettings');
+    if (!saved) return;
+    try {
+      const s = JSON.parse(saved);
+      applyThemeSettings(s);
+    } catch(e) {
+      console.error('테마 설정 로드 오류:', e);
+    }
+  }
+
+  function handleTextColorPreset(side, val) {
+    const customPicker = document.getElementById(`${side === 'left' ? 'left' : 'right'}CustomColorPicker`);
+    if (val === 'custom') {
+      customPicker.style.display = 'block';
+      if (side === 'left') updateLeftTextColor(customPicker.value);
+      else updateRightTextColor(customPicker.value);
+    } else {
+      customPicker.style.display = 'none';
+      if (side === 'left') updateLeftTextColor(val);
+      else updateRightTextColor(val);
+    }
+    saveThemeSettings();
+  }
+
+  function updateTextColorCustom(side, color) {
+    if (side === 'left') updateLeftTextColor(color);
+    else updateRightTextColor(color);
+    saveThemeSettings();
+  }
+
+  function switchTab(tabNum) {
+    const btn1 = document.getElementById('tabBtn1');
+    const btn2 = document.getElementById('tabBtn2');
+    const content1 = document.getElementById('tabContent1');
+    const content2 = document.getElementById('tabContent2');
+
+    if (tabNum === 1) {
+      btn1.classList.add('active');
+      btn2.classList.remove('active');
+      content1.classList.add('active');
+      content2.classList.remove('active');
+    } else {
+      btn2.classList.add('active');
+      btn1.classList.remove('active');
+      content2.classList.add('active');
+      content1.classList.remove('active');
+    }
+  }
+
+  function updateCurrentPhotoWidth(val) {
+    draftPhotoWidth = `${val}px`;
+    document.getElementById('chatImgWidthVal').innerText = `${val}px`;
+    if (editingIndex !== null) {
+      messages[editingIndex].photoWidth = draftPhotoWidth;
+      renderAllMessages();
+    } else {
+      syncLiveDraft();
+    }
+  }
+
+  function loadCustomGallery() {
+    const saved = localStorage.getItem('chatMakerCustomGallery');
+    if (saved) {
+      try {
+        customGallery = JSON.parse(saved);
+      } catch(e) {
+        customGallery = [];
+      }
+    }
+    renderCustomGallery();
+  }
+
+  function saveCustomGallery() {
+    localStorage.setItem('chatMakerCustomGallery', JSON.stringify(customGallery));
+    renderCustomGallery();
+  }
+
+  /* 🌟 [수정 완료] 자르기 없이 원본 이미지 곧바로 보관소에 등록 */
+  function addCustomImagesToGallery(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    let loadedCount = 0;
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        customGallery.push(e.target.result);
+        loadedCount++;
+        if (loadedCount === files.length) {
+          saveCustomGallery();
+          event.target.value = ''; // 초기화하여 같은 파일 재선택 가능하게 함
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /* 🌟 [추가] 보관소 썸네일 속 [자르기] 버튼 클릭 시 모달 오픈 */
+  function openGalleryCropModal(index, event) {
+    event.stopPropagation();
+    editingGalleryIndex = index;
+    currentTarget = 'galleryEdit';
+
+    const imageUrl = customGallery[index];
+    rawImageObj = new Image();
+    rawImageObj.onload = () => {
+      const stageImg = document.getElementById('stageImg');
+      const modalTitle = document.getElementById('cropModalTitle');
+
+      stageImg.src = imageUrl;
+      imageScale = 1;
+      imageOffsetX = 0;
+      imageOffsetY = 0;
+      updateImageTransform();
+
+      targetAspectRatio = 0; // 자유 비율
+      modalTitle.innerText = `이미지 보관소 자르기`;
+      document.getElementById('cropModal').style.display = 'flex';
+
+      setTimeout(() => {
+        initCropBox();
+      }, 50);
+    };
+    rawImageObj.src = imageUrl;
+  }
+
+  function removeCustomGalleryItem(index, event) {
+    event.stopPropagation();
+    if (confirm('해당 이미지를 보관소에서 삭제하시겠습니까?')) {
+      customGallery.splice(index, 1);
+      saveCustomGallery();
+    }
+  }
+
+  function clearCustomGallery() {
+    if (confirm('보관소에 저장된 모든 이미지를 삭제하시겠습니까?')) {
+      customGallery = [];
+      saveCustomGallery();
+    }
+  }
+
+  function selectGalleryImage(url) {
+    draftChatPhotoUrl = url;
+    draftPhotoWidth = '200px';
+    document.getElementById('chatImgWidthSlider').value = 200;
+    document.getElementById('chatImgWidthVal').innerText = '200px';
+
+    const thumbWrap = document.getElementById('msgPhotoThumbWrap');
+    const thumbImg = document.getElementById('msgPhotoThumbImg');
+    thumbWrap.style.display = 'block';
+    thumbImg.src = url;
+
+    document.getElementById('typeSelect').value = 'photo';
+    updateTypeGroupsVisibility('photo');
+
+    if (editingIndex !== null) {
+      handleInputChange();
+    } else {
+      syncLiveDraft();
+    }
+  }
+
+  function renderCustomGallery() {
+    const box = document.getElementById('customGalleryBox');
+    if (!customGallery || customGallery.length === 0) {
+      box.innerHTML = `<span style="font-size:11.5px; color:#aaa; align-self:center; width:100%; text-align:center;" id="galleryEmptyText">등록된 이미지가 없습니다.</span>`;
+      return;
+    }
+
+    box.innerHTML = customGallery.map((url, i) => `
+      <div class="gallery-thumb" onclick="selectGalleryImage('${url}')" title="클릭하여 사진 메시지로 사용">
+        <img src="${url}" alt="gallery img">
+        <div class="gallery-thumb-actions">
+          <div class="gallery-thumb-crop" onclick="openGalleryCropModal(${i}, event)" title="자르기">✂️</div>
+          <div class="gallery-thumb-del" onclick="removeCustomGalleryItem(${i}, event)" title="삭제">✕</div>
+        </div>
+      </div>
+    `).join('');
+  }
 
   function updateRoomTitle() {
     document.getElementById('roomTitle').innerText = document.getElementById('titleInput').value;
@@ -1368,6 +1960,7 @@
     chatArea.style.backgroundImage = 'none';
     document.getElementById('bgOpacityRange').value = 0;
     updateBgOpacity(0);
+    saveThemeSettings();
   }
 
   function changeAvatarColor(side, color) {
@@ -1383,6 +1976,7 @@
     }
     renderAllMessages();
     syncLiveDraft();
+    saveThemeSettings();
   }
 
   function deleteAvatar(side) {
@@ -1397,6 +1991,7 @@
     }
     renderAllMessages();
     syncLiveDraft();
+    saveThemeSettings();
   }
 
   function updateBubbleColor(type, color) {
@@ -1425,16 +2020,20 @@
     const defaultColor = '#ffffff';
     document.getElementById('leftBubbleColorPicker').value = defaultColor;
     document.getElementById('leftTextColorSelect').value = '#4A4A4A';
+    document.getElementById('leftCustomColorPicker').style.display = 'none';
     updateBubbleColor('left', defaultColor);
     updateLeftTextColor('#4A4A4A');
+    saveThemeSettings();
   }
 
   function resetMyBubbleColor() {
     const defaultColor = '#F69CB6';
     document.getElementById('myBubbleColorPicker').value = defaultColor;
     document.getElementById('rightTextColorSelect').value = '#ffffff';
+    document.getElementById('rightCustomColorPicker').style.display = 'none';
     updateBubbleColor('right', defaultColor);
     updateRightTextColor('#ffffff');
+    saveThemeSettings();
   }
 
   function updatePhoneBgColor(color) {
@@ -1451,10 +2050,25 @@
     updatePhoneBgColor(defaultBgColor);
     document.getElementById('bgOpacityRange').value = 0;
     updateBgOpacity(0);
+    saveThemeSettings();
+  }
+
+  function resetOnlyChatMessages() {
+    if (confirm('작성된 모든 대화 내용이 초기화됩니다. (테마 및 프로필 설정은 유지됩니다.) 계속하시겠습니까?')) {
+      pushHistory();
+      messages = [];
+      if (editingIndex !== null) cancelEditing();
+      resetFormToCreateMode();
+      renderAllMessages();
+    }
   }
 
   function resetAllChatSettings() {
-    if (!confirm('방 이름, 모든 색상 설정 및 대화 내용이 초기화됩니다. 계속하시겠습니까?')) return;
+    if (!confirm('방 이름, 모든 색상 설정, 프로필 및 대화 내용이 완전히 초기화됩니다. 계속하시겠습니까?')) return;
+
+    localStorage.removeItem('chatMakerThemeSettings');
+    localStorage.removeItem('chatMakerThemePresets');
+    localStorage.removeItem('chatMakerCustomGallery');
 
     document.getElementById('titleInput').value = '채팅방 이름';
     updateRoomTitle();
@@ -1467,11 +2081,32 @@
     deleteAvatar('left');
     deleteAvatar('right');
 
+    themePresets = {};
+    updatePresetSelectOptions('');
+
     messages = [];
-    openTranscriptions = {};
+    historyStack = [];
+    redoStack = [];
+    updateUndoRedoButtons();
+
+    customGallery = [];
+    renderCustomGallery();
+
     if (editingIndex !== null) cancelEditing();
     resetFormToCreateMode();
     renderAllMessages();
+  }
+
+  function toggleLuckyMoneyStatus(index) {
+    if (messages[index].type === 'lucky') {
+      pushHistory();
+      messages[index].type = 'luckyReceived';
+      renderAllMessages();
+    } else if (messages[index].type === 'luckyReceived') {
+      pushHistory();
+      messages[index].type = 'lucky';
+      renderAllMessages();
+    }
   }
 
   /* ================= 드래그 앤 드롭 이벤트 핸들러 ================= */
@@ -1497,6 +2132,8 @@
     e.preventDefault();
     if (draggedIndex === null || draggedIndex === dropIndex) return;
 
+    pushHistory();
+
     const item = messages.splice(draggedIndex, 1)[0];
     messages.splice(dropIndex, 0, item);
 
@@ -1516,7 +2153,6 @@
     document.querySelectorAll('.msg-row, .divider-container').forEach(row => row.classList.remove('drag-over'));
   }
 
-  /* ================= 이미지 다운로드 ================= */
   function downloadPreviewImage(isFullLength = false) {
     const phoneElement = document.getElementById('phoneScreen');
     const chatArea = document.getElementById('chatArea');
@@ -1865,7 +2501,7 @@
       outW = 380 * 2; outH = 610 * 2;
     } else if (currentTarget === 'left' || currentTarget === 'right') {
       outW = 200 * 2; outH = 200 * 2;
-    } else if (currentTarget === 'chatPhoto') {
+    } else if (currentTarget === 'chatPhoto' || currentTarget === 'galleryEdit') {
       outW = Math.round(sourceW * 2);
       outH = Math.round(sourceH * 2);
     }
@@ -1880,15 +2516,18 @@
     if (currentTarget === 'left') {
       leftAvatarUrl = croppedDataUrl;
       document.getElementById('leftThumbImg').src = croppedDataUrl;
+      saveThemeSettings();
     } else if (currentTarget === 'right') {
       rightAvatarUrl = croppedDataUrl;
       document.getElementById('rightThumbImg').src = croppedDataUrl;
+      saveThemeSettings();
     } else if (currentTarget === 'bg') {
       bgUrl = croppedDataUrl;
       const chatArea = document.getElementById('chatArea');
       chatArea.style.backgroundImage = `url('${bgUrl}')`;
       chatArea.style.backgroundSize = '380px 610px';
       chatArea.style.backgroundPosition = 'center top';
+      saveThemeSettings();
     } else if (currentTarget === 'chatPhoto') {
       draftChatPhotoUrl = croppedDataUrl;
       const thumbWrap = document.getElementById('msgPhotoThumbWrap');
@@ -1900,6 +2539,12 @@
       } else {
         syncLiveDraft();
       }
+    } else if (currentTarget === 'galleryEdit') {
+      if (editingGalleryIndex !== null && editingGalleryIndex >= 0) {
+        customGallery[editingGalleryIndex] = croppedDataUrl;
+        saveCustomGallery();
+      }
+      editingGalleryIndex = null;
     }
 
     renderAllMessages();
@@ -1989,9 +2634,10 @@
         </div>
       `;
     } else if (data.type === 'photo') {
+      const pWidth = data.photoWidth || '200px';
       contentHtml = `
         <div class="msg-content-wrap" ${bubbleClickAttr}>
-          <div class="chat-photo-bubble" style="${isDraft ? 'border: 2px dashed var(--accent-blue);' : ''}">
+          <div class="chat-photo-bubble" style="width: ${pWidth}; ${isDraft ? 'border: 2px dashed var(--accent-blue);' : ''}">
             <img src="${data.photoUrl || ''}" alt="chat photo">
           </div>
           ${actionButtonsHtml}
@@ -1999,9 +2645,11 @@
       `;
     } else if (data.type === 'lucky' || data.type === 'luckyReceived') {
       const isReceived = data.type === 'luckyReceived';
+      const luckyClickAction = !isDraft ? `onclick="event.stopPropagation(); toggleLuckyMoneyStatus(${index});"` : '';
+      
       contentHtml = `
-        <div class="msg-content-wrap" ${bubbleClickAttr}>
-          <div class="lucky-money-wrap ${isReceived ? 'received' : ''}" style="${isDraft ? 'border: 2px dashed var(--accent-blue);' : ''}">
+        <div class="msg-content-wrap" ${!isDraft ? `onclick="event.stopPropagation(); showEditIcon(${index})"` : ''}>
+          <div class="lucky-money-wrap ${isReceived ? 'received' : ''}" style="${isDraft ? 'border: 2px dashed var(--accent-blue);' : ''}" ${luckyClickAction} title="클릭하여 수령 상태 토글">
             <div class="lucky-money-box">
               <div class="lucky-money-top">
                 <div class="lucky-money-icon">
@@ -2027,15 +2675,16 @@
         </div>
       `;
     } else if (data.type === 'missedCall') {
+      const missedColor = data.missedColor || '#DA5D5D';
       contentHtml = `
         <div class="msg-content-wrap" ${bubbleClickAttr}>
           <div class="call-bubble-wrap missed" style="${isDraft ? 'border: 2px dashed var(--accent-blue);' : ''}">
             <div class="call-bubble-icon missed">
               <svg viewBox="0 0 24 24">
-                <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+                <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z" style="fill: ${missedColor} !important;"/>
               </svg>
             </div>
-            <div class="call-bubble-text missed">${data.missedCallText || '부재중 전화'}</div>
+            <div class="call-bubble-text missed" style="color: ${missedColor} !important;">${data.missedCallText || '부재중 전화'}</div>
           </div>
           ${actionButtonsHtml}
         </div>
@@ -2059,6 +2708,8 @@
       const transId = isDraft ? 'draft-trans' : `trans-${index}`;
       const isOpen = !!openTranscriptions[transKey];
 
+      const durationFormatted = parseFloat(data.duration || 2.5).toFixed(2);
+
       contentHtml = `
         <div class="msg-content-wrap voice-content-wrap" ${bubbleClickAttr}>
           <div class="voice-pill-wrap">
@@ -2070,7 +2721,7 @@
                   <path d="M14.5 4.5c4.1 4.1 4.1 10.9 0 15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
                 </svg>
               </span>
-              <span class="voice-sec">${data.duration || '2.5'} "</span>
+              <span class="voice-sec">${durationFormatted} "</span>
             </div>
             ${data.transText ? `
               <button class="voice-toggle-btn" onclick="toggleTranscription('${transId}', '${transKey}', event)" title="글로 변환">
@@ -2124,27 +2775,33 @@
         delete messages[editingIndex].duration;
         delete messages[editingIndex].transText;
         delete messages[editingIndex].photoUrl;
+        delete messages[editingIndex].photoWidth;
         delete messages[editingIndex].luckyTitle;
         delete messages[editingIndex].luckyDesc;
         delete messages[editingIndex].missedCallText;
+        delete messages[editingIndex].missedColor;
         delete messages[editingIndex].callCompleteText;
       } else if (type === 'voice') {
         messages[editingIndex].duration = document.getElementById('voiceDurationInput').value;
         messages[editingIndex].transText = document.getElementById('voiceTextInput').value;
         delete messages[editingIndex].text;
         delete messages[editingIndex].photoUrl;
+        delete messages[editingIndex].photoWidth;
         delete messages[editingIndex].luckyTitle;
         delete messages[editingIndex].luckyDesc;
         delete messages[editingIndex].missedCallText;
+        delete messages[editingIndex].missedColor;
         delete messages[editingIndex].callCompleteText;
       } else if (type === 'photo') {
         if (draftChatPhotoUrl) messages[editingIndex].photoUrl = draftChatPhotoUrl;
+        messages[editingIndex].photoWidth = draftPhotoWidth;
         delete messages[editingIndex].text;
         delete messages[editingIndex].duration;
         delete messages[editingIndex].transText;
         delete messages[editingIndex].luckyTitle;
         delete messages[editingIndex].luckyDesc;
         delete messages[editingIndex].missedCallText;
+        delete messages[editingIndex].missedColor;
         delete messages[editingIndex].callCompleteText;
       } else if (type === 'lucky' || type === 'luckyReceived') {
         messages[editingIndex].luckyTitle = document.getElementById('luckyTitleInput').value;
@@ -2153,14 +2810,18 @@
         delete messages[editingIndex].duration;
         delete messages[editingIndex].transText;
         delete messages[editingIndex].photoUrl;
+        delete messages[editingIndex].photoWidth;
         delete messages[editingIndex].missedCallText;
+        delete messages[editingIndex].missedColor;
         delete messages[editingIndex].callCompleteText;
       } else if (type === 'missedCall') {
         messages[editingIndex].missedCallText = document.getElementById('missedCallTextInput').value;
+        messages[editingIndex].missedColor = document.getElementById('missedColorPicker').value;
         delete messages[editingIndex].text;
         delete messages[editingIndex].duration;
         delete messages[editingIndex].transText;
         delete messages[editingIndex].photoUrl;
+        delete messages[editingIndex].photoWidth;
         delete messages[editingIndex].luckyTitle;
         delete messages[editingIndex].luckyDesc;
         delete messages[editingIndex].callCompleteText;
@@ -2170,9 +2831,11 @@
         delete messages[editingIndex].duration;
         delete messages[editingIndex].transText;
         delete messages[editingIndex].photoUrl;
+        delete messages[editingIndex].photoWidth;
         delete messages[editingIndex].luckyTitle;
         delete messages[editingIndex].luckyDesc;
         delete messages[editingIndex].missedCallText;
+        delete messages[editingIndex].missedColor;
       }
       renderAllMessages();
     } else {
@@ -2203,11 +2866,13 @@
         return;
       }
       data.photoUrl = draftChatPhotoUrl;
+      data.photoWidth = draftPhotoWidth;
     } else if (type === 'lucky' || type === 'luckyReceived') {
       data.luckyTitle = document.getElementById('luckyTitleInput').value;
       data.luckyDesc = document.getElementById('luckyDescInput').value;
     } else if (type === 'missedCall') {
       data.missedCallText = document.getElementById('missedCallTextInput').value;
+      data.missedColor = document.getElementById('missedColorPicker').value;
     } else if (type === 'callComplete') {
       data.callCompleteText = document.getElementById('callCompleteTextInput').value;
     }
@@ -2218,6 +2883,7 @@
 
   function addDividerMessage() {
     if (editingIndex !== null) return;
+    pushHistory();
     messages.push({ type: 'divider' });
     renderAllMessages();
     scrollChatBottom();
@@ -2257,8 +2923,9 @@
   document.addEventListener('click', hideAllEditIcons);
 
   function startEditingMessage(idx) {
+    switchTab(2);
+
     if (editingIndex === null) {
-      // 수정 시작 시점의 원본 데이터를 깊은 복사(Deep Copy)하여 백업
       draftBackup = JSON.parse(JSON.stringify(messages[idx]));
     }
 
@@ -2283,10 +2950,15 @@
     if (item.type === 'text') {
       document.getElementById('msgTextInput').value = item.text || '';
     } else if (item.type === 'voice') {
-      document.getElementById('voiceDurationInput').value = item.duration || '2.5';
+      document.getElementById('voiceDurationInput').value = item.duration || '2.50';
       document.getElementById('voiceTextInput').value = item.transText || '';
     } else if (item.type === 'photo') {
       draftChatPhotoUrl = item.photoUrl || '';
+      draftPhotoWidth = item.photoWidth || '200px';
+      const numericW = parseInt(draftPhotoWidth);
+      document.getElementById('chatImgWidthSlider').value = isNaN(numericW) ? 200 : numericW;
+      document.getElementById('chatImgWidthVal').innerText = draftPhotoWidth;
+
       if (draftChatPhotoUrl) {
         document.getElementById('msgPhotoThumbWrap').style.display = 'block';
         document.getElementById('msgPhotoThumbImg').src = draftChatPhotoUrl;
@@ -2296,6 +2968,7 @@
       document.getElementById('luckyDescInput').value = item.luckyDesc || '핸드폰 럭키머니';
     } else if (item.type === 'missedCall') {
       document.getElementById('missedCallTextInput').value = item.missedCallText || '부재중 전화';
+      if (item.missedColor) document.getElementById('missedColorPicker').value = item.missedColor;
     } else if (item.type === 'callComplete') {
       document.getElementById('callCompleteTextInput').value = item.callCompleteText || '통화 종료';
     }
@@ -2304,6 +2977,7 @@
   }
 
   function saveEditedMessage() {
+    pushHistory();
     editingIndex = null;
     draftBackup = null;
     resetFormToCreateMode();
@@ -2311,7 +2985,6 @@
   }
 
   function cancelEditing() {
-    // 취소 시 백업해 둔 이전 내용으로 원복
     if (editingIndex !== null && draftBackup) {
       messages[editingIndex] = draftBackup;
     }
@@ -2322,7 +2995,7 @@
   }
 
   function resetFormToCreateMode() {
-    document.getElementById('formTitle').innerText = '💬 2. 대화 메시지 작성';
+    document.getElementById('formTitle').innerText = '💬 대화 메시지 작성';
     document.getElementById('editBadge').style.display = 'none';
     document.getElementById('msgCardBox').classList.remove('editing-mode');
     document.getElementById('addBtn').style.display = 'block';
@@ -2330,14 +3003,18 @@
     document.getElementById('editBtnRow').style.display = 'none';
 
     document.getElementById('msgTextInput').value = '';
-    document.getElementById('voiceDurationInput').value = '2.5';
+    document.getElementById('voiceDurationInput').value = '2.50';
     document.getElementById('voiceTextInput').value = '';
     document.getElementById('msgPhotoThumbWrap').style.display = 'none';
     document.getElementById('luckyTitleInput').value = '럭키머니';
     document.getElementById('luckyDescInput').value = '핸드폰 럭키머니';
     document.getElementById('missedCallTextInput').value = '부재중 전화';
+    document.getElementById('missedColorPicker').value = '#DA5D5D';
     document.getElementById('callCompleteTextInput').value = '통화 종료';
     draftChatPhotoUrl = '';
+    draftPhotoWidth = '200px';
+    document.getElementById('chatImgWidthSlider').value = 200;
+    document.getElementById('chatImgWidthVal').innerText = '200px';
     document.getElementById('liveDraftBox').innerHTML = '';
   }
 
@@ -2352,7 +3029,7 @@
       if (!item.text.trim()) return;
       document.getElementById('msgTextInput').value = '';
     } else if (type === 'voice') {
-      item.duration = document.getElementById('voiceDurationInput').value || '2.5';
+      item.duration = document.getElementById('voiceDurationInput').value || '2.50';
       item.transText = document.getElementById('voiceTextInput').value;
       document.getElementById('voiceTextInput').value = '';
     } else if (type === 'photo') {
@@ -2361,6 +3038,7 @@
         return;
       }
       item.photoUrl = draftChatPhotoUrl;
+      item.photoWidth = draftPhotoWidth;
       document.getElementById('msgPhotoThumbWrap').style.display = 'none';
       draftChatPhotoUrl = '';
     } else if (type === 'lucky' || type === 'luckyReceived') {
@@ -2368,10 +3046,12 @@
       item.luckyDesc = document.getElementById('luckyDescInput').value || '핸드폰 럭키머니';
     } else if (type === 'missedCall') {
       item.missedCallText = document.getElementById('missedCallTextInput').value || '부재중 전화';
+      item.missedColor = document.getElementById('missedColorPicker').value;
     } else if (type === 'callComplete') {
       item.callCompleteText = document.getElementById('callCompleteTextInput').value || '통화 종료';
     }
 
+    pushHistory();
     messages.push(item);
     document.getElementById('liveDraftBox').innerHTML = '';
     renderAllMessages();
@@ -2384,6 +3064,7 @@
     } else if (editingIndex !== null && editingIndex > idx) {
       editingIndex--;
     }
+    pushHistory();
     messages.splice(idx, 1);
     delete openTranscriptions[`msg-${idx}`];
     renderAllMessages();
@@ -2402,6 +3083,8 @@
   }
 
   window.onload = () => {
+    loadThemeSettings();
+    loadCustomGallery();
     renderAllMessages();
     syncLiveDraft();
   };

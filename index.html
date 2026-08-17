@@ -727,7 +727,6 @@
     z-index: 10;
   }
 
-  /* 비활성화 모드 (기본 회색) */
   .chat-footer.disabled-mode .fake-input {
     flex: 1;
     height: 29px;
@@ -752,7 +751,6 @@
     text-shadow: 0 0 2px rgba(255, 255, 255, 0.6);
   }
 
-  /* 발송창 활성화 모드 */
   .chat-footer.active-mode .fake-input {
     flex: 1;
     height: 29px;
@@ -1431,6 +1429,11 @@
                 <span id="chatImgWidthVal" style="font-size: 11.5px; font-weight: 700; color: var(--text-sub);">200px</span>
               </div>
               <input type="range" id="chatImgWidthSlider" min="80" max="320" step="5" value="200" oninput="updateCurrentPhotoWidth(this.value)" style="width: 100%; cursor: pointer; accent-color: var(--accent-blue);">
+              
+              <div style="display: flex; gap: 6px; margin-top: 6px;">
+                <button class="btn-reset-small" style="flex:1; height: 32px;" onclick="applyWidthToAllPhotos()">전체 이미지 가로 크기 적용</button>
+                <button class="btn-reset-small" style="flex:1; height: 32px; background: #e2e6f0; font-weight: 700;" onclick="applyWidthToCurrentPhotoOnly()">이 개별 이미지만 크기 적용</button>
+              </div>
             </div>
 
             <div class="file-btn-wrap">
@@ -1658,6 +1661,53 @@
       document.getElementById('voiceDurationInput').value = calculatedDuration;
     }
     handleInputChange();
+  }
+
+  /* ================= 사진 가로 크기 실시간 미리보기 및 적용 함수 ================= */
+  function updateCurrentPhotoWidth(val) {
+    draftPhotoWidth = `${val}px`;
+    document.getElementById('chatImgWidthVal').innerText = `${val}px`;
+    
+    if (editingIndex !== null && messages[editingIndex].type === 'photo') {
+      messages[editingIndex].photoWidth = draftPhotoWidth;
+      renderAllMessages();
+    } else {
+      syncLiveDraft();
+    }
+  }
+
+  function applyWidthToAllPhotos() {
+    pushHistory();
+    const currentVal = document.getElementById('chatImgWidthSlider').value + 'px';
+    draftPhotoWidth = currentVal;
+    
+    messages.forEach(m => {
+      if (m.type === 'photo') {
+        m.photoWidth = currentVal;
+      }
+    });
+
+    if (editingIndex !== null) {
+      messages[editingIndex].photoWidth = currentVal;
+    }
+
+    renderAllMessages();
+    syncLiveDraft();
+    alert('모든 사진 메시지의 가로 크기가 일괄 적용되었습니다!');
+  }
+
+  function applyWidthToCurrentPhotoOnly() {
+    const currentVal = document.getElementById('chatImgWidthSlider').value + 'px';
+    if (editingIndex !== null && messages[editingIndex].type === 'photo') {
+      pushHistory();
+      messages[editingIndex].photoWidth = currentVal;
+      renderAllMessages();
+      alert('선택한 개별 사진의 크기가 변경되었습니다!');
+    } else {
+      draftPhotoWidth = currentVal;
+      syncLiveDraft();
+      alert('현재 작성 중인 사진의 크기가 설정되었습니다.');
+    }
   }
 
   /* ================= 발송창 버전 및 색상 설정 제어 ================= */
@@ -1909,17 +1959,6 @@
     }
   }
 
-  function updateCurrentPhotoWidth(val) {
-    draftPhotoWidth = `${val}px`;
-    document.getElementById('chatImgWidthVal').innerText = `${val}px`;
-    if (editingIndex !== null) {
-      messages[editingIndex].photoWidth = draftPhotoWidth;
-      renderAllMessages();
-    } else {
-      syncLiveDraft();
-    }
-  }
-
   function loadCustomGallery() {
     const saved = localStorage.getItem('chatMakerCustomGallery');
     if (saved) {
@@ -2001,9 +2040,7 @@
 
   function selectGalleryImage(url) {
     draftChatPhotoUrl = url;
-    draftPhotoWidth = '200px';
-    document.getElementById('chatImgWidthSlider').value = 200;
-    document.getElementById('chatImgWidthVal').innerText = '200px';
+    draftPhotoWidth = document.getElementById('chatImgWidthSlider').value + 'px';
 
     const thumbWrap = document.getElementById('msgPhotoThumbWrap');
     const thumbImg = document.getElementById('msgPhotoThumbImg');
@@ -2736,7 +2773,7 @@
         </div>
       `;
     } else if (data.type === 'photo') {
-      const pWidth = data.photoWidth || '200px';
+      const pWidth = data.photoWidth || draftPhotoWidth || '200px';
       contentHtml = `
         <div class="msg-content-wrap" ${bubbleClickAttr}>
           <div class="chat-photo-bubble" style="width: ${pWidth}; ${isDraft ? 'border: 2px dashed var(--accent-blue);' : ''}">
@@ -3184,22 +3221,26 @@
     chatArea.scrollTop = chatArea.scrollHeight;
   }
 
-  /* 🌟 [추가 기능] 작성 중인 메시지 입력창 외의 다른 곳을 클릭하면 자동으로 대화 목록에 추가 */
+  /* 🌟 [수정 완료] 작성 중 또는 수정 중일 때 다른 곳을 클릭하면 자동으로 추가되거나 수정 완료 처리 */
   document.addEventListener('click', (e) => {
-    // 만약 현재 '대화 메시지 작성' 탭이 활성화되어 있고 작성 중인 내용이 있다면
     const activeTab = document.getElementById('tabContent2');
-    if (activeTab && activeTab.classList.contains('active') && editingIndex === null) {
-      const type = document.getElementById('typeSelect').value;
-      if (type === 'text') {
-        const textInput = document.getElementById('msgTextInput');
-        // 클릭한 대상이 입력창(textarea) 내부나 '대화 목록에 추가' 버튼이 아닐 경우에만 자동 추가
-        const isInsideForm = document.getElementById('msgCardBox').contains(e.target);
-        const isUndoRedo = e.target.closest('.undo-redo-container');
-        const isTabs = e.target.closest('.menu-tabs-container');
+    if (activeTab && activeTab.classList.contains('active')) {
+      const isInsideForm = document.getElementById('msgCardBox').contains(e.target);
+      const isUndoRedo = e.target.closest('.undo-redo-container');
+      const isTabs = e.target.closest('.menu-tabs-container');
 
-        if (!isInsideForm && !isUndoRedo && !isTabs) {
-          if (textInput.value.trim() !== '') {
-            confirmDraftMessage();
+      if (!isInsideForm && !isUndoRedo && !isTabs) {
+        if (editingIndex !== null) {
+          // 수정 중일 때 바깥을 클릭하면 '수정 완료' 실행
+          saveEditedMessage();
+        } else {
+          // 작성 중일 때 바깥을 클릭하면 '대화 목록에 추가' 실행
+          const type = document.getElementById('typeSelect').value;
+          if (type === 'text') {
+            const textInput = document.getElementById('msgTextInput');
+            if (textInput.value.trim() !== '') {
+              confirmDraftMessage();
+            }
           }
         }
       }

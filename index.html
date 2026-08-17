@@ -17,6 +17,7 @@
     --right-text-color: #ffffff;  /* 내 채팅 글씨 색상 */
     --missed-text-color: #DA5D5D; /* 부재중 전화 글씨 색상 */
     --send-btn-color: #8da9e8;    /* 발송창 활성화 시 발송 버튼 기본 하늘색 */
+    --cam-color: #F69CB6;         /* 상단 카메라 아이콘 고정 색상 */
     --text-main: #4A4A4A;
     --text-sub: #71788e;
     --accent-blue: #4a8bf5;
@@ -25,7 +26,6 @@
     --lucky-red: #EB6D79;         /* 럭키머니 고유 색상 */
     --lucky-received-bg: #F4AEB8; /* 럭키머니 수령 완료 색상 */
     --convert-btn-bg: #ADCFFF;
-    --cam-color: #F69CB6;        /* 상단 카메라 아이콘 색상 (내 채팅 기본값 연동) */
     --status-color: #9C9C9C;
     --bg-page: #f0f2f7;
     --panel-bg: #ffffff;
@@ -689,7 +689,7 @@
     min-height: 100%;
   }
 
-  /* ================= 🌟 구분선 스타일 (일정한 두께와 선명함 유지) ================= */
+  /* ================= 구분선 스타일 ================= */
   .divider-container {
     width: 100%;
     position: relative;
@@ -1213,7 +1213,10 @@
       <div class="control-block">
         <div class="section-title">
           <span>⚙️ 프로필 & 테마 설정</span>
-          <button class="btn-reset-small" onclick="resetAllChatSettings()" title="모든 설정을 처음 상태로 초기화합니다">전체 초기화</button>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn-reset-small" onclick="resetToDefaultSettings()" title="대화 및 테마 저장 데이터는 유지하고 기본 설정만 되돌립니다">기본 설정</button>
+            <button class="btn-reset-small" onclick="resetAllChatSettings()" title="모든 설정을 처음 상태로 초기화합니다">전체 초기화</button>
+          </div>
         </div>
 
         <div class="control-group">
@@ -2084,7 +2087,6 @@
       document.documentElement.style.setProperty('--left-bubble-bg', color);
     } else if (type === 'right') {
       document.documentElement.style.setProperty('--right-bubble-bg', color);
-      document.documentElement.style.setProperty('--cam-color', color);
     }
   }
 
@@ -2138,6 +2140,27 @@
     saveThemeSettings();
   }
 
+  function resetToDefaultSettings() {
+    if (confirm('방 이름, 색상 테마 및 발송창 설정을 초기 기본값으로 되돌립니다. (저장된 테마 프리셋과 이미지 보관소 사진은 유지됩니다.) 계속하시겠습니까?')) {
+      document.getElementById('titleInput').value = '채팅방 이름';
+      updateRoomTitle();
+
+      resetMyBubbleColor();
+      resetLeftBubbleColor();
+      resetPhoneBgColor();
+
+      deleteBgImage();
+      deleteAvatar('left');
+      deleteAvatar('right');
+
+      document.getElementById('footerVersionSelect').value = 'disabled';
+      handleFooterVersionChange('disabled');
+      resetSendBtnColor();
+
+      saveThemeSettings();
+    }
+  }
+
   function resetOnlyChatMessages() {
     if (confirm('작성된 모든 대화 내용이 초기화됩니다. (테마 및 프로필 설정은 유지됩니다.) 계속하시겠습니까?')) {
       pushHistory();
@@ -2165,6 +2188,10 @@
     deleteBgImage();
     deleteAvatar('left');
     deleteAvatar('right');
+
+    document.getElementById('footerVersionSelect').value = 'disabled';
+    handleFooterVersionChange('disabled');
+    resetSendBtnColor();
 
     themePresets = {};
     updatePresetSelectOptions('');
@@ -3156,6 +3183,28 @@
     const chatArea = document.getElementById('chatArea');
     chatArea.scrollTop = chatArea.scrollHeight;
   }
+
+  /* 🌟 [추가 기능] 작성 중인 메시지 입력창 외의 다른 곳을 클릭하면 자동으로 대화 목록에 추가 */
+  document.addEventListener('click', (e) => {
+    // 만약 현재 '대화 메시지 작성' 탭이 활성화되어 있고 작성 중인 내용이 있다면
+    const activeTab = document.getElementById('tabContent2');
+    if (activeTab && activeTab.classList.contains('active') && editingIndex === null) {
+      const type = document.getElementById('typeSelect').value;
+      if (type === 'text') {
+        const textInput = document.getElementById('msgTextInput');
+        // 클릭한 대상이 입력창(textarea) 내부나 '대화 목록에 추가' 버튼이 아닐 경우에만 자동 추가
+        const isInsideForm = document.getElementById('msgCardBox').contains(e.target);
+        const isUndoRedo = e.target.closest('.undo-redo-container');
+        const isTabs = e.target.closest('.menu-tabs-container');
+
+        if (!isInsideForm && !isUndoRedo && !isTabs) {
+          if (textInput.value.trim() !== '') {
+            confirmDraftMessage();
+          }
+        }
+      }
+    }
+  });
 
   window.onload = () => {
     loadThemeSettings();

@@ -1337,7 +1337,7 @@
           </div>
         </div>
 
-        <!-- 테마 프리셋 관리 박스 -->
+        <!-- 테마 프리셋 관리 박스 (🌟 수정 및 저장이 확실히 되도록 리팩토링 완료) -->
         <div class="card-box" style="background: #f0f4ff; border-color: #cbd8fc;">
           <label style="color: var(--accent-blue);">📂 테마 프리셋 관리</label>
           <div class="control-row">
@@ -1663,53 +1663,6 @@
     handleInputChange();
   }
 
-  /* ================= 사진 가로 크기 실시간 미리보기 및 적용 함수 ================= */
-  function updateCurrentPhotoWidth(val) {
-    draftPhotoWidth = `${val}px`;
-    document.getElementById('chatImgWidthVal').innerText = `${val}px`;
-    
-    if (editingIndex !== null && messages[editingIndex].type === 'photo') {
-      messages[editingIndex].photoWidth = draftPhotoWidth;
-      renderAllMessages();
-    } else {
-      syncLiveDraft();
-    }
-  }
-
-  function applyWidthToAllPhotos() {
-    pushHistory();
-    const currentVal = document.getElementById('chatImgWidthSlider').value + 'px';
-    draftPhotoWidth = currentVal;
-    
-    messages.forEach(m => {
-      if (m.type === 'photo') {
-        m.photoWidth = currentVal;
-      }
-    });
-
-    if (editingIndex !== null) {
-      messages[editingIndex].photoWidth = currentVal;
-    }
-
-    renderAllMessages();
-    syncLiveDraft();
-    alert('모든 사진 메시지의 가로 크기가 일괄 적용되었습니다!');
-  }
-
-  function applyWidthToCurrentPhotoOnly() {
-    const currentVal = document.getElementById('chatImgWidthSlider').value + 'px';
-    if (editingIndex !== null && messages[editingIndex].type === 'photo') {
-      pushHistory();
-      messages[editingIndex].photoWidth = currentVal;
-      renderAllMessages();
-      alert('선택한 개별 사진의 크기가 변경되었습니다!');
-    } else {
-      draftPhotoWidth = currentVal;
-      syncLiveDraft();
-      alert('현재 작성 중인 사진의 크기가 설정되었습니다.');
-    }
-  }
-
   /* ================= 발송창 버전 및 색상 설정 제어 ================= */
   function handleFooterVersionChange(version) {
     const footer = document.getElementById('chatFooter');
@@ -1735,7 +1688,7 @@
     updateSendBtnColor(defaultColor);
   }
 
-  /* ================= 테마 프리셋 저장 및 불러오기 관리 (방 이름 연동 포함) ================= */
+  /* ================= 🌟 테마 프리셋 저장 및 불러오기 관리 (오류 수정 완료) ================= */
   function saveThemePreset() {
     const nameInput = document.getElementById('presetNameInput');
     const presetName = nameInput.value.trim();
@@ -1769,7 +1722,7 @@
 
     updatePresetSelectOptions(presetName);
     nameInput.value = '';
-    alert(`"${presetName}" 테마와 방 이름이 성공적으로 저장되었습니다!`);
+    alert(`"${presetName}" 테마가 성공적으로 저장되었습니다!`);
   }
 
   function loadThemePreset(presetName) {
@@ -3221,7 +3174,7 @@
     chatArea.scrollTop = chatArea.scrollHeight;
   }
 
-  /* 🌟 [수정 완료] 작성 중 또는 수정 중일 때 다른 곳을 클릭하면 자동으로 추가되거나 수정 완료 처리 */
+  /* 🌟 작성 및 수정 중 빈 곳 클릭 시 자동 추가/수정 완료 처리 */
   document.addEventListener('click', (e) => {
     const activeTab = document.getElementById('tabContent2');
     if (activeTab && activeTab.classList.contains('active')) {
@@ -3231,10 +3184,8 @@
 
       if (!isInsideForm && !isUndoRedo && !isTabs) {
         if (editingIndex !== null) {
-          // 수정 중일 때 바깥을 클릭하면 '수정 완료' 실행
           saveEditedMessage();
         } else {
-          // 작성 중일 때 바깥을 클릭하면 '대화 목록에 추가' 실행
           const type = document.getElementById('typeSelect').value;
           if (type === 'text') {
             const textInput = document.getElementById('msgTextInput');

@@ -1337,7 +1337,7 @@
           </div>
         </div>
 
-        <!-- 테마 프리셋 관리 박스 (🌟 수정 및 저장이 확실히 되도록 리팩토링 완료) -->
+        <!-- 테마 프리셋 관리 박스 -->
         <div class="card-box" style="background: #f0f4ff; border-color: #cbd8fc;">
           <label style="color: var(--accent-blue);">📂 테마 프리셋 관리</label>
           <div class="control-row">
@@ -1688,7 +1688,7 @@
     updateSendBtnColor(defaultColor);
   }
 
-  /* ================= 🌟 테마 프리셋 저장 및 불러오기 관리 (오류 수정 완료) ================= */
+  /* ================= 테마 프리셋 저장 및 불러오기 관리 ================= */
   function saveThemePreset() {
     const nameInput = document.getElementById('presetNameInput');
     const presetName = nameInput.value.trim();
@@ -3174,7 +3174,7 @@
     chatArea.scrollTop = chatArea.scrollHeight;
   }
 
-  /* 🌟 작성 및 수정 중 빈 곳 클릭 시 자동 추가/수정 완료 처리 */
+  /* 🌟 작성 중 또는 수정 중일 때 바깥쪽을 클릭하면 자동 추가/수정 완료 처리 */
   document.addEventListener('click', (e) => {
     const activeTab = document.getElementById('tabContent2');
     if (activeTab && activeTab.classList.contains('active')) {

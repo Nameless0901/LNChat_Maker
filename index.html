@@ -50,8 +50,8 @@
     color: var(--text-main);
     min-height: 100vh;
     display: flex;
-    justify-content: center; /* 🌟 가로 중앙 정렬 */
-    align-items: center;     /* 🌟 세로 중앙 정렬 */
+    justify-content: center;
+    align-items: center;
     padding: 28px 16px;
     overflow-x: hidden;
   }
@@ -63,7 +63,7 @@
     max-width: 1120px;
     width: 100%;
     align-items: flex-start;
-    justify-content: center; /* 🌟 전체 컨테이너 내부 중앙 정렬 */
+    justify-content: center;
   }
 
   /* ================= LEFT: 조작 패널 ================= */
@@ -689,7 +689,7 @@
     min-height: 100%;
   }
 
-  /* ================= 구분선 스타일 ================= */
+  /* ================= 구분선 스타일 (🌟 더 얇게 수정) ================= */
   .divider-container {
     width: 100%;
     position: relative;
@@ -707,9 +707,9 @@
 
   .divider-line {
     width: calc(100% - 11px); 
-    height: 2px !important;
-    min-height: 2px;
-    max-height: 2px;
+    height: 1px !important; /* 🌟 기존 2px에서 1px로 얇게 변경 */
+    min-height: 1px;
+    max-height: 1px;
     background-color: #8c929d;
     opacity: 0.7;
     flex-shrink: 0;
@@ -1315,7 +1315,7 @@
           </div>
         </div>
 
-        <!-- 하단 발송창 옵션 (프로필 아래, 프리셋 위) -->
+        <!-- 하단 발송창 옵션 -->
         <div class="card-box">
           <label>💬 하단 발송창 디자인 설정</label>
           <div class="control-row">
@@ -1336,7 +1336,7 @@
           </div>
         </div>
 
-        <!-- 테마 프리셋 관리 박스 (방 이름 연동 포함) -->
+        <!-- 테마 프리셋 관리 박스 -->
         <div class="card-box" style="background: #f0f4ff; border-color: #cbd8fc;">
           <label style="color: var(--accent-blue);">📂 테마 프리셋 관리</label>
           <div class="control-row">

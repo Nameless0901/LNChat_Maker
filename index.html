@@ -1220,6 +1220,27 @@
           <input type="text" id="titleInput" value="채팅방 이름" oninput="updateRoomTitle(); saveThemeSettings();">
         </div>
 
+        <!-- 하단 발송창 디자인 설정 -->
+        <div class="card-box">
+          <label>💬 하단 발송창 디자인 설정</label>
+          <div class="control-row">
+            <div class="control-group">
+              <label>발송창 버전</label>
+              <select id="footerVersionSelect" class="styled-select" style="height: 40px; font-size: 13px;" onchange="handleFooterVersionChange(this.value)">
+                <option value="disabled">비활성화</option>
+                <option value="active">발송창 활성화</option>
+              </select>
+            </div>
+            <div class="control-group" id="sendBtnColorGroup" style="display: none;">
+              <label>발송 버튼 색상</label>
+              <div class="color-picker-row">
+                <input type="color" id="sendBtnColorPicker" class="color-trigger-btn" value="#8da9e8" oninput="updateSendBtnColor(this.value)">
+                <button class="btn-reset-small" onclick="resetSendBtnColor()">초기화</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="color-pickers-container">
           <div class="color-picker-column">
             <label>🎨 상대 채팅(좌)</label>
@@ -1311,27 +1332,6 @@
               </div>
             </div>
             <input type="file" id="rightAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'right')">
-          </div>
-        </div>
-
-        <!-- 🌟 [이동 완료] 하단 발송창 옵션 (프로필 아래, 프리셋 위) -->
-        <div class="card-box">
-          <label>💬 하단 발송창 디자인 설정</label>
-          <div class="control-row">
-            <div class="control-group">
-              <label>발송창 버전</label>
-              <select id="footerVersionSelect" class="styled-select" style="height: 40px; font-size: 13px;" onchange="handleFooterVersionChange(this.value)">
-                <option value="disabled">비활성화</option>
-                <option value="active">발송창 활성화</option>
-              </select>
-            </div>
-            <div class="control-group" id="sendBtnColorGroup" style="display: none;">
-              <label>발송 버튼 색상</label>
-              <div class="color-picker-row">
-                <input type="color" id="sendBtnColorPicker" class="color-trigger-btn" value="#8da9e8" oninput="updateSendBtnColor(this.value)">
-                <button class="btn-reset-small" onclick="resetSendBtnColor()">초기화</button>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -1681,7 +1681,7 @@
     updateSendBtnColor(defaultColor);
   }
 
-  /* ================= 테마 프리셋 저장 및 불러오기 관리 ================= */
+  /* ================= 테마 프리셋 저장 및 불러오기 관리 (방 이름 연동 포함) ================= */
   function saveThemePreset() {
     const nameInput = document.getElementById('presetNameInput');
     const presetName = nameInput.value.trim();
@@ -1715,7 +1715,7 @@
 
     updatePresetSelectOptions(presetName);
     nameInput.value = '';
-    alert(`"${presetName}" 테마가 성공적으로 저장되었습니다!`);
+    alert(`"${presetName}" 테마와 방 이름이 성공적으로 저장되었습니다!`);
   }
 
   function loadThemePreset(presetName) {

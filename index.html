@@ -16,6 +16,7 @@
     --left-text-color: #4A4A4A;   /* 상대방 글씨 색상 */
     --right-text-color: #ffffff;  /* 내 채팅 글씨 색상 */
     --missed-text-color: #DA5D5D; /* 부재중 전화 글씨 색상 */
+    --send-btn-color: #8da9e8;    /* 발송창 활성화 시 발송 버튼 기본 하늘색 */
     --text-main: #4A4A4A;
     --text-sub: #71788e;
     --accent-blue: #4a8bf5;
@@ -718,24 +719,50 @@
     height: 49px;
     background: #ebebf0;
     display: flex;
-    align-items: flex-start;
-    padding: 10px 14px 0 14px;
+    align-items: center;
+    padding: 0 14px;
     gap: 10px;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
     z-index: 10;
   }
 
-  .fake-input {
+  /* 비활성화 모드 (기본 회색) */
+  .chat-footer.disabled-mode .fake-input {
     flex: 1;
     height: 29px;
     background: #dedfe4;
     border-radius: var(--bubble-radius);
+    border: none;
   }
-
-  .fake-btn {
+  .chat-footer.disabled-mode .fake-btn {
     min-width: 82px;
     height: 29px;
     background: #a0a0a0;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    padding-left: 2px;
+    border-radius: var(--bubble-radius);
+    user-select: none;
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.6);
+  }
+
+  /* 발송창 활성화 모드 */
+  .chat-footer.active-mode .fake-input {
+    flex: 1;
+    height: 29px;
+    background: #ffffff;
+    border: 1px solid #e2e6f0;
+    border-radius: var(--bubble-radius);
+  }
+  .chat-footer.active-mode .fake-btn {
+    min-width: 82px;
+    height: 29px;
+    background: var(--send-btn-color);
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -988,7 +1015,7 @@
 
   .msg-row.right .call-bubble-wrap.missed { background: var(--right-bubble-bg); }
   .msg-row.right .call-bubble-text.missed { color: var(--missed-text-color) !important; }
-  .msg-row.right .call-bubble-icon.missed path { fill: var(--missed-text-color) !important; }
+  .msg-row.right .call-bubble-icon.missed path { fill: var(--right-text-color) !important; }
 
   .msg-row.left .call-bubble-wrap.complete { background: var(--left-bubble-bg); }
   .msg-row.left .call-bubble-text.complete { color: var(--left-text-color) !important; }
@@ -1287,6 +1314,27 @@
           </div>
         </div>
 
+        <!-- 🌟 [이동 완료] 하단 발송창 옵션 (프로필 아래, 프리셋 위) -->
+        <div class="card-box">
+          <label>💬 하단 발송창 디자인 설정</label>
+          <div class="control-row">
+            <div class="control-group">
+              <label>발송창 버전</label>
+              <select id="footerVersionSelect" class="styled-select" style="height: 40px; font-size: 13px;" onchange="handleFooterVersionChange(this.value)">
+                <option value="disabled">비활성화</option>
+                <option value="active">발송창 활성화</option>
+              </select>
+            </div>
+            <div class="control-group" id="sendBtnColorGroup" style="display: none;">
+              <label>발송 버튼 색상</label>
+              <div class="color-picker-row">
+                <input type="color" id="sendBtnColorPicker" class="color-trigger-btn" value="#8da9e8" oninput="updateSendBtnColor(this.value)">
+                <button class="btn-reset-small" onclick="resetSendBtnColor()">초기화</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- 테마 프리셋 관리 박스 -->
         <div class="card-box" style="background: #f0f4ff; border-color: #cbd8fc;">
           <label style="color: var(--accent-blue);">📂 테마 프리셋 관리</label>
@@ -1488,7 +1536,7 @@
       </div>
 
       <!-- 하단 발송 창 -->
-      <div class="chat-footer">
+      <div class="chat-footer disabled-mode" id="chatFooter">
         <div class="fake-input"></div>
         <div class="fake-btn">발송</div>
       </div>
@@ -1608,6 +1656,31 @@
     handleInputChange();
   }
 
+  /* ================= 발송창 버전 및 색상 설정 제어 ================= */
+  function handleFooterVersionChange(version) {
+    const footer = document.getElementById('chatFooter');
+    const colorGroup = document.getElementById('sendBtnColorGroup');
+
+    footer.className = `chat-footer ${version === 'active' ? 'active-mode' : 'disabled-mode'}`;
+    if (version === 'active') {
+      colorGroup.style.display = 'flex';
+    } else {
+      colorGroup.style.display = 'none';
+    }
+    saveThemeSettings();
+  }
+
+  function updateSendBtnColor(color) {
+    document.documentElement.style.setProperty('--send-btn-color', color);
+    saveThemeSettings();
+  }
+
+  function resetSendBtnColor() {
+    const defaultColor = '#8da9e8';
+    document.getElementById('sendBtnColorPicker').value = defaultColor;
+    updateSendBtnColor(defaultColor);
+  }
+
   /* ================= 테마 프리셋 저장 및 불러오기 관리 ================= */
   function saveThemePreset() {
     const nameInput = document.getElementById('presetNameInput');
@@ -1631,7 +1704,9 @@
       leftAvatarUrl: leftAvatarUrl,
       rightAvatarUrl: rightAvatarUrl,
       leftColor: document.getElementById('leftColorInput').value,
-      rightColor: document.getElementById('rightColorInput').value
+      rightColor: document.getElementById('rightColorInput').value,
+      footerVersion: document.getElementById('footerVersionSelect').value,
+      sendBtnColor: document.getElementById('sendBtnColorPicker').value
     };
 
     themePresets[presetName] = currentSettings;
@@ -1737,6 +1812,15 @@
     }
     if (s.leftColor) document.getElementById('leftColorInput').value = s.leftColor;
     if (s.rightColor) document.getElementById('rightColorInput').value = s.rightColor;
+    
+    if (s.footerVersion) {
+      document.getElementById('footerVersionSelect').value = s.footerVersion;
+      handleFooterVersionChange(s.footerVersion);
+    }
+    if (s.sendBtnColor) {
+      document.getElementById('sendBtnColorPicker').value = s.sendBtnColor;
+      updateSendBtnColor(s.sendBtnColor);
+    }
   }
 
   function saveThemeSettings() {
@@ -1754,7 +1838,9 @@
       leftAvatarUrl: leftAvatarUrl,
       rightAvatarUrl: rightAvatarUrl,
       leftColor: document.getElementById('leftColorInput').value,
-      rightColor: document.getElementById('rightColorInput').value
+      rightColor: document.getElementById('rightColorInput').value,
+      footerVersion: document.getElementById('footerVersionSelect').value,
+      sendBtnColor: document.getElementById('sendBtnColorPicker').value
     };
     localStorage.setItem('chatMakerThemeSettings', JSON.stringify(currentSettings));
   }
@@ -1847,7 +1933,6 @@
     renderCustomGallery();
   }
 
-  /* 🌟 [수정 완료] 자르기 없이 원본 이미지 곧바로 보관소에 등록 */
   function addCustomImagesToGallery(event) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -1860,14 +1945,13 @@
         loadedCount++;
         if (loadedCount === files.length) {
           saveCustomGallery();
-          event.target.value = ''; // 초기화하여 같은 파일 재선택 가능하게 함
+          event.target.value = '';
         }
       };
       reader.readAsDataURL(file);
     });
   }
 
-  /* 🌟 [추가] 보관소 썸네일 속 [자르기] 버튼 클릭 시 모달 오픈 */
   function openGalleryCropModal(index, event) {
     event.stopPropagation();
     editingGalleryIndex = index;
@@ -1885,7 +1969,7 @@
       imageOffsetY = 0;
       updateImageTransform();
 
-      targetAspectRatio = 0; // 자유 비율
+      targetAspectRatio = 0;
       modalTitle.innerText = `이미지 보관소 자르기`;
       document.getElementById('cropModal').style.display = 'flex';
 
@@ -2178,16 +2262,6 @@
         if (clonedPhone) {
           clonedPhone.style.borderRadius = '0px';
           clonedPhone.style.boxShadow = 'none';
-
-          clonedDoc.querySelectorAll('.bubble-text, .call-bubble-text').forEach(el => {
-            el.style.transform = 'none';
-            el.style.lineHeight = '1.4';
-          });
-
-          const clonedTitle = clonedDoc.querySelector('.header-title');
-          if (clonedTitle) {
-            clonedTitle.style.transform = 'translate(-50%, -50%)';
-          }
 
           const clonedChatArea = clonedDoc.getElementById('chatArea');
           if (clonedChatArea) {

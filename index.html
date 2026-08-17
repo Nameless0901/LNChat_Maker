@@ -50,8 +50,8 @@
     color: var(--text-main);
     min-height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    justify-content: center; /* 🌟 가로 중앙 정렬 */
+    align-items: center;     /* 🌟 세로 중앙 정렬 */
     padding: 28px 16px;
     overflow-x: hidden;
   }
@@ -63,6 +63,7 @@
     max-width: 1120px;
     width: 100%;
     align-items: flex-start;
+    justify-content: center; /* 🌟 전체 컨테이너 내부 중앙 정렬 */
   }
 
   /* ================= LEFT: 조작 패널 ================= */
@@ -1220,27 +1221,6 @@
           <input type="text" id="titleInput" value="채팅방 이름" oninput="updateRoomTitle(); saveThemeSettings();">
         </div>
 
-        <!-- 하단 발송창 디자인 설정 -->
-        <div class="card-box">
-          <label>💬 하단 발송창 디자인 설정</label>
-          <div class="control-row">
-            <div class="control-group">
-              <label>발송창 버전</label>
-              <select id="footerVersionSelect" class="styled-select" style="height: 40px; font-size: 13px;" onchange="handleFooterVersionChange(this.value)">
-                <option value="disabled">비활성화</option>
-                <option value="active">발송창 활성화</option>
-              </select>
-            </div>
-            <div class="control-group" id="sendBtnColorGroup" style="display: none;">
-              <label>발송 버튼 색상</label>
-              <div class="color-picker-row">
-                <input type="color" id="sendBtnColorPicker" class="color-trigger-btn" value="#8da9e8" oninput="updateSendBtnColor(this.value)">
-                <button class="btn-reset-small" onclick="resetSendBtnColor()">초기화</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="color-pickers-container">
           <div class="color-picker-column">
             <label>🎨 상대 채팅(좌)</label>
@@ -1335,7 +1315,28 @@
           </div>
         </div>
 
-        <!-- 테마 프리셋 관리 박스 -->
+        <!-- 하단 발송창 옵션 (프로필 아래, 프리셋 위) -->
+        <div class="card-box">
+          <label>💬 하단 발송창 디자인 설정</label>
+          <div class="control-row">
+            <div class="control-group">
+              <label>발송창 버전</label>
+              <select id="footerVersionSelect" class="styled-select" style="height: 40px; font-size: 13px;" onchange="handleFooterVersionChange(this.value)">
+                <option value="disabled">비활성화</option>
+                <option value="active">발송창 활성화</option>
+              </select>
+            </div>
+            <div class="control-group" id="sendBtnColorGroup" style="display: none;">
+              <label>발송 버튼 색상</label>
+              <div class="color-picker-row">
+                <input type="color" id="sendBtnColorPicker" class="color-trigger-btn" value="#8da9e8" oninput="updateSendBtnColor(this.value)">
+                <button class="btn-reset-small" onclick="resetSendBtnColor()">초기화</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 테마 프리셋 관리 박스 (방 이름 연동 포함) -->
         <div class="card-box" style="background: #f0f4ff; border-color: #cbd8fc;">
           <label style="color: var(--accent-blue);">📂 테마 프리셋 관리</label>
           <div class="control-row">

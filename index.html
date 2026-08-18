@@ -712,19 +712,6 @@
     background: rgba(0, 0, 0, 0.25);
   }
 
-  .bg-overlay-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    min-height: 100%;
-    background-color: #ffffff;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
-  }
-
   .chat-content-container {
     position: relative;
     z-index: 2;
@@ -742,6 +729,7 @@
     width: 100%;
     position: relative;
     cursor: grab;
+    z-index: 2;
   }
   .divider-container:active { cursor: grabbing; }
 
@@ -831,6 +819,7 @@
     position: relative;
     align-items: flex-start;
     cursor: grab;
+    z-index: 2;
   }
   .msg-row:active { cursor: grabbing; }
 
@@ -1498,7 +1487,6 @@
         </div>
 
         <div class="chat-scroll-area" id="chatArea">
-          <div class="bg-overlay-layer" id="bgOverlayLayer"></div>
           <div class="chat-content-container" id="chatContentContainer">
             <div id="confirmedList" style="display: contents;"></div>
             <div id="liveDraftBox" style="display: contents;"></div>
@@ -2640,9 +2628,10 @@
       const chatArea = document.getElementById('chatArea');
       if (chatArea) {
         if (bgUrl) {
-          chatArea.style.backgroundImage = `url('${bgUrl}')`;
+          chatArea.style.backgroundImage = `linear-gradient(rgba(255,255,255,var(--bg-opacity, 0)), rgba(255,255,255,var(--bg-opacity, 0))), url('${bgUrl}')`;
           chatArea.style.backgroundSize = '380px 610px';
           chatArea.style.backgroundPosition = 'center top';
+          chatArea.style.backgroundRepeat = 'repeat-y';
         } else {
           chatArea.style.backgroundImage = 'none';
         }
@@ -2829,8 +2818,13 @@
   }
 
   function updateBgOpacity(val) {
-    const overlay = document.getElementById('bgOverlayLayer');
-    if (overlay) overlay.style.opacity = val;
+    const chatArea = document.getElementById('chatArea');
+    if (chatArea) {
+      chatArea.style.setProperty('--bg-opacity', val);
+      if (bgUrl) {
+        chatArea.style.backgroundImage = `linear-gradient(rgba(255,255,255,${val}), rgba(255,255,255,${val})), url('${bgUrl}')`;
+      }
+    }
     const valSpan = document.getElementById('bgOpacityVal');
     if (valSpan) valSpan.innerText = `${Math.round(val * 100)}%`;
   }
@@ -3114,10 +3108,12 @@
     } else if (currentTarget === 'bg') {
       bgUrl = croppedDataUrl;
       const chatArea = document.getElementById('chatArea');
+      const opacityVal = document.getElementById('bgOpacityRange') ? document.getElementById('bgOpacityRange').value : 0;
       if (chatArea) {
-        chatArea.style.backgroundImage = `url('${bgUrl}')`;
+        chatArea.style.backgroundImage = `linear-gradient(rgba(255,255,255,${opacityVal}), rgba(255,255,255,${opacityVal})), url('${bgUrl}')`;
         chatArea.style.backgroundSize = '380px 610px';
         chatArea.style.backgroundPosition = 'center top';
+        chatArea.style.backgroundRepeat = 'repeat-y';
       }
       saveThemeSettings();
     } else if (currentTarget === 'chatPhoto') {

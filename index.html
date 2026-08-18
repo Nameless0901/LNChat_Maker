@@ -80,11 +80,26 @@
     gap: 20px;
     width: 100%;
     max-width: 820px;
+    transition: all 0.3s ease;
   }
 
+  /* 설정 패널 접힘 상태 클래스 */
+  .controller-side.collapsed {
+    flex: 0 0 280px;
+    max-width: 280px;
+    overflow: hidden;
+  }
+  .controller-side.collapsed .collapse-target-content {
+    display: none !important;
+  }
+  .controller-side.collapsed .foldable-action-btn {
+    display: none !important;
+  }
+
+  /* 프로필 & 테마 설정을 가로 정렬로 변경 */
   .theme-settings-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: row;
     gap: 16px;
     align-items: start;
     width: 100%;
@@ -94,7 +109,7 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 100%;
+    flex: 1;
     min-width: 0;
   }
 
@@ -1160,6 +1175,7 @@
     body { align-items: stretch; padding: 16px 8px; }
     .app-container { flex-direction: column; align-items: center; gap: 24px; }
     .controller-side, .preview-wrapper-side { width: 100%; max-width: 380px; position: static; }
+    .controller-side.collapsed { max-width: 380px; }
     .preview-wrapper-side { flex-direction: column; }
     .msg-composer-side { width: 100%; position: static; }
     .crop-stage { width: 280px; height: 280px; }
@@ -1177,239 +1193,242 @@
       <div class="section-title">
         <span>⚙️ 프로필 & 테마 설정</span>
         <div style="display: flex; gap: 6px; align-items: center;">
-          <button class="undo-btn" id="undoThemeBtn" onclick="undoThemeAction()" disabled style="height: 28px; font-size: 14px; padding: 0 8px; border-radius: 6px;" title="되돌리기">⟲</button>
-          <button class="redo-btn" id="redoThemeBtn" onclick="redoThemeAction()" disabled style="height: 28px; font-size: 14px; padding: 0 8px; border-radius: 6px;" title="다시 실행">⟳</button>
-          <button class="btn-reset-small" onclick="resetToDefaultSettings()" style="height: 28px; font-size: 11px;" title="대화 내용은 유지하고, 테마 및 프로필 설정을 기본 테마로 되돌립니다">기본 테마로 돌아가기</button>
-          <button class="btn-del-small" onclick="resetAllChatSettings()" style="height: 28px; font-size: 11px; background: #ffebee; color: #d32f2f; border: 1px solid #ffcdd2;" title="모든 설정을 처음 상태로 초기화합니다">전체 초기화</button>
+          <button class="btn-reset-small" onclick="toggleControllerSide()" id="toggleControllerBtn" style="height: 28px; font-size: 11.5px; background: #eef2ff; color: var(--accent-blue); font-weight: 700;">◀ 접기</button>
+          <button class="undo-btn foldable-action-btn" id="undoThemeBtn" onclick="undoThemeAction()" disabled style="height: 28px; font-size: 14px; padding: 0 8px; border-radius: 6px;" title="되돌리기">⟲</button>
+          <button class="redo-btn foldable-action-btn" id="redoThemeBtn" onclick="redoThemeAction()" disabled style="height: 28px; font-size: 14px; padding: 0 8px; border-radius: 6px;" title="다시 실행">⟳</button>
+          <button class="btn-reset-small foldable-action-btn" onclick="resetToDefaultSettings()" style="height: 28px; font-size: 11px;" title="대화 내용은 유지하고, 테마 및 프로필 설정을 기본 테마로 되돌립니다">기본 테마</button>
+          <button class="btn-del-small foldable-action-btn" onclick="resetAllChatSettings()" style="height: 28px; font-size: 11px; background: #ffebee; color: #d32f2f; border: 1px solid #ffcdd2;" title="모든 설정을 처음 상태로 초기화합니다">전체 초기화</button>
         </div>
       </div>
 
-      <div class="control-group">
-        <label>방 이름</label>
-        <input type="text" id="titleInput" value="채팅방 이름" oninput="updateRoomTitle();" onchange="pushHistory();">
-      </div>
+      <div class="collapse-target-content" style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="control-group">
+          <label>방 이름</label>
+          <input type="text" id="titleInput" value="채팅방 이름" oninput="updateRoomTitle();" onchange="pushHistory();">
+        </div>
 
-      <div class="theme-settings-grid">
-        
-        <div class="column-box">
+        <div class="theme-settings-grid">
           
-          <div class="card-box">
-            <label>🖼️ 채팅 배경 이미지 업로드 & 투명도</label>
-            <div class="file-btn-wrap">
-              <label class="file-btn" for="bgFileInput">배경 선택 및 자르기</label>
-              <button class="btn-del-small" onclick="deleteBgImage()" title="배경 사진 삭제">삭제</button>
-            </div>
-            <input type="file" id="bgFileInput" accept="image/*" onchange="openCropModal(event, 'bg')">
+          <div class="column-box">
             
-            <div class="control-group" style="margin-top: 4px;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <label style="margin: 0;">배경 투명도</label>
-                <span id="bgOpacityVal" style="font-size: 11.5px; font-weight: 700; color: var(--text-sub);">0%</span>
+            <div class="card-box">
+              <label>🖼️ 채팅 배경 이미지 업로드 & 투명도</label>
+              <div class="file-btn-wrap">
+                <label class="file-btn" for="bgFileInput">배경 선택 및 자르기</label>
+                <button class="btn-del-small" onclick="deleteBgImage()" title="배경 사진 삭제">삭제</button>
               </div>
-              <input type="range" id="bgOpacityRange" min="0" max="1" step="0.05" value="0" oninput="updateBgOpacity(this.value);" onchange="pushHistory();" style="width: 100%; cursor: pointer; accent-color: var(--accent-blue);">
-            </div>
-
-            <button class="btn-reset-small" onclick="toggleBgColorsSection()" style="margin-top: 6px; width: 100%; height: 36px; background: #eef2ff; color: var(--accent-blue); font-weight: 700;">🎨 배경 세부 컬러 지정 설정 열기/닫기</button>
-
-            <div class="collapsible-content" id="bgColorsSection">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <label style="margin: 0;">세부 컬러 옵션</label>
-                <button class="btn-reset-small" onclick="resetAllUiColors()" style="height: 26px; font-size: 10px;">일괄 초기화</button>
-              </div>
-
-              <div class="control-group" style="gap: 4px;">
-                <label>채팅방 바탕 배경색</label>
-                <div class="color-picker-row">
-                  <input type="color" id="phoneBgColorPicker" class="color-trigger-btn" value="#F7F7F7" oninput="updatePhoneBgColor(this.value);" onchange="pushHistory();">
-                  <button class="btn-reset-small" onclick="resetPhoneBgColor()">기본</button>
-                </div>
-              </div>
-
-              <div class="control-group" style="gap: 4px;">
-                <label>채팅방 상단바 배경색</label>
-                <div class="color-picker-row">
-                  <input type="color" id="headerBgColorPicker" class="color-trigger-btn" value="#F2F2F2" oninput="updateHeaderBgColor(this.value);" onchange="pushHistory();">
-                  <button class="btn-reset-small" onclick="resetHeaderBgColor()">기본</button>
-                </div>
-              </div>
-
-              <div class="control-group" style="gap: 4px;">
-                <label>채팅방 이름 글씨 컬러</label>
-                <div style="display: flex; gap: 6px; align-items: center;">
-                  <select id="headerTextColorSelect" class="styled-select" onchange="handleHeaderTextColorPreset(this.value); pushHistory();" style="height: 36px;">
-                    <option value="#4A4A4A">진한 회색 (#4A4A4A)</option>
-                    <option value="#ffffff">흰색 (#ffffff)</option>
-                    <option value="custom">자유 컬러 지정...</option>
-                  </select>
-                  <input type="color" id="headerTextCustomPicker" value="#4A4A4A" style="width: 36px; height: 36px; border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateHeaderTextColorCustom(this.value);" onchange="pushHistory();">
-                </div>
-              </div>
-
-              <div class="control-group" style="gap: 4px;">
-                <label>화살표 & 메뉴 아이콘 컬러</label>
-                <div style="display: flex; gap: 6px; align-items: center;">
-                  <select id="headerIconColorSelect" class="styled-select" onchange="handleHeaderIconColorPreset(this.value); pushHistory();" style="height: 36px;">
-                    <option value="#4A4A4A">진한 회색 (#4A4A4A)</option>
-                    <option value="#ffffff">흰색 (#ffffff)</option>
-                    <option value="custom">자유 컬러 지정...</option>
-                  </select>
-                  <input type="color" id="headerIconCustomPicker" value="#4A4A4A" style="width: 36px; height: 36px; border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateHeaderIconColorCustom(this.value);" onchange="pushHistory();">
-                </div>
-              </div>
-
-              <div class="control-group" style="gap: 4px;">
-                <label>상단바 카메라 아이콘 색상</label>
-                <div style="display: flex; gap: 6px; align-items: center;">
-                  <select id="camColorSelect" class="styled-select" onchange="handleCamColorPreset(this.value); pushHistory();" style="height: 36px;">
-                    <option value="#F69CB6">기본 핑크 (#F69CB6)</option>
-                    <option value="#9C9C9C">회색 (#9C9C9C)</option>
-                    <option value="custom">자유 컬러 지정...</option>
-                  </select>
-                  <input type="color" id="camCustomColorPicker" value="#F69CB6" style="width: 36px; height: 36px; border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateCamColorCustom(this.value);" onchange="pushHistory();">
-                </div>
-              </div>
-
-              <div class="control-group" style="gap: 4px;">
-                <label>하단 발송창 표시 여부</label>
-                <select id="footerActiveSelect" class="styled-select" onchange="toggleFooterActive(this.value); pushHistory();" style="height: 36px;">
-                  <option value="active">활성화 (표시)</option>
-                  <option value="inactive">비활성화 (회색조)</option>
-                </select>
-              </div>
-
-              <div class="control-group" style="gap: 4px;">
-                <label>발송 버튼 색상</label>
-                <div class="color-picker-row">
-                  <input type="color" id="sendBtnColorPicker" class="color-trigger-btn" value="#8da9e8" oninput="updateSendBtnColor(this.value);" onchange="pushHistory();">
-                  <button class="btn-reset-small" onclick="resetSendBtnColor()">기본</button>
-                </div>
-              </div>
-
-              <div class="control-group" style="gap: 4px;">
-                <label>발송 텍스트 색상</label>
-                <div style="display: flex; gap: 6px; align-items: center;">
-                  <select id="sendBtnTextColorSelect" class="styled-select" onchange="handleSendBtnTextColorPreset(this.value); pushHistory();" style="height: 36px;">
-                    <option value="#ffffff">흰색 (#ffffff)</option>
-                    <option value="#4A4A4A">진한 회색 (#4A4A4A)</option>
-                    <option value="custom">자유 컬러 지정...</option>
-                  </select>
-                  <input type="color" id="sendBtnTextCustomPicker" value="#ffffff" style="width: 36px; height: 36px; border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateSendBtnTextColorCustom(this.value);" onchange="pushHistory();">
-                </div>
-              </div>
-
-              <div class="control-group" style="gap: 4px;">
-                <label>하단 발송창 배경 컬러</label>
-                <div class="color-picker-row">
-                  <input type="color" id="footerBgColorPicker" class="color-trigger-btn" value="#ebebf0" oninput="updateFooterBgColor(this.value);" onchange="pushHistory();">
-                  <button class="btn-reset-small" onclick="resetFooterBgColor()">기본</button>
-                </div>
-              </div>
-
-              <div class="control-group" style="gap: 4px;">
-                <label>하단 입력창 배경 컬러</label>
-                <div class="color-picker-row">
-                  <input type="color" id="footerInputBgColorPicker" class="color-trigger-btn" value="#ffffff" oninput="updateFooterInputBgColor(this.value);" onchange="pushHistory();">
-                  <button class="btn-reset-small" onclick="resetFooterInputBgColor()">기본</button>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="column-box">
-          
-          <div class="card-box">
-            <label>👤 내 프로필 (우)</label>
-            <div class="file-btn-wrap">
-              <label class="file-btn" for="rightAvatarFileInput">사진 선택</label>
-              <button class="btn-del-small" onclick="deleteAvatar('right')" title="프로필 삭제">삭제</button>
-              <div class="avatar-preview-thumb" id="rightThumbWrap" title="클릭하여 단색 프로필 색상 변경">
-                <img id="rightThumbImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23F69CB6'/%3E%3C/svg%3E">
-                <input type="color" class="hidden-avatar-color-input" id="rightColorInput" value="#F69CB6" oninput="changeAvatarColor('right', this.value)">
-              </div>
-            </div>
-            <input type="file" id="rightAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'right')">
-          </div>
-
-          <div class="card-box">
-            <div class="section-title" style="font-size:13.5px;">
-              <span>👥 상대방 프로필 관리</span>
-              <button class="btn-reset-small" onclick="addPeerProfile()" style="height: 32px; font-size: 11px;">➕ 추가</button>
-            </div>
-            <div id="peerProfilesContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 160px; overflow-y: auto;"></div>
-          </div>
-
-          <div class="card-box">
-            <button class="btn-reset-small" onclick="toggleChatDetailsSection()" style="width: 100%; height: 38px; background: #eef2ff; color: var(--accent-blue); font-weight: 700;">💬 채팅 세부 설정 열기/닫기</button>
-
-            <div class="collapsible-content" id="chatDetailsSection">
-              <div class="control-group">
+              <input type="file" id="bgFileInput" accept="image/*" onchange="openCropModal(event, 'bg')">
+              
+              <div class="control-group" style="margin-top: 4px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <label style="margin: 0;">🔤 채팅 폰트 크기 조절</label>
-                  <span id="fontSizeVal" style="font-size: 11.5px; font-weight: 700; color: var(--text-sub);">13.5px</span>
+                  <label style="margin: 0;">배경 투명도</label>
+                  <span id="bgOpacityVal" style="font-size: 11.5px; font-weight: 700; color: var(--text-sub);">0%</span>
                 </div>
-                <div class="control-row" style="align-items: center; margin-top: 4px;">
-                  <input type="range" id="fontSizeRange" min="11" max="18" step="0.5" value="13.5" oninput="updateBubbleFontSize(this.value);" onchange="pushHistory();" style="flex: 1; cursor: pointer; accent-color: var(--accent-blue);">
-                  <button class="btn-reset-small" onclick="resetBubbleFontSize()">기본값</button>
+                <input type="range" id="bgOpacityRange" min="0" max="1" step="0.05" value="0" oninput="updateBgOpacity(this.value);" onchange="pushHistory();" style="width: 100%; cursor: pointer; accent-color: var(--accent-blue);">
+              </div>
+
+              <button class="btn-reset-small" onclick="toggleBgColorsSection()" style="margin-top: 6px; width: 100%; height: 36px; background: #eef2ff; color: var(--accent-blue); font-weight: 700;">🎨 배경 세부 컬러 지정 설정 열기/닫기</button>
+
+              <div class="collapsible-content" id="bgColorsSection">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <label style="margin: 0;">세부 컬러 옵션</label>
+                  <button class="btn-reset-small" onclick="resetAllUiColors()" style="height: 26px; font-size: 10px;">일괄 초기화</button>
+                </div>
+
+                <div class="control-group" style="gap: 4px;">
+                  <label>채팅방 바탕 배경색</label>
+                  <div class="color-picker-row">
+                    <input type="color" id="phoneBgColorPicker" class="color-trigger-btn" value="#F7F7F7" oninput="updatePhoneBgColor(this.value);" onchange="pushHistory();">
+                    <button class="btn-reset-small" onclick="resetPhoneBgColor()">기본</button>
+                  </div>
+                </div>
+
+                <div class="control-group" style="gap: 4px;">
+                  <label>채팅방 상단바 배경색</label>
+                  <div class="color-picker-row">
+                    <input type="color" id="headerBgColorPicker" class="color-trigger-btn" value="#F2F2F2" oninput="updateHeaderBgColor(this.value);" onchange="pushHistory();">
+                    <button class="btn-reset-small" onclick="resetHeaderBgColor()">기본</button>
+                  </div>
+                </div>
+
+                <div class="control-group" style="gap: 4px;">
+                  <label>채팅방 이름 글씨 컬러</label>
+                  <div style="display: flex; gap: 6px; align-items: center;">
+                    <select id="headerTextColorSelect" class="styled-select" onchange="handleHeaderTextColorPreset(this.value); pushHistory();" style="height: 36px;">
+                      <option value="#4A4A4A">진한 회색 (#4A4A4A)</option>
+                      <option value="#ffffff">흰색 (#ffffff)</option>
+                      <option value="custom">자유 컬러 지정...</option>
+                    </select>
+                    <input type="color" id="headerTextCustomPicker" value="#4A4A4A" style="width: 36px; height: 36px; border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateHeaderTextColorCustom(this.value);" onchange="pushHistory();">
+                  </div>
+                </div>
+
+                <div class="control-group" style="gap: 4px;">
+                  <label>화살표 & 메뉴 아이콘 컬러</label>
+                  <div style="display: flex; gap: 6px; align-items: center;">
+                    <select id="headerIconColorSelect" class="styled-select" onchange="handleHeaderIconColorPreset(this.value); pushHistory();" style="height: 36px;">
+                      <option value="#4A4A4A">진한 회색 (#4A4A4A)</option>
+                      <option value="#ffffff">흰색 (#ffffff)</option>
+                      <option value="custom">자유 컬러 지정...</option>
+                    </select>
+                    <input type="color" id="headerIconCustomPicker" value="#4A4A4A" style="width: 36px; height: 36px; border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateHeaderIconColorCustom(this.value);" onchange="pushHistory();">
+                  </div>
+                </div>
+
+                <div class="control-group" style="gap: 4px;">
+                  <label>상단바 카메라 아이콘 색상</label>
+                  <div style="display: flex; gap: 6px; align-items: center;">
+                    <select id="camColorSelect" class="styled-select" onchange="handleCamColorPreset(this.value); pushHistory();" style="height: 36px;">
+                      <option value="#F69CB6">기본 핑크 (#F69CB6)</option>
+                      <option value="#9C9C9C">회색 (#9C9C9C)</option>
+                      <option value="custom">자유 컬러 지정...</option>
+                    </select>
+                    <input type="color" id="camCustomColorPicker" value="#F69CB6" style="width: 36px; height: 36px; border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateCamColorCustom(this.value);" onchange="pushHistory();">
+                  </div>
+                </div>
+
+                <div class="control-group" style="gap: 4px;">
+                  <label>하단 발송창 표시 여부</label>
+                  <select id="footerActiveSelect" class="styled-select" onchange="toggleFooterActive(this.value); pushHistory();" style="height: 36px;">
+                    <option value="active">활성화 (표시)</option>
+                    <option value="inactive">비활성화 (회색조)</option>
+                  </select>
+                </div>
+
+                <div class="control-group" style="gap: 4px;">
+                  <label>발송 버튼 색상</label>
+                  <div class="color-picker-row">
+                    <input type="color" id="sendBtnColorPicker" class="color-trigger-btn" value="#8da9e8" oninput="updateSendBtnColor(this.value);" onchange="pushHistory();">
+                    <button class="btn-reset-small" onclick="resetSendBtnColor()">기본</button>
+                  </div>
+                </div>
+
+                <div class="control-group" style="gap: 4px;">
+                  <label>발송 텍스트 색상</label>
+                  <div style="display: flex; gap: 6px; align-items: center;">
+                    <select id="sendBtnTextColorSelect" class="styled-select" onchange="handleSendBtnTextColorPreset(this.value); pushHistory();" style="height: 36px;">
+                      <option value="#ffffff">흰색 (#ffffff)</option>
+                      <option value="#4A4A4A">진한 회색 (#4A4A4A)</option>
+                      <option value="custom">자유 컬러 지정...</option>
+                    </select>
+                    <input type="color" id="sendBtnTextCustomPicker" value="#ffffff" style="width: 36px; height: 36px; border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateSendBtnTextColorCustom(this.value);" onchange="pushHistory();">
+                  </div>
+                </div>
+
+                <div class="control-group" style="gap: 4px;">
+                  <label>하단 발송창 배경 컬러</label>
+                  <div class="color-picker-row">
+                    <input type="color" id="footerBgColorPicker" class="color-trigger-btn" value="#ebebf0" oninput="updateFooterBgColor(this.value);" onchange="pushHistory();">
+                    <button class="btn-reset-small" onclick="resetFooterBgColor()">기본</button>
+                  </div>
+                </div>
+
+                <div class="control-group" style="gap: 4px;">
+                  <label>하단 입력창 배경 컬러</label>
+                  <div class="color-picker-row">
+                    <input type="color" id="footerInputBgColorPicker" class="color-trigger-btn" value="#ffffff" oninput="updateFooterInputBgColor(this.value);" onchange="pushHistory();">
+                    <button class="btn-reset-small" onclick="resetFooterInputBgColor()">기본</button>
+                  </div>
                 </div>
               </div>
 
-              <div class="control-group" style="margin-top: 4px;">
-                <label>🎨 상대 채팅(좌) 말풍선 & 글씨</label>
-                <div class="control-group" style="gap: 6px; margin-top: 4px;">
-                  <div class="color-picker-row">
-                    <input type="color" id="leftBubbleColorPicker" class="color-trigger-btn" value="#ffffff" oninput="updateBubbleColor('left', this.value);" onchange="pushHistory();" title="말풍선 배경색">
-                    <button class="btn-reset-small" onclick="resetLeftBubbleColor()">초기화</button>
-                  </div>
-                  <div style="display: flex; gap: 6px; align-items: center;">
-                    <select id="leftTextColorSelect" class="styled-select" onchange="handleTextColorPreset('left', this.value); pushHistory();">
-                      <option value="#4A4A4A">글씨: 진한 회색</option>
-                      <option value="#ffffff">글씨: 흰색</option>
-                      <option value="custom">자유 컬러 지정...</option>
-                    </select>
-                    <input type="color" id="leftCustomColorPicker" value="#4A4A4A" style="width: 36px; height: 36px; border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateTextColorCustom('left', this.value);" onchange="pushHistory();" title="자유 글씨 색상">
-                  </div>
+            </div>
+
+          </div>
+
+          <div class="column-box">
+            
+            <div class="card-box">
+              <label>👤 내 프로필 (우)</label>
+              <div class="file-btn-wrap">
+                <label class="file-btn" for="rightAvatarFileInput">사진 선택</label>
+                <button class="btn-del-small" onclick="deleteAvatar('right')" title="프로필 삭제">삭제</button>
+                <div class="avatar-preview-thumb" id="rightThumbWrap" title="클릭하여 단색 프로필 색상 변경">
+                  <img id="rightThumbImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23F69CB6'/%3E%3C/svg%3E">
+                  <input type="color" class="hidden-avatar-color-input" id="rightColorInput" value="#F69CB6" oninput="changeAvatarColor('right', this.value)">
                 </div>
               </div>
+              <input type="file" id="rightAvatarFileInput" accept="image/*" onchange="openCropModal(event, 'right')">
+            </div>
 
-              <div class="control-group" style="margin-top: 4px;">
-                <label>🎨 내 채팅(우) 말풍선 & 글씨</label>
-                <div class="control-group" style="gap: 6px; margin-top: 4px;">
-                  <div class="color-picker-row">
-                    <input type="color" id="myBubbleColorPicker" class="color-trigger-btn" value="#F69CB6" oninput="updateBubbleColor('right', this.value);" onchange="pushHistory();" title="말풍선 배경색">
-                    <button class="btn-reset-small" onclick="resetMyBubbleColor()">초기화</button>
+            <div class="card-box">
+              <div class="section-title" style="font-size:13.5px;">
+                <span>👥 상대방 프로필 관리</span>
+                <button class="btn-reset-small" onclick="addPeerProfile()" style="height: 32px; font-size: 11px;">➕ 추가</button>
+              </div>
+              <div id="peerProfilesContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 160px; overflow-y: auto;"></div>
+            </div>
+
+            <div class="card-box">
+              <button class="btn-reset-small" onclick="toggleChatDetailsSection()" style="width: 100%; height: 38px; background: #eef2ff; color: var(--accent-blue); font-weight: 700;">💬 채팅 세부 설정 열기/닫기</button>
+
+              <div class="collapsible-content" id="chatDetailsSection">
+                <div class="control-group">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label style="margin: 0;">🔤 채팅 폰트 크기 조절</label>
+                    <span id="fontSizeVal" style="font-size: 11.5px; font-weight: 700; color: var(--text-sub);">13.5px</span>
                   </div>
-                  <div style="display: flex; gap: 6px; align-items: center;">
-                    <select id="rightTextColorSelect" class="styled-select" onchange="handleTextColorPreset('right', this.value); pushHistory();">
-                      <option value="#ffffff">글씨: 흰색</option>
-                      <option value="#4A4A4A">글씨: 진한 회색</option>
-                      <option value="custom">자유 컬러 지정...</option>
-                    </select>
-                    <input type="color" id="rightCustomColorPicker" value="#ffffff" style="width: 36px; height: 36px; border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateTextColorCustom('right', this.value);" onchange="pushHistory();" title="자유 글씨 색상">
+                  <div class="control-row" style="align-items: center; margin-top: 4px;">
+                    <input type="range" id="fontSizeRange" min="11" max="18" step="0.5" value="13.5" oninput="updateBubbleFontSize(this.value);" onchange="pushHistory();" style="flex: 1; cursor: pointer; accent-color: var(--accent-blue);">
+                    <button class="btn-reset-small" onclick="resetBubbleFontSize()">기본값</button>
+                  </div>
+                </div>
+
+                <div class="control-group" style="margin-top: 4px;">
+                  <label>🎨 상대 채팅(좌) 말풍선 & 글씨</label>
+                  <div class="control-group" style="gap: 6px; margin-top: 4px;">
+                    <div class="color-picker-row">
+                      <input type="color" id="leftBubbleColorPicker" class="color-trigger-btn" value="#ffffff" oninput="updateBubbleColor('left', this.value);" onchange="pushHistory();" title="말풍선 배경색">
+                      <button class="btn-reset-small" onclick="resetLeftBubbleColor()">초기화</button>
+                    </div>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                      <select id="leftTextColorSelect" class="styled-select" onchange="handleTextColorPreset('left', this.value); pushHistory();">
+                        <option value="#4A4A4A">글씨: 진한 회색</option>
+                        <option value="#ffffff">글씨: 흰색</option>
+                        <option value="custom">자유 컬러 지정...</option>
+                      </select>
+                      <input type="color" id="leftCustomColorPicker" value="#4A4A4A" style="width: 36px; height: 36px; border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateTextColorCustom('left', this.value);" onchange="pushHistory();" title="자유 글씨 색상">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="control-group" style="margin-top: 4px;">
+                  <label>🎨 내 채팅(우) 말풍선 & 글씨</label>
+                  <div class="control-group" style="gap: 6px; margin-top: 4px;">
+                    <div class="color-picker-row">
+                      <input type="color" id="myBubbleColorPicker" class="color-trigger-btn" value="#F69CB6" oninput="updateBubbleColor('right', this.value);" onchange="pushHistory();" title="말풍선 배경색">
+                      <button class="btn-reset-small" onclick="resetMyBubbleColor()">초기화</button>
+                    </div>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                      <select id="rightTextColorSelect" class="styled-select" onchange="handleTextColorPreset('right', this.value); pushHistory();">
+                        <option value="#ffffff">글씨: 흰색</option>
+                        <option value="#4A4A4A">글씨: 진한 회색</option>
+                        <option value="custom">자유 컬러 지정...</option>
+                      </select>
+                      <input type="color" id="rightCustomColorPicker" value="#ffffff" style="width: 36px; height: 36px; border-radius: 8px; cursor: pointer; padding: 0; background: transparent; display: none;" oninput="updateTextColorCustom('right', this.value);" onchange="pushHistory();" title="자유 글씨 색상">
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+
           </div>
 
         </div>
 
-      </div>
-
-      <!-- 프리셋 관리 블록 -->
-      <div class="card-box" style="background: #f0f4ff; border-color: #cbd8fc; margin-top: 8px;">
-        <label style="color: var(--accent-blue);">📂 테마 프리셋 관리</label>
-        <div class="control-row">
-          <input type="text" id="presetNameInput" placeholder="저장할 테마 이름 입력..." style="flex: 2;">
-          <button class="btn-primary" onclick="saveThemePreset()" style="flex: 1; padding: 10px; font-size: 12.5px;">💾 현재 테마 저장</button>
-        </div>
-        <div class="control-row" style="margin-top: 4px;">
-          <select id="presetSelect" class="styled-select" style="height: 38px; font-size: 12.5px; flex: 2;" onchange="loadThemePreset(this.value)">
-            <option value="">-- 저장된 테마 선택하기 --</option>
-          </select>
-          <button class="btn-del-small" onclick="deleteCurrentPreset()" style="flex: 1; height: 38px;">🗑️ 삭제</button>
+        <!-- 프리셋 관리 블록 -->
+        <div class="card-box" style="background: #f0f4ff; border-color: #cbd8fc; margin-top: 8px;">
+          <label style="color: var(--accent-blue);">📂 테마 프리셋 관리</label>
+          <div class="control-row">
+            <input type="text" id="presetNameInput" placeholder="저장할 테마 이름 입력..." style="flex: 2;">
+            <button class="btn-primary" onclick="saveThemePreset()" style="flex: 1; padding: 10px; font-size: 12.5px;">💾 현재 테마 저장</button>
+          </div>
+          <div class="control-row" style="margin-top: 4px;">
+            <select id="presetSelect" class="styled-select" style="height: 38px; font-size: 12.5px; flex: 2;" onchange="loadThemePreset(this.value)">
+              <option value="">-- 저장된 테마 선택하기 --</option>
+            </select>
+            <button class="btn-del-small" onclick="deleteCurrentPreset()" style="flex: 1; height: 38px;">🗑️ 삭제</button>
+          </div>
         </div>
       </div>
 
@@ -1696,6 +1715,20 @@
 
   let editingGalleryIndex = null;
   let activePeerIndexForCrop = null;
+
+  // 프로필/테마 설정 패널 접기/펼치기 토글 함수
+  function toggleControllerSide() {
+    const side = document.getElementById('controllerSide');
+    const btn = document.getElementById('toggleControllerBtn');
+    if (!side || !btn) return;
+
+    side.classList.toggle('collapsed');
+    if (side.classList.contains('collapsed')) {
+      btn.innerText = '펼치기 ▶';
+    } else {
+      btn.innerText = '◀ 접기';
+    }
+  }
 
   // LocalStorage 안전 저장 함수 (용량 초과 방지)
   function safeSetLocalStorage(key, value) {
